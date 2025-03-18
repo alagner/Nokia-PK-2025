@@ -1,7 +1,5 @@
 # NOKIA-PK
 
-## Nie pushujemy/zmieniamy mastera w tym repozytorium
-
 ## Tree
  * BTS, COMMON, UE - components
  * googletest - ut library
