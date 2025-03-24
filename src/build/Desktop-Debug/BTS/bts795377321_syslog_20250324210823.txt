@@ -1,0 +1,19 @@
+#1,tid:137688760471808[DEBUG]:[Application]started
+#2,tid:137688760471808[DEBUG]:[SPAWNER]Listen to new connections
+#3,tid:137688760471808[DEBUG]:[Console]Add: `a` for "Show address"
+#4,tid:137688760471808[DEBUG]:[Console]Add: `s` for "Show status"
+#5,tid:137688760471808[DEBUG]:[Console]Add: `l` for "List attached ue"
+#6,tid:137688760471808[DEBUG]:[Console]Add close: `q` for "quit"
+#7,tid:137688760471808[DEBUG]:[Console]Add help: `h` for "help"
+#8,tid:137688760471808[DEBUG]:[Console]Add: `t` for "Test commands - details in implementation"
+#9,tid:137688760471808[DEBUG]:Application loop started
+#10,tid:137688703305408[DEBUG]:[SIB]started
+#11,tid:137688692819648[DEBUG]:Console loop started
+#12,tid:137688760471808[DEBUG]:Session opened
+#13,tid:137688760471808:server started, port: 8181
+#14,tid:137688692819648[DEBUG]:[Console]Console closed!
+#15,tid:137688692819648[DEBUG]:Console loop finished
+#16,tid:137688760471808[DEBUG]:Application loop finished
+#17,tid:137688703305408[DEBUG]:[SIB]finished
+#18,tid:137688760471808[DEBUG]:[SPAWNER]Stop listenning to new connections
+#19,tid:137688760471808[DEBUG]:[Application]finished

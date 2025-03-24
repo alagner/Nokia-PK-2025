@@ -20,6 +20,7 @@ class IBtsPort
 public:
     virtual ~IBtsPort() = default;
 
+    virtual void start(IBtsEventsHandler& handler) = 0;
     virtual void sendAttachRequest(common::BtsId) = 0;
 };
 
