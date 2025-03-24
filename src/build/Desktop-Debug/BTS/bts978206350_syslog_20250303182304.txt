@@ -1,0 +1,13 @@
+#1,tid:138824883060992[DEBUG]:[Application]started
+#2,tid:138824883060992[DEBUG]:[SPAWNER]Listen to new connections
+#3,tid:138824883060992[DEBUG]:[Console]Add: `a` for "Show address"
+#4,tid:138824883060992[DEBUG]:[Console]Add: `s` for "Show status"
+#5,tid:138824883060992[DEBUG]:[Console]Add: `l` for "List attached ue"
+#6,tid:138824883060992[DEBUG]:[Console]Add close: `q` for "quit"
+#7,tid:138824883060992[DEBUG]:[Console]Add help: `h` for "help"
+#8,tid:138824883060992[DEBUG]:[Console]Add: `t` for "Test commands - details in implementation"
+#9,tid:138824883060992[DEBUG]:Application loop started
+#10,tid:138824816527040[DEBUG]:[SIB]started
+#11,tid:138824806041280[DEBUG]:Console loop started
+#12,tid:138824883060992[DEBUG]:Session opened
+#13,tid:138824883060992[ERROR]:server could not start, port: 8181

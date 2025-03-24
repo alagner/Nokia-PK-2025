@@ -1,0 +1,70 @@
+{
+	"backtrace" : 0,
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : 
+		[
+			"BTS/QtApplicationEnvironment/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"id" : "BtsApplicationEnvironment::@12c5a2ea5395b2f3ac8f"
+		},
+		{
+			"id" : "QtBtsConsole::@0dc30363bfe1f55ba2d1"
+		},
+		{
+			"id" : "QtBtsTransport::@7d26c8b28b076815da90"
+		}
+	],
+	"id" : "QtBtsApplicationEnvironment_autogen_timestamp_deps::@9a3b473017da7115b8c3",
+	"isGeneratorProvided" : true,
+	"name" : "QtBtsApplicationEnvironment_autogen_timestamp_deps",
+	"paths" : 
+	{
+		"build" : "BTS/QtApplicationEnvironment",
+		"source" : "BTS/QtApplicationEnvironment"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		},
+		{
+			"name" : "CMake Rules",
+			"sourceIndexes" : 
+			[
+				1
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "build/Desktop-Debug/BTS/QtApplicationEnvironment/CMakeFiles/QtBtsApplicationEnvironment_autogen_timestamp_deps",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "build/Desktop-Debug/BTS/QtApplicationEnvironment/CMakeFiles/QtBtsApplicationEnvironment_autogen_timestamp_deps.rule",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "UTILITY"
+}

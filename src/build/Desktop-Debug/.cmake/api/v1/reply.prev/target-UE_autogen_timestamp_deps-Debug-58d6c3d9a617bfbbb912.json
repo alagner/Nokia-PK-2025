@@ -1,0 +1,79 @@
+{
+	"backtrace" : 0,
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : 
+		[
+			"UE/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"id" : "UeApplication::@73ff395ed0ec3d5dc1b3"
+		},
+		{
+			"id" : "UeApplicationEnvironment::@4abf5fbca927f03aabc9"
+		},
+		{
+			"id" : "QtUeApplicationEnvironment::@da690c1b2f54b815ce33"
+		},
+		{
+			"id" : "QtUeGUI::@2e2ff36e4f635c1eed24"
+		},
+		{
+			"id" : "QtUeTransport::@d4f48aa2cb2df08c3486"
+		},
+		{
+			"id" : "Common::@1b08b490bb01f627c501"
+		}
+	],
+	"id" : "UE_autogen_timestamp_deps::@030a2062f74b9d54b6b0",
+	"isGeneratorProvided" : true,
+	"name" : "UE_autogen_timestamp_deps",
+	"paths" : 
+	{
+		"build" : "UE",
+		"source" : "UE"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		},
+		{
+			"name" : "CMake Rules",
+			"sourceIndexes" : 
+			[
+				1
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "build/Desktop-Debug/UE/CMakeFiles/UE_autogen_timestamp_deps",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "build/Desktop-Debug/UE/CMakeFiles/UE_autogen_timestamp_deps.rule",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "UTILITY"
+}

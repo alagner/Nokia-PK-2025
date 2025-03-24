@@ -1,0 +1,13 @@
+#1,tid:137768134563776[DEBUG]: [phone:140]GUI: setConnectedStateSlot()
+#2,tid:137768134563776[DEBUG]: [phone:140]GUI: setNewMessageSlot(0)
+#3,tid:137768134563776[DEBUG]: [phone:140][TRANSPORT]Selected configuration localhost:8181
+#4,tid:137768134563776: [phone:140][APP] Started
+#5,tid:137768134563776[DEBUG]: [phone:140][NotConnectedState]entry
+#6,tid:137768134563776[DEBUG]: [phone:140][TIMER PORT]Started
+#7,tid:137768134563776[ERROR]: [phone:140][NotConnectedState]Uexpected: handleSib: 576088101
+#8,tid:137768134563776[ERROR]: [phone:140][NotConnectedState]Uexpected: handleSib: 576088101
+#9,tid:137768134563776[DEBUG]: [phone:140][TIMER PORT]Stoped
+#10,tid:137768134563776: [phone:140][APP] Stopped
+#11,tid:137768134563776[DEBUG]: [phone:140][NotConnectedState]exit
+#12,tid:137768134563776[DEBUG]: [phone:140][TRANSPORT]Bye
+#13,tid:137768134563776[ERROR]: [phone:140][TRANSPORT]Connection lost! - application not interested!
