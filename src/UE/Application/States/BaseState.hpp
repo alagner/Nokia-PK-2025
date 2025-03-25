@@ -7,11 +7,15 @@
 namespace ue
 {
 
+struct Context;
+
 class BaseState : public IEventsHandler
 {
 public:
     BaseState(Context& context, const std::string& name);
     ~BaseState() override;
+
+    virtual void enter() {};
 
     // ITimerEventsHandler interface
     void handleTimeout() override;

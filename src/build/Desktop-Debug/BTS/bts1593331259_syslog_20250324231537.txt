@@ -1,0 +1,20 @@
+#1,tid:140001963184384[DEBUG]:[Application]started
+#2,tid:140001963184384[DEBUG]:[SPAWNER]Listen to new connections
+#3,tid:140001963184384[DEBUG]:[Console]Add: `a` for "Show address"
+#4,tid:140001963184384[DEBUG]:[Console]Add: `s` for "Show status"
+#5,tid:140001963184384[DEBUG]:[Console]Add: `l` for "List attached ue"
+#6,tid:140001963184384[DEBUG]:[Console]Add close: `q` for "quit"
+#7,tid:140001963184384[DEBUG]:[Console]Add help: `h` for "help"
+#8,tid:140001963184384[DEBUG]:[Console]Add: `t` for "Test commands - details in implementation"
+#9,tid:140001963184384[DEBUG]:Application loop started
+#10,tid:140001906001600[DEBUG]:[SIB]started
+#11,tid:140001895515840[DEBUG]:Console loop started
+#12,tid:140001963184384[DEBUG]:Session opened
+#13,tid:140001963184384:server started, port: 8181
+#14,tid:140001963184384[DEBUG]:New connection from: ::ffff:127.0.0.1-58646
+#15,tid:140001963184384[DEBUG]:[SPAWNER]new connection: ::ffff:127.0.0.1-58646
+#16,tid:140001963184384[DEBUG]:Send message to: ::ffff:127.0.0.1-58646
+#17,tid:140001963184384[DEBUG]:Message received from: ::ffff:127.0.0.1-58646 body: 0178005ef84e3b
+#18,tid:140001963184384[DEBUG]:[RELAY]Attached: ::ffff:127.0.0.1-58646:000:I
+#19,tid:140001963184384:[UE:::ffff:127.0.0.1-58646:120:A]Attached
+#20,tid:140001963184384[DEBUG]:Send message to: ::ffff:127.0.0.1-58646

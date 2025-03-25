@@ -33,6 +33,7 @@ private:
     Context context;
     common::PrefixedLogger logger;
 
+    friend class ApplicationTestSuite_shouldEnterConnectingState_Test;
 };
 
 }

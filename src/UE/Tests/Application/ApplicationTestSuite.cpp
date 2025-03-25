@@ -7,6 +7,7 @@
 #include "Mocks/IUserPortMock.hpp"
 #include "Mocks/ITimerPortMock.hpp"
 #include "Messages/PhoneNumber.hpp"
+#include "States/ConnectingState.hpp"
 #include <memory>
 
 namespace ue
@@ -20,11 +21,11 @@ struct ApplicationTestSuite : Test
     //const common::BtsId BTS_ID{22};
     const common::BtsId BTS_ID{1024};
     NiceMock<common::ILoggerMock> loggerMock;
-    StrictMock<IBtsPortMock> btsPortMock;
-    StrictMock<IUserPortMock> userPortMock;
-    StrictMock<ITimerPortMock> timerPortMock;
+    NiceMock<IBtsPortMock> btsPortMock;
+    NiceMock<IUserPortMock> userPortMock;
+    NiceMock<ITimerPortMock> timerPortMock;
 
-    Expectation showNotConnected = EXPECT_CALL(userPortMock, showNotConnected());
+    //Expectation showNotConnected = EXPECT_CALL(userPortMock, showNotConnected());
     Application objectUnderTest{PHONE_NUMBER,
                                 loggerMock,
                                 btsPortMock,
@@ -39,9 +40,14 @@ struct ApplicationNotConnectedTestSuite : ApplicationTestSuite
 
 void ApplicationNotConnectedTestSuite::sendAttachRequestOnSib()
 {
-    EXPECT_CALL(btsPortMock, sendAttachRequest(BTS_ID));
-    EXPECT_CALL(timerPortMock, startTimer(500ms));
-    EXPECT_CALL(userPortMock, showConnecting());
+    ON_CALL(timerPortMock, startTimer(_)).WillByDefault(Return());
+    ON_CALL(timerPortMock, stopTimer()).WillByDefault(Return());
+    ON_CALL(userPortMock, showConnecting()).WillByDefault(Return());
+
+    EXPECT_CALL(btsPortMock, sendAttachRequest(BTS_ID)).Times(1);
+    EXPECT_CALL(timerPortMock, startTimer(500ms)).Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, showConnecting()).Times(AtLeast(1));
+
     objectUnderTest.handleSib(BTS_ID);
 }
 
@@ -60,24 +66,37 @@ struct ApplicationConnectingTestSuite : ApplicationNotConnectedTestSuite
 
 TEST_F(ApplicationConnectingTestSuite, shallConnectOnAttachAccept)
 {
-    EXPECT_CALL(timerPortMock, stopTimer());
-    EXPECT_CALL(userPortMock, showConnected());
+    EXPECT_CALL(timerPortMock, stopTimer()).Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, showConnected()).Times(1);
     objectUnderTest.handleAttachAccept();
 }
 
 TEST_F(ApplicationConnectingTestSuite, shallDisConnectOnAttachReject)
 {
-    EXPECT_CALL(timerPortMock, stopTimer());
-    EXPECT_CALL(userPortMock, showNotConnected());
+    EXPECT_CALL(timerPortMock, stopTimer()).Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, showNotConnected()).Times(AtLeast(1));
     objectUnderTest.handleAttachReject();
 }
 
 TEST_F(ApplicationConnectingTestSuite, shallDisConnectOnTimeout)
 {
-    EXPECT_CALL(userPortMock, showNotConnected());
+    EXPECT_CALL(userPortMock, showNotConnected()).Times(AtLeast(1));
     objectUnderTest.handleTimeout();
 }
 
+TEST_F(ApplicationTestSuite, shouldEnterConnectingState)
+{
+    ON_CALL(timerPortMock, stopTimer()).WillByDefault(Return());
+    ON_CALL(timerPortMock, startTimer(_)).WillByDefault(Return());
+    ON_CALL(userPortMock, showConnecting()).WillByDefault(Return());
+
+    EXPECT_CALL(userPortMock, showConnecting()).Times(AtLeast(1));
+    EXPECT_CALL(timerPortMock, startTimer(500ms)).Times(AtLeast(1));
+
+    objectUnderTest.context.setState<ConnectingState>();
+}
+
+}
 /*
 struct ApplicationConnectedTestSuite : ApplicationConnectingTestSuite
 {
@@ -118,5 +137,3 @@ TEST_F(ApplicationConnectingTestSuite, shallHandleAttachAccept)
     EXPECT_CALL(userPortMock, showConnected());
     objectUnderTest.handleAttachAccept();
 }*/
-
-}

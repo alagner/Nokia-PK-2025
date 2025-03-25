@@ -11,6 +11,13 @@ ConnectingState::ConnectingState(Context &context)
     context.user.showConnecting();
 }
 
+void ConnectingState::enter()
+{
+    using namespace std::chrono_literals;
+    context.logger.logInfo("ConnectingState::enter() – uruchamiam timer");
+    context.timer.startTimer(500ms);
+}
+
 void ConnectingState::handleAttachAccept()
 {
     context.timer.stopTimer();
@@ -25,6 +32,7 @@ void ConnectingState::handleAttachReject()
 
 void ConnectingState::handleTimeout()
 {
+    context.user.showNotConnected();
     context.setState<NotConnectedState>();
 }
 
