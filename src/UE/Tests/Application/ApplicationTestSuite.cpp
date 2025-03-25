@@ -101,8 +101,31 @@ TEST_F(ApplicationTestSuite, UeShallHandleAttachmentTimeout)
     applicationPtr->handleSib(btsId);
 
     // WHEN - BTS doesn't respond and timer expires
+    EXPECT_CALL(timerPortMock, stopTimer()); 
     EXPECT_CALL(userPortMock, showNotConnected());
     applicationPtr->handleTimeout();
+}
+
+TEST_F(ApplicationTestSuite, UeShallHandleDisconnection)
+{
+    // Create application and connect it
+    createApplication();
+    verifyShowNotConnectedOnStart();
+    
+    // Connect to BTS
+    common::BtsId btsId{42};
+    EXPECT_CALL(btsPortMock, sendAttachRequest(btsId));
+    EXPECT_CALL(timerPortMock, startTimer(std::chrono::milliseconds{500}));
+    applicationPtr->handleSib(btsId);
+    
+    // Accept connection
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(userPortMock, showConnected());
+    applicationPtr->handleAttachAccept();
+    
+    // Handle disconnection
+    EXPECT_CALL(userPortMock, showNotConnected());
+    applicationPtr->handleDisconnected();
 }
 
 }

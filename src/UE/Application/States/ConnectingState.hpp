@@ -13,6 +13,7 @@ public:
     void handleTimeout() override;
     void handleAttachAccept() override;
     void handleAttachReject() override;
+    void handleDisconnected() override;
 
 private:
     common::BtsId btsId;

@@ -5,10 +5,13 @@
 namespace ue
 {
 
-class ConnectedState : public BaseState
-{
-public:
-    ConnectedState(Context& context);
-};
+    class ConnectedState : public BaseState
+    {
+    public:
+        ConnectedState(Context &context);
+
+        // Override handleDisconnected to handle disconnection in connected state
+        void handleDisconnected() override;
+    };
 
 }

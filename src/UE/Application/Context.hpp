@@ -1,6 +1,9 @@
 #pragma once
 
 #include "IEventsHandler.hpp"
+#include "Ports/IBtsPort.hpp"
+#include "Ports/IUserPort.hpp" 
+#include "Ports/ITimerPort.hpp"
 #include "Logger/ILogger.hpp"
 #include <memory>
 
