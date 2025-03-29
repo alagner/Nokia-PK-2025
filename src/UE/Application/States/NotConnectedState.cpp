@@ -18,4 +18,13 @@ void NotConnectedState::handleSib(common::BtsId btsId)
     context.setState<ConnectingState>();
 }
 
+void NotConnectedState::handleSib(common::BtsId btsId)
+{
+    using namespace std::chrono_literals;
+    context.bts.sendAttachRequest(btsId);
+    context.timer.startTimer(500ms);
+
+    context.setState<ConnectingState>();
+}
+
 }

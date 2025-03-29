@@ -12,6 +12,7 @@
 namespace ue
 {
 using namespace ::testing;
+using namespace std::chrono_literals;
 
 struct ApplicationTestSuite : Test
 {
@@ -77,4 +78,17 @@ TEST_F(ApplicationConnectingTestSuite, shallDisConnectOnTimeout)
     objectUnderTest.handleTimeout();
 }
 
+struct ApplicationConnectingTestSuite : ApplicationNotConnectedTestSuite
+{
+    ApplicationConnectingTestSuite()
+    {
+        shallHandleSibMessage();
+    }
+};
+
+TEST_F(ApplicationConnectingTestSuite, shallHandleAttachAccept)
+{
+    EXPECT_CALL(userPortMock, showConnected());
+    objectUnderTest.handleAttachAccept();
+}
 }
