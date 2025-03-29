@@ -1,5 +1,6 @@
 #include "Application.hpp"
 #include "States/NotConnectedState.hpp"
+#include "States/ConnectedState.hpp"
 
 namespace ue
 {
@@ -21,36 +22,46 @@ namespace ue
         logger.logInfo("Stopped");
     }
 
+    void Application::handleUiAction(std::optional<std::size_t> selectedIndex)
+    {
+        if (context.state) context.state->handleUiAction(selectedIndex);
+    }
+
+    void Application::handleUiBack()
+    {
+        if (context.state) context.state->handleUiBack();
+    }
+    
     void Application::handleTimeout()
     {
-        context.state->handleTimeout();
+        if (context.state) context.state->handleTimeout();
     }
 
     void Application::handleSib(common::BtsId btsId)
     {
-        context.state->handleSib(btsId);
+        if (context.state) context.state->handleSib(btsId);
     }
 
     void Application::handleAttachAccept()
     {
-        context.state->handleAttachAccept();
+        if (context.state) context.state->handleAttachAccept();
     }
 
     void Application::handleAttachReject()
     {
-        context.state->handleAttachReject();
+        if (context.state) context.state->handleAttachReject();
     }
 
     void Application::handleDisconnected()
     {
         logger.logInfo("Transport disconnected");
-        context.state->handleDisconnected();
+        if (context.state) context.state->handleDisconnected();
     }
 
     void Application::handleSmsReceived(common::PhoneNumber from, std::string text)
     {
         logger.logInfo("SMS received from: ", from);
-        context.state->handleSmsReceived(from, text);
+        if (context.state) context.state->handleSmsReceived(from, text);
     }
 
 }

@@ -17,6 +17,7 @@ namespace ue
         MOCK_METHOD(void, handleAttachReject, (), (final));
         MOCK_METHOD(void, handleDisconnected, (), (final));
         MOCK_METHOD(void, handleSmsReceived, (common::PhoneNumber from, std::string text), (override)); 
+        
     };
 
     class IBtsPortMock : public IBtsPort

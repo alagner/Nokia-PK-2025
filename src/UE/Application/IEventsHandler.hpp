@@ -3,9 +3,20 @@
 #include "Ports/IBtsPort.hpp"
 #include "Ports/IUserPort.hpp"
 #include "Ports/ITimerPort.hpp"
+#include <optional> // Include for optional
 
 namespace ue
 {
+    // Forward declaration if needed, or include specific GUI mode headers
+    namespace details {
+        using GuiViewMode = int; // Or an enum class
+        constexpr GuiViewMode VIEW_MODE_UNKNOWN = 0;
+        constexpr GuiViewMode VIEW_MODE_MAIN_MENU = 1;
+        constexpr GuiViewMode VIEW_MODE_SMS_LIST = 2;
+        constexpr GuiViewMode VIEW_MODE_SMS_VIEW = 3;
+        // Add others like COMPOSE, DIAL etc. as needed
+    }
+
 
     class IEventsHandler : public IBtsEventsHandler,
                            public ITimerEventsHandler,
@@ -13,6 +24,13 @@ namespace ue
     {
     public:
         virtual ~IEventsHandler() = default;
+
+        // New UI Interaction Handlers
+        // Called when user presses "Accept/OK/Select" in the current view
+        virtual void handleUiAction(std::optional<std::size_t> selectedIndex) = 0;
+        // Called when user presses "Reject/Back/Cancel" in the current view
+        virtual void handleUiBack() = 0;
+
     };
 
 }

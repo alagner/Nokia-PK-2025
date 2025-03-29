@@ -23,6 +23,8 @@ public:
     void handleAttachReject() override;
     void handleDisconnected() override;
     void handleSmsReceived(common::PhoneNumber from, std::string text) override;
+    void handleUiAction(std::optional<std::size_t> selectedIndex) override;
+    void handleUiBack() override;
 protected:
     Context& context;
     common::PrefixedLogger logger;

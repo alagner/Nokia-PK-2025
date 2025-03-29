@@ -24,7 +24,9 @@ namespace ue
                     IUserPort &user,
                     ITimerPort &timer);
         ~Application();
-
+        
+        void handleUiAction(std::optional<std::size_t> selectedIndex) override;
+        void handleUiBack() override;
         // ITimerEventsHandler interface
         void handleTimeout() override;
 
