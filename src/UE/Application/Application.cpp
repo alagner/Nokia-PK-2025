@@ -47,4 +47,10 @@ namespace ue
         context.state->handleDisconnected();
     }
 
+    void Application::handleSmsReceived(common::PhoneNumber from, std::string text)
+    {
+        logger.logInfo("SMS received from: ", from);
+        context.state->handleSmsReceived(from, text);
+    }
+
 }

@@ -7,6 +7,7 @@
 #include "Ports/IBtsPort.hpp"  
 #include "Ports/IUserPort.hpp" 
 #include "Ports/ITimerPort.hpp"
+#include "SmsDb.hpp"
 
 namespace ue
 {
@@ -32,6 +33,7 @@ namespace ue
         void handleAttachAccept() override;
         void handleAttachReject() override;
         void handleDisconnected() override;
+        void handleSmsReceived(common::PhoneNumber from, std::string text) override;
 
     private:
         Context context;

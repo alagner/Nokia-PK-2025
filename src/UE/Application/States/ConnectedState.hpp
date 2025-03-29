@@ -5,13 +5,16 @@
 namespace ue
 {
 
-    class ConnectedState : public BaseState
-    {
-    public:
-        ConnectedState(Context &context);
+class ConnectedState : public BaseState
+{
+public:
+    ConnectedState(Context &context);
 
-        // Override handleDisconnected to handle disconnection in connected state
-        void handleDisconnected() override;
-    };
+    // Override handleDisconnected to handle disconnection in connected state
+    void handleDisconnected() override;
+    
+    // Override handleSmsReceived to handle SMS in connected state
+    void handleSmsReceived(common::PhoneNumber from, std::string text) override;
+};
 
 }
