@@ -1,0 +1,32 @@
+# Run manually to reformat a file:
+# clang-format -i --style=file <file>
+Language:                           Cpp
+BasedOnStyle:                       Microsoft
+
+# ColumnLimit:                        80
+
+AlignAfterOpenBracket:              Align
+BinPackParameters:                  false
+BinPackArguments:                   false
+
+Cpp11BracedListStyle:               false
+FixNamespaceComments:               false
+SkipMacroDefinitionBody:            true
+BreakTemplateDeclarations:          Leave
+BreakConstructorInitializers:       BeforeColon
+BreakBeforeBinaryOperators:         NonAssignment
+BreakBeforeBraces:                  Custom
+BraceWrapping:
+  SplitEmptyFunction:               false
+  SplitEmptyRecord:                 false
+
+DerivePointerAlignment:             true
+PointerAlignment:                   Right
+
+AccessModifierOffset:               -4
+IndentAccessModifiers:              false
+
+SpaceBeforeParens:                  Custom
+SpaceBeforeParensOptions:
+  AfterOverloadedOperator:          true
+SpaceBeforeRangeBasedForLoopColon:  false
