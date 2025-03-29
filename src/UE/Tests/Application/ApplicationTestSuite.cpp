@@ -77,18 +77,4 @@ TEST_F(ApplicationConnectingTestSuite, shallDisConnectOnTimeout)
     EXPECT_CALL(userPortMock, showNotConnected());
     objectUnderTest.handleTimeout();
 }
-
-struct ApplicationConnectingTestSuite : ApplicationNotConnectedTestSuite
-{
-    ApplicationConnectingTestSuite()
-    {
-        shallHandleSibMessage();
-    }
-};
-
-TEST_F(ApplicationConnectingTestSuite, shallHandleAttachAccept)
-{
-    EXPECT_CALL(userPortMock, showConnected());
-    objectUnderTest.handleAttachAccept();
-}
 }
