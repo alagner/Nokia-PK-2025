@@ -51,6 +51,7 @@ CMakeFiles
 CTestTestfile.cmake
 Makefile
 cmake_install.cmake
+googletest/generated
 googlemock/CMakeFiles
 googlemock/CTestTestfile.cmake
 googlemock/Makefile
