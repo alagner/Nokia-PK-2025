@@ -36,6 +36,8 @@ namespace ue
         void handleAttachReject() override;
         void handleDisconnected() override;
         void handleSmsReceived(common::PhoneNumber from, std::string text) override;
+        void handleSmsSentResult(common::PhoneNumber to, bool success) override;
+        void handleSmsComposeResult(common::PhoneNumber recipient, const std::string& text) override;
 
     private:
         Context context;

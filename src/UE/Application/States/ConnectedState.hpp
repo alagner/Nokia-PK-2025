@@ -14,6 +14,7 @@ public:
     // Override handlers relevant to the connected state
     void handleDisconnected() override;
     void handleSmsReceived(common::PhoneNumber from, std::string text) override;
+    void handleSmsSentResult(common::PhoneNumber to, bool success) override;
 
     // Handle UI Actions from the main menu
     void handleUiAction(std::optional<std::size_t> selectedIndex) override;

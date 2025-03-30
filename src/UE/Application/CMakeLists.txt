@@ -19,6 +19,7 @@ set(APPLICATION_SOURCES
     States/NotConnectedState.cpp
     States/ViewingSmsListState.cpp     
     States/ViewingSingleSmsState.cpp   
+    States/ComposingSmsState.cpp
 )
 
 

@@ -10,10 +10,10 @@ namespace ue
                              IBtsPort &bts,
                              IUserPort &user,
                              ITimerPort &timer)
-        : context{iLogger, bts, user, timer},
+        : context{iLogger, bts, user, timer, SmsDb(), nullptr, phoneNumber},
           logger(iLogger, "[APP] ")
     {
-        logger.logInfo("Started");
+        logger.logInfo("Started with phone number: ", context.myPhoneNumber);
         context.setState<NotConnectedState>();
     }
 
@@ -24,44 +24,67 @@ namespace ue
 
     void Application::handleUiAction(std::optional<std::size_t> selectedIndex)
     {
-        if (context.state) context.state->handleUiAction(selectedIndex);
+        if (context.state)
+            context.state->handleUiAction(selectedIndex);
     }
 
     void Application::handleUiBack()
     {
-        if (context.state) context.state->handleUiBack();
+        if (context.state)
+            context.state->handleUiBack();
     }
-    
+
     void Application::handleTimeout()
     {
-        if (context.state) context.state->handleTimeout();
+        if (context.state)
+            context.state->handleTimeout();
     }
 
     void Application::handleSib(common::BtsId btsId)
     {
-        if (context.state) context.state->handleSib(btsId);
+        if (context.state)
+            context.state->handleSib(btsId);
     }
 
     void Application::handleAttachAccept()
     {
-        if (context.state) context.state->handleAttachAccept();
+        if (context.state)
+            context.state->handleAttachAccept();
     }
 
     void Application::handleAttachReject()
     {
-        if (context.state) context.state->handleAttachReject();
+        if (context.state)
+            context.state->handleAttachReject();
     }
 
     void Application::handleDisconnected()
     {
         logger.logInfo("Transport disconnected");
-        if (context.state) context.state->handleDisconnected();
+        if (context.state)
+            context.state->handleDisconnected();
     }
 
     void Application::handleSmsReceived(common::PhoneNumber from, std::string text)
     {
         logger.logInfo("SMS received from: ", from);
-        if (context.state) context.state->handleSmsReceived(from, text);
+        if (context.state)
+            context.state->handleSmsReceived(from, text);
+    }
+
+    void Application::handleSmsSentResult(common::PhoneNumber to, bool success)
+    {
+        logger.logInfo("Handling SMS send result for: ", to, ", Success: ", success);
+        if (context.state)
+            context.state->handleSmsSentResult(to, success);
+    }
+
+    void Application::handleSmsComposeResult(common::PhoneNumber recipient, const std::string &text)
+    {
+        context.smsDb.addSentSms(recipient, text);
+        context.bts.sendSms(recipient, text);
+
+        context.setState<ConnectedState>();
     }
 
 }

@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <optional>
 
 namespace ue
 {
@@ -13,12 +14,23 @@ namespace ue
  */
 struct SmsMessage
 {
-    common::PhoneNumber from;
-    std::string text;
-    bool isRead;
+    enum class Direction { INCOMING, OUTGOING };
+    enum class Status { RECEIVED_READ, RECEIVED_UNREAD, SENT, FAILED };
 
-    SmsMessage(common::PhoneNumber from, std::string text, bool isRead = false)
-        : from(from), text(text), isRead(isRead)
+    common::PhoneNumber peer;
+    std::string text;
+    //bool isRead;
+    Direction direction;
+    Status status;
+
+    // Constructor for incoming SMS
+    SmsMessage(common::PhoneNumber from, std::string text)
+        : peer(from), text(text), direction(Direction::INCOMING), status(Status::RECEIVED_UNREAD)
+    {}
+
+    // Constructor for outgoing SMS
+    SmsMessage(common::PhoneNumber to, std::string text, Status initialStatus)
+        : peer(to), text(text), direction(Direction::OUTGOING), status(initialStatus)
     {}
 };
 
@@ -36,7 +48,16 @@ public:
      * @param text SMS text
      * @return Index of the stored SMS
      */
-    std::size_t addSms(common::PhoneNumber from, const std::string& text);
+    std::size_t addReceivedSms(common::PhoneNumber from, const std::string& text);
+
+    /**
+     * @brief Add a new *outgoing* SMS to the database
+     * @param to Recipient's phone number
+     * @param text SMS text
+     * @param initialStatus The initial status (e.g., SENT)
+     * @return Index of the stored SMS
+     */
+    std::size_t addSentSms(common::PhoneNumber to, const std::string& text, SmsMessage::Status initialStatus = SmsMessage::Status::SENT);
 
     /**
      * @brief Get all SMS messages
@@ -57,8 +78,15 @@ public:
      */
     bool markAsRead(std::size_t index);
 
+    /**
+     * @brief Marks the last sent (outgoing) SMS as failed.
+     * @return true if an outgoing SMS was found and marked, false otherwise.
+     */
+    bool markLastOutgoingSmsAsFailed();
+
 private:
     std::vector<SmsMessage> messages;
+    std::optional<std::size_t> lastSentSmsIndex;
 };
 
 } // namespace ue

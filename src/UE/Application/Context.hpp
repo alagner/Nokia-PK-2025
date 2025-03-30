@@ -6,6 +6,7 @@
 #include "Ports/ITimerPort.hpp"
 #include "Logger/ILogger.hpp"
 #include "SmsDb.hpp"
+#include "Messages/PhoneNumber.hpp"
 #include <memory>
 
 namespace ue
@@ -19,6 +20,7 @@ struct Context
     ITimerPort& timer;
     SmsDb smsDb;
     std::unique_ptr<IEventsHandler> state{};
+    common::PhoneNumber myPhoneNumber;
 
     template <typename State, typename ...Arg>
     void setState(Arg&& ...arg)

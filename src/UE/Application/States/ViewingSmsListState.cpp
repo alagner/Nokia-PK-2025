@@ -5,9 +5,11 @@
 
 namespace ue
 {
-    ViewingSmsListState::ViewingSmsListState(Context &context)
+    ViewingSmsListState::ViewingSmsListState(Context& context)
         : BaseState(context, "ViewingSmsListState")
     {
+        logger.logDebug("Entering SMS List view");
+        // Display the list of SMS messages
         showList();
     }
 
@@ -24,7 +26,16 @@ namespace ue
         }
         else
         {
-            context.user.showSmsList(currentSmsList); // Display via UserPort
+            logger.logDebug("Displaying SMS list with updated read statuses:");
+            for (size_t i = 0; i < currentSmsList.size(); ++i)
+            {
+                const auto &msg = currentSmsList[i];
+                bool isRead = (msg.direction == SmsMessage::Direction::INCOMING) ? (msg.status == SmsMessage::Status::RECEIVED_READ) : true;
+                logger.logDebug("SMS #", i, ": ", common::to_string(msg.peer),
+                                " - Read: ", isRead ? "Yes" : "No");
+            }
+
+            context.user.showSmsList(currentSmsList);
         }
     }
 
@@ -37,6 +48,12 @@ namespace ue
         }
 
         std::size_t index = selectedIndex.value();
+        if (currentSmsList.empty())
+        {
+            logger.logError("Cannot select SMS from empty list");
+            context.user.showAlert("Error", "No messages available");
+            return;
+        }
         if (index < currentSmsList.size())
         {
             logger.logInfo("SMS selected at index: ", index);
@@ -53,6 +70,9 @@ namespace ue
     void ViewingSmsListState::handleUiBack()
     {
         logger.logInfo("Back action from SMS List view.");
+
+        logger.logDebug("Explicitly refreshing SMS list before exiting");
+
         context.setState<ConnectedState>(); // Go back to main menu
     }
 
@@ -66,7 +86,7 @@ namespace ue
     void ViewingSmsListState::handleSmsReceived(common::PhoneNumber from, std::string text)
     {
         logger.logInfo("SMS received while viewing list (from: ", from, ")");
-        std::size_t smsIndex = context.smsDb.addSms(from, text);
+        std::size_t smsIndex = context.smsDb.addReceivedSms(from, text);
         logger.logDebug("SMS stored at index: ", smsIndex);
         context.user.showNewSms();
         // Refresh the list view

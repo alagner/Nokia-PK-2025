@@ -1,6 +1,7 @@
 #include "ConnectedState.hpp"
 #include "NotConnectedState.hpp"
 #include "ViewingSmsListState.hpp" 
+#include "ComposingSmsState.hpp"
 #include <vector> // Include vector
 
 namespace ue
@@ -26,10 +27,11 @@ namespace ue
 
     void ConnectedState::handleSmsReceived(common::PhoneNumber from, std::string text)
     {
-        logger.logInfo("SMS received from: ", from); // Log removed text for brevity
-        std::size_t smsIndex = context.smsDb.addSms(from, text);
+        logger.logInfo("SMS received from: ", from);
+        // Use the correct add method
+        std::size_t smsIndex = context.smsDb.addReceivedSms(from, text);
         logger.logDebug("SMS stored at index: ", smsIndex);
-        context.user.showNewSms(); // Show notification, but stay in main menu
+        context.user.showNewSms();
     }
 
     // Handle selection from the main menu list
@@ -40,30 +42,41 @@ namespace ue
             return;
         }
 
-        std::size_t index = selectedIndex.value();
-        logger.logInfo("Main menu action selected: index ", index);
-
-        // Assuming order: 0: Compose SMS, 1: View SMS
-        if (index == 0)
+        logger.logInfo("Main menu selection: index=", selectedIndex.value());
+    
+        switch (selectedIndex.value())
         {
-            logger.logInfo("Compose SMS action selected - (Not Implemented Yet)");
-            // context.setState<ComposingSmsState>(); // Transition to compose state
-        }
-        else if (index == 1)
-        {
-            logger.logInfo("View SMS action selected");
-            context.setState<ViewingSmsListState>(); // Transition to SMS list state
-        }
-        else
-        {
-            logger.logInfo("Unknown main menu index selected: ", index);
+        case 0: // "Compose SMS"
+            logger.logInfo("Compose SMS selected");
+            context.setState<ComposingSmsState>();
+            break;
+            
+        case 1: // "View SMS"
+            logger.logInfo("View SMS selected");
+            context.setState<ViewingSmsListState>();
+            break;
+            
+        default:
+            logger.logError("Invalid menu option selected: ", selectedIndex.value());
+            break;
         }
     }
 
     void ConnectedState::handleUiBack()
     {
-        // What should back do from the main menu? Nothing? Exit?
-        logger.logInfo("Back action in main menu - ignored");
+         logger.logInfo("Back action in main menu - ignored");
     }
+
+    void ConnectedState::handleSmsSentResult(common::PhoneNumber to, bool success)
+    {
+        logger.logInfo("Received SMS send result for ", to, " while in main menu. Success: ", success);
+        if (!success) {
+            if (!context.smsDb.markLastOutgoingSmsAsFailed()) {
+                logger.logInfo("Could not mark last outgoing SMS as failed.");
+            }
+            context.user.showAlert("SMS Failed", "Could not send SMS to " + common::to_string(to));
+        }
+    }
+
 
 } // namespace ue
