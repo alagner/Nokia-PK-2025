@@ -7,6 +7,7 @@
 #include "Ports/IBtsPort.hpp"  
 #include "Ports/IUserPort.hpp" 
 #include "Ports/ITimerPort.hpp"
+#include "SmsDb.hpp"
 
 namespace ue
 {
@@ -23,7 +24,9 @@ namespace ue
                     IUserPort &user,
                     ITimerPort &timer);
         ~Application();
-
+        
+        void handleUiAction(std::optional<std::size_t> selectedIndex) override;
+        void handleUiBack() override;
         // ITimerEventsHandler interface
         void handleTimeout() override;
 
@@ -32,6 +35,7 @@ namespace ue
         void handleAttachAccept() override;
         void handleAttachReject() override;
         void handleDisconnected() override;
+        void handleSmsReceived(common::PhoneNumber from, std::string text) override;
 
     private:
         Context context;
