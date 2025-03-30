@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
+set(CMAKE_MESSAGE_LOG_LEVEL DEBUG)
 project(CPP_Workshop)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

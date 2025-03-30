@@ -16,6 +16,12 @@ include_directories(${Qt5Network_INCLUDES})
 add_definitions(${Qt5Network_DEFINITIONS})
 endmacro()
 
+# Silence QT5 deprecation warnings
+macro(silence_deprecation_warning)
+add_compile_options(-Wno-deprecated-declarations)
+endmacro(silence_deprecation_warning)
+
+
 macro(target_link_qt)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 target_link_libraries(${PROJECT_NAME} ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES} pthread)

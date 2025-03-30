@@ -1,5 +1,6 @@
 project(QtBtsTransport)
 set_qt_options()
+silence_deprecation_warning()
 
 cmake_minimum_required(VERSION 3.12)
 

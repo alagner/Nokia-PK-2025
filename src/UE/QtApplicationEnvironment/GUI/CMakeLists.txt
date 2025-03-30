@@ -6,6 +6,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories(${UE_GUI_DIR})
 
 set_qt_options()
+silence_deprecation_warning()
 
 aux_source_directory(. SRC_LIST)
 
