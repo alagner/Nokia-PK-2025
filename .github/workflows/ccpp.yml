@@ -21,7 +21,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
 
-    - name: Static analyzer: Run
+    - name: "Static analyzer: Run"
       uses: deep5050/cppcheck-action@main
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -30,7 +30,7 @@ jobs:
         std: c++20
         other_options: --library=qt.cfg,googletest.cfg
 
-    - name: Static analyzer: Publish report
+    - name: "Static analyzer: Publish report"
       uses: mikeal/publish-to-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
