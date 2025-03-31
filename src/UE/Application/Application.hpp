@@ -28,12 +28,17 @@ public:
     void handleSib(common::BtsId btsId) override;
     void handleAttachAccept() override;
     void handleAttachReject() override;
+    void handleDisconnected() override;
+
+protected:
+    Context& getContext() { return context; }
 
 private:
     Context context;
     common::PrefixedLogger logger;
 
     friend class ApplicationTestSuite_shouldEnterConnectingState_Test;
+    friend class ApplicationTestSuite_shallHandleDisconnectedInConnectedState_Test;
 };
 
 }

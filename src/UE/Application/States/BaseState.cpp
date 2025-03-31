@@ -35,4 +35,9 @@ void BaseState::handleAttachReject()
     logger.logError("Uexpected: handleAttachReject");
 }
 
+void BaseState::handleDisconnected()
+{
+    logger.logError("handleDisconnected not implemented for this state");
+}
+
 }

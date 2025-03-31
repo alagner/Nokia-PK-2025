@@ -42,4 +42,10 @@ void Application::handleAttachReject()
     context.state->handleAttachReject();
 }
 
+void Application::handleDisconnected()
+{
+    context.state->handleDisconnected();
+    logger.logInfo("Application received disconnect event");
+}
+
 }

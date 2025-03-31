@@ -8,6 +8,7 @@
 #include "Mocks/ITimerPortMock.hpp"
 #include "Messages/PhoneNumber.hpp"
 #include "States/ConnectingState.hpp"
+#include "States/ConnectedState.hpp"
 #include <memory>
 
 namespace ue
@@ -96,44 +97,11 @@ TEST_F(ApplicationTestSuite, shouldEnterConnectingState)
     objectUnderTest.context.setState<ConnectingState>();
 }
 
-}
-/*
-struct ApplicationConnectedTestSuite : ApplicationConnectingTestSuite
+TEST_F(ApplicationTestSuite, shallHandleDisconnectedInConnectedState)
 {
-    ApplicationConnectingTestSuite()
-    {
-        sendAttachRequestOnSib();
-    }
-};
-*/
-
-/*struct ApplicationNotConnectedTestSuite : ApplicationTestSuite
-{
-    void shallHandleSibMessage()
-    {
-        EXPECT_CALL(btsPortMock, sendAttachRequest(BTS_ID));
-        EXPECT_CALL(timerPortMock, startTimer(500ms));
-        EXPECT_CALL(userPortMock, showConnecting());
-
-        objectUnderTest.handleSib(BTS_ID);
-    }
-};
-
-TEST_F(ApplicationNotConnectedTestSuite, shallHandleSibMessage)
-{
-    shallHandleSibMessage();
+    objectUnderTest.getContext().setState<ConnectedState>();
+    EXPECT_CALL(userPortMock, showNotConnected()).Times(1);
+    objectUnderTest.handleDisconnected();
 }
 
-struct ApplicationConnectingTestSuite : ApplicationNotConnectedTestSuite
-{
-    ApplicationConnectingTestSuite()
-    {
-        shallHandleSibMessage();
-    }
-};
-
-TEST_F(ApplicationConnectingTestSuite, shallHandleAttachAccept)
-{
-    EXPECT_CALL(userPortMock, showConnected());
-    objectUnderTest.handleAttachAccept();
-}*/
+}
