@@ -19,7 +19,13 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2
+      uses: jurplel/install-qt-action@v3
+      with:
+        aqtversion: '==3.1.*'
+        version: '5.15.2'
+        host: 'linux'
+        target: 'desktop'
+        arch: 'gcc_64'
 
     - name: "Static analyzer: Run"
       uses: deep5050/cppcheck-action@main
