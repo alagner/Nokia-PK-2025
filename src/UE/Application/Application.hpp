@@ -29,6 +29,8 @@ public:
     void handleAttachAccept() override;
     void handleAttachReject() override;
 
+    void handleDisconnected() ;
+
 private:
     Context context;
     common::PrefixedLogger logger;

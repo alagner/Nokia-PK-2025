@@ -21,7 +21,7 @@ public:
     void handleAttachAccept() override;
     void handleAttachReject() override;
 
-    void handleDisconnected() ;
+    void handleDisconnected() override;
 
 protected:
     Context& context;
