@@ -15,14 +15,12 @@ void BtsPort::start(IBtsEventsHandler &handler)
 {
     transport.registerMessageCallback([this](BinaryMessage msg) {handleMessage(msg);});
     this->handler = &handler;
-    transport.registerDisconnectedCallback([this]{this->handler->handleDisconnected();});
 }
 
 void BtsPort::stop()
 {
     transport.registerMessageCallback(nullptr);
     handler = nullptr;
-    transport.registerDisconnectedCallback(nullptr);
 }
 
 void BtsPort::handleMessage(BinaryMessage msg)

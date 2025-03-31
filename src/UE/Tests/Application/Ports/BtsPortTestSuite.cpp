@@ -23,16 +23,21 @@ protected:
     StrictMock<common::ITransportMock> transportMock;
     common::ITransport::MessageCallback messageCallback;
 
+    common::ITransport::MessageCallback disconnectedCallback;
+
     BtsPort objectUnderTest{loggerMock, transportMock, PHONE_NUMBER};
 
     BtsPortTestSuite()
     {
         EXPECT_CALL(transportMock, registerMessageCallback(_))
                 .WillOnce(SaveArg<0>(&messageCallback));
+
         objectUnderTest.start(handlerMock);
+
     }
     ~BtsPortTestSuite()
     {
+        EXPECT_CALL(transportMock, registerDisconnectedCallback(IsNull()));
 
         EXPECT_CALL(transportMock, registerMessageCallback(IsNull()));
         objectUnderTest.stop();
@@ -92,5 +97,6 @@ TEST_F(BtsPortTestSuite, shallSendAttachRequest)
     ASSERT_NO_THROW(EXPECT_EQ(BTS_ID, reader.readBtsId()));
     ASSERT_NO_THROW(reader.checkEndOfMessage());
 }
+
 
 }
