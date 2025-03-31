@@ -15,7 +15,6 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: src
 
     steps:
       - name: Install Qt
