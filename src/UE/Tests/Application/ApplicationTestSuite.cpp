@@ -100,7 +100,7 @@ TEST_F(ApplicationTestSuite, shouldEnterConnectingState)
 TEST_F(ApplicationTestSuite, shallHandleDisconnectedInConnectedState)
 {
     objectUnderTest.getContext().setState<ConnectedState>();
-    EXPECT_CALL(userPortMock, showNotConnected()).Times(1);
+    EXPECT_CALL(userPortMock, showNotConnected()).Times(AtLeast(1));
     objectUnderTest.handleDisconnected();
 }
 

@@ -434,3 +434,6 @@
 4391	5082	1743443477823299170	UE/UE	647b80ae74810478
 7	5237	1743443477978303667	UE/Tests/Application/CMakeFiles/UeApplicationUT.dir/ApplicationTestSuite.cpp.o	dd72ab3284cc1ece
 5237	5408	1743443478143308448	UE/Tests/Application/UeApplicationUT	704cbc6112bfd9f3
+8	4814	1743445345581462416	UE/Tests/Application/CMakeFiles/UeApplicationUT.dir/Ports/BtsPortTestSuite.cpp.o	62a6f0998139f030
+6	5288	1743445346046482213	UE/Tests/Application/CMakeFiles/UeApplicationUT.dir/ApplicationTestSuite.cpp.o	dd72ab3284cc1ece
+5288	5460	1743445346221489649	UE/Tests/Application/UeApplicationUT	704cbc6112bfd9f3
