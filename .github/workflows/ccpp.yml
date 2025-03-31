@@ -2,9 +2,11 @@ name: C/C++ CI
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
 
 jobs:
   build:
@@ -14,28 +16,19 @@ jobs:
       run:
         shell: bash
         working-directory: src
-        
+
     steps:
-    - uses: actions/checkout@v2
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v2
-    - name: cmake
-      run: cmake .
-    - name: make all targets
-      run: make all
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
 
-    - name: UT for BtsApplication
-      run: make BtsApplicationUT 
+      - uses: actions/checkout@v2
 
-    - name: run BTS ut
-      run: ./BTS/Tests/Application/BtsApplicationUT
+      - name: Configure CMake
+        run: cmake -B build
 
-    - name: UT for COMMON
-      run: make COMMON_UT
+      - name: Build All Targets
+        run: cmake --build build
 
-    - name: UT for UeApplication
-      run: make UeApplicationUT
-
-    - name: Next Steps
-      run: echo "Add your next steps here"
-
+      - name: Run unit tests via CTest
+        working-directory: build
+        run: ctest --output-on-failure
