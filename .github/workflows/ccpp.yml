@@ -10,24 +10,18 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-
     steps:
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v2
-
       - uses: actions/checkout@v2
 
       - name: Configure CMake
         run: cmake -B build
+        working-directory: src
 
       - name: Build All Targets
         run: cmake --build build
+        working-directory: src
 
       - name: Run unit tests via CTest
-        working-directory: build
+        working-directory: src/build
         run: ctest --output-on-failure
