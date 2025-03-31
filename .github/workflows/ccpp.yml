@@ -7,35 +7,24 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
+  build-and-test: 
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: src
-        
+
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v4 
+
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2
-    - name: cmake
-      run: cmake .
-    - name: make all targets
-      run: make all
+      uses: jurplel/install-qt-action@v3 
+     
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Debug
 
-    - name: UT for BtsApplication
-      run: make BtsApplicationUT 
+      
+    - name: Build all targets
+      run: cmake --build ${{github.workspace}}/build --config Debug
 
-    - name: run BTS ut
-      run: ./BTS/Tests/Application/BtsApplicationUT
-
-    - name: UT for COMMON
-      run: make COMMON_UT
-
-    - name: UT for UeApplication
-      run: make UeApplicationUT
-
-    - name: Next Steps
-      run: echo "Add your next steps here"
+    - name: Run tests via CTest
+      working-directory: ${{github.workspace}}/build
+      run: ctest -C Debug --output-on-failure
 
