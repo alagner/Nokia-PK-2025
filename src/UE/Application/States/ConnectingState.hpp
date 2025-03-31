@@ -9,6 +9,8 @@ class ConnectingState : public BaseState
 {
 public:
     ConnectingState(Context& context);
+    void handleAttachAccept() override;
 };
+
 
 }
