@@ -27,20 +27,22 @@ jobs:
         target: 'desktop'
         arch: 'gcc_64'
 
-    # - name: "Static analyzer: Run"
-    #   uses: deep5050/cppcheck-action@main
-    #   with:
-    #     github_token: ${{ secrets.GITHUB_TOKEN }}
-        # enable: warning,style
-        # exclude_check: ./src/googletest
-        # std: c++20
-        # other_options: --library=qt.cfg,googletest.cfg
+    - name: "Static analyzer: Run"
+      uses: deep5050/cppcheck-action@main
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        enable: warning,style
+        exclude_check: ./googletest
+        std: c++20
+        other_options: --library=qt.cfg,googletest.cfg
+      working-directory: ./src
+      
 
-    # - name: "Static analyzer: Publish report"
-    #   uses: mikeal/publish-to-github-action@master
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     BRANCH_NAME: 'master'
+    - name: "Static analyzer: Publish report"
+      uses: mikeal/publish-to-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH_NAME: 'master'
 
     - name: Make project
       run: |
