@@ -43,7 +43,9 @@ jobs:
     #     BRANCH_NAME: 'master'
 
     - name: Make project
-      run: cmake --build . --parallel 4
+      run: |
+        cmake .
+        cmake --build . --parallel 4
       working-directory: ./src
 
     - name: UT for BtsApplication
