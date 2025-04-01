@@ -27,20 +27,13 @@ jobs:
         target: 'desktop'
         arch: 'gcc_64'
 
-    - name: "Static analyzer: Run"
-      uses: deep5050/cppcheck-action@main
-      with:
-        # github_token: ${{ secrets.GITHUB_TOKEN }}
-        enable: warning,style
-        exclude_check: ./googletest
-        std: c++20
-        other_options: --library=qt.cfg,googletest.cfg      
+    - name: Install cppcheck
+      run: |
+        sudo apt-get update && sudo apt-get install -y cppcheck
 
-    - name: "Static analyzer: Publish report"
-      uses: mikeal/publish-to-github-action@master
-      env:
-        # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH_NAME: 'master'
+    - name: Run cppcheck
+      run: |
+        cppcheck --std=c++20 --enable=warning,style,performance --library=qt.cfg,googletest.cfg -isrc/googletest .
 
     - name: Make project
       run: |
