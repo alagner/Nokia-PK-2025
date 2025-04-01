@@ -44,18 +44,23 @@ jobs:
 
     - name: Make project
       run: cmake --build . --parallel 4
+      working-directory: ./src
 
     - name: UT for BtsApplication
       run: make BtsApplicationUT 
+      working-directory: ./src
 
     - name: Run BTS ut
       run: ./BTS/Tests/Application/BtsApplicationUT
+      working-directory: ./src
 
     - name: UT for COMMON
       run: make COMMON_UT
+      working-directory: ./src
 
     - name: UT for UeApplication
       run: make UeApplicationUT
+      working-directory: ./src
 
     # - name: Next Steps
     #   run: echo "Add your next steps here"
