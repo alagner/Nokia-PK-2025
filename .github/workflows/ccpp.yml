@@ -33,7 +33,7 @@ jobs:
 
     - name: Run cppcheck
       run: |
-        cppcheck --std=c++20 --enable=warning,style,performance --library=qt.cfg,googletest.cfg -isrc/googletest .
+        cppcheck --std=c++20 --enable=warning,style,performance --library=qt.cfg,googletest.cfg -igoogletest .
 
     - name: Make project
       run: |
