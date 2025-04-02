@@ -19,6 +19,7 @@ struct IUeGuiMock : public IUeGui
     MOCK_METHOD(void, setCloseGuard, (CloseGuard closeGuard), (final));
     MOCK_METHOD(void, setAcceptCallback, (Callback), (final));
     MOCK_METHOD(void, setRejectCallback, (Callback), (final));
+    MOCK_METHOD(void, setMailCallback, (Callback), (final));
     MOCK_METHOD(void, setTitle, (const std::string &title), (final));
     MOCK_METHOD(void, showConnected, (), (final));
     MOCK_METHOD(void, showConnecting, (), (final));
@@ -32,6 +33,9 @@ struct IUeGuiMock : public IUeGui
     MOCK_METHOD(ICallMode&, setCallMode, (), (final));
     MOCK_METHOD(ITextMode&, setAlertMode, (), (final));
     MOCK_METHOD(ITextMode&, setViewTextMode, (), (final));
+    MOCK_METHOD(ISmsComposeMode&, setComposeSmsMode, (), (override));
+    MOCK_METHOD((ISmsComposeMode&), getSmsComposeMode, (), (const, override));
+
 };
 
 class IListViewModeMock : public IUeGui::IListViewMode
@@ -63,6 +67,8 @@ public:
     MOCK_METHOD(PhoneNumber, getPhoneNumber, (), (const, final));
     MOCK_METHOD(std::string, getSmsText, (), (const, final));
     MOCK_METHOD(void, clearSmsText, (), (final));
+    MOCK_METHOD((std::pair<common::PhoneNumber, std::string>), getComposedSmsData, (), (final));
+
 };
 
 class ICallModeMock : public IUeGui::ICallMode

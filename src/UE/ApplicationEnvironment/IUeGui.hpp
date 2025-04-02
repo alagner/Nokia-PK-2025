@@ -27,6 +27,7 @@ public:
     virtual void setCloseGuard(CloseGuard closeGuard) = 0;
     virtual void setAcceptCallback(Callback) = 0;
     virtual void setRejectCallback(Callback) = 0;
+    virtual void setMailCallback(Callback) = 0;
 
     virtual void setTitle(const std::string& title) = 0;
     virtual void showConnected() = 0;
@@ -41,6 +42,8 @@ public:
     virtual ICallMode& setCallMode() = 0;
     virtual ITextMode& setAlertMode() = 0;
     virtual ITextMode& setViewTextMode() = 0;
+    virtual ISmsComposeMode& setComposeSmsMode() = 0;
+    virtual ISmsComposeMode& getSmsComposeMode() const = 0;
 };
 
 }

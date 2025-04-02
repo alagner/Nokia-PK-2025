@@ -24,16 +24,18 @@ public:
     IUserPortMock();
     ~IUserPortMock() override;
 
-    MOCK_METHOD(void, showNotConnected, (), (override)); // Use override
-    MOCK_METHOD(void, showConnecting, (), (override));   // Use override
-    MOCK_METHOD(void, showConnected, (), (override));    // Use override
-    MOCK_METHOD(void, showNewSms, (), (override));       // Use override
+    MOCK_METHOD(void, showNotConnected, (), (override));
+    MOCK_METHOD(void, showConnecting, (), (override));
+    MOCK_METHOD(void, showConnected, (), (override));
+    MOCK_METHOD(void, showNewSms, (), (override));  
 
-    // --- Add Mocks for the new methods ---
+
     MOCK_METHOD(void, showSmsList, (const std::vector<SmsMessage>& messages), (override));
     MOCK_METHOD(void, showSmsView, (const SmsMessage& message), (override));
     MOCK_METHOD(void, showAlert, (const std::string& title, const std::string& message), (override));
-    // --- End of added mocks ---
+    MOCK_METHOD(void, showSmsCompose, (), (override));
+    MOCK_METHOD(common::PhoneNumber, getSmsRecipient, (), (const, override));
+    MOCK_METHOD(std::string, getSmsText, (), (const, override));
 };
 
 } // namespace ue

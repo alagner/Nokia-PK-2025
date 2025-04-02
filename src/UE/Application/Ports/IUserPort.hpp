@@ -26,6 +26,12 @@ public:
     virtual void showSmsList(const std::vector<SmsMessage>& messages) = 0;
     virtual void showSmsView(const SmsMessage& message) = 0;
     virtual void showAlert(const std::string& title, const std::string& message) = 0;
+    virtual void showSmsCompose() = 0;
+
+    
+
+    virtual common::PhoneNumber getSmsRecipient() const = 0;
+    virtual std::string getSmsText() const = 0;
 };
 
 }

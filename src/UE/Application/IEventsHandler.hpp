@@ -3,6 +3,7 @@
 #include "Ports/IBtsPort.hpp"
 #include "Ports/IUserPort.hpp"
 #include "Ports/ITimerPort.hpp"
+#include "Messages/PhoneNumber.hpp"
 #include <optional> // Include for optional
 
 namespace ue
@@ -14,6 +15,8 @@ namespace ue
         constexpr GuiViewMode VIEW_MODE_MAIN_MENU = 1;
         constexpr GuiViewMode VIEW_MODE_SMS_LIST = 2;
         constexpr GuiViewMode VIEW_MODE_SMS_VIEW = 3;
+        constexpr GuiViewMode VIEW_MODE_SMS_COMPOSE = 4;
+        constexpr GuiViewMode VIEW_MODE_SMS_MENU = 5;
         // Add others like COMPOSE, DIAL etc. as needed
     }
 
@@ -30,6 +33,9 @@ namespace ue
         virtual void handleUiAction(std::optional<std::size_t> selectedIndex) = 0;
         // Called when user presses "Reject/Back/Cancel" in the current view
         virtual void handleUiBack() = 0;
+        virtual void handleSmsReceived(common::PhoneNumber from, std::string text) = 0;
+        virtual void handleSmsSentResult(common::PhoneNumber to, bool success) = 0;
+        virtual void handleSmsComposeResult(common::PhoneNumber recipient, const std::string& text) = 0;
 
     };
 
