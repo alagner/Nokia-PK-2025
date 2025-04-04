@@ -18,7 +18,7 @@ class ApplicationTestSuite : public Test
 {
 protected:
     const common::PhoneNumber PHONE_NUMBER{112};
-    const common::BtsId BTS_ID{22};
+    const common::BtsId BTS_ID{1024};
     NiceMock<common::ILoggerMock> loggerMock;
     StrictMock<IBtsPortMock> btsPortMock;
     StrictMock<IUserPortMock> userPortMock;
@@ -55,5 +55,26 @@ struct ApplicationConnectingTestSuite : ApplicationNotConnectedTestSuite
          shallHandleSibMessage();
      }
  };
+
+TEST_F(ApplicationConnectingTestSuite, shallConnectOnAttachAccept)
+{
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(userPortMock, showConnected());
+    objectUnderTest.handleAttachAccept();
+}
+
+TEST_F(ApplicationConnectingTestSuite, shallDisConnectOnAttachReject)
+{
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(userPortMock, showNotConnected());
+    objectUnderTest.handleAttachReject();
+}
+
+TEST_F(ApplicationConnectingTestSuite, shallDisConnectOnTimeout)
+{
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(userPortMock, showNotConnected());
+    objectUnderTest.handleTimeout();
+}
 
 }
