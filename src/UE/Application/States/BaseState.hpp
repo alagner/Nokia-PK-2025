@@ -23,6 +23,8 @@ public:
 
     void handleDisconnected() override;
 
+    void handleSmsReceive(common::PhoneNumber sender, std::string text) override;
+
 protected:
     Context& context;
     common::PrefixedLogger logger;
