@@ -17,25 +17,46 @@ jobs:
         
     steps:
     - uses: actions/checkout@v2
+
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2
-    - name: cmake
-      run: cmake .
-    - name: make all targets
-      run: make all
+      uses: jurplel/install-qt-action@v3
+      with:
+        aqtversion: '==3.1.*'
+        version: '5.15.2'
+        host: 'linux'
+        target: 'desktop'
+        arch: 'gcc_64'
+
+    - name: Install cppcheck
+      run: |
+        sudo apt-get update && sudo apt-get install -y cppcheck
+
+    - name: Run cppcheck
+      run: |
+        cppcheck --std=c++20 --enable=warning,style,performance --library=qt.cfg,googletest.cfg -igoogletest .
+
+    - name: Make project
+      run: |
+        cmake .
+        cmake --build . --parallel 4
+      working-directory: ./src
 
     - name: UT for BtsApplication
       run: make BtsApplicationUT 
+      working-directory: ./src
 
-    - name: run BTS ut
+    - name: Run BTS ut
       run: ./BTS/Tests/Application/BtsApplicationUT
+      working-directory: ./src
 
     - name: UT for COMMON
       run: make COMMON_UT
+      working-directory: ./src
 
     - name: UT for UeApplication
       run: make UeApplicationUT
+      working-directory: ./src
 
-    - name: Next Steps
-      run: echo "Add your next steps here"
+    # - name: Next Steps
+    #   run: echo "Add your next steps here"
 
