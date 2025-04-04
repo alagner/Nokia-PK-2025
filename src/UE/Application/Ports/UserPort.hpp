@@ -19,6 +19,8 @@ public:
     void showConnecting() override;
     void showConnected() override;
 
+    void showNewMessage() override;
+
 private:
     common::PrefixedLogger logger;
     IUeGui& gui;
