@@ -4,6 +4,7 @@
 #include "Messages/PhoneNumber.hpp"
 #include "IEventsHandler.hpp"
 #include "Context.hpp"
+#include "SmsStorage.hpp"
 
 namespace ue
 {
@@ -29,7 +30,9 @@ public:
     void handleAttachAccept() override;
     void handleAttachReject() override;
 
-    void handleDisconnected() ;
+    void handleDisconnected() override;
+
+    void handleSmsReceive( common::PhoneNumber sender, std::string text) ;
 
 private:
     Context context;
