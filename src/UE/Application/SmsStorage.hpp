@@ -1,13 +1,4 @@
-//
-// Created by student on 4/4/25.
-//
 #pragma once
-
-#ifndef SMSSTORAGE_HPP
-#define SMSSTORAGE_HPP
-
-#endif
-
 
 #include "Messages/PhoneNumber.hpp"
 #include <string>
@@ -45,7 +36,7 @@ public:
 
 
 
-}
+};
 
 
 

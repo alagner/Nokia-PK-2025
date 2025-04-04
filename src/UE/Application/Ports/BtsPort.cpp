@@ -54,7 +54,7 @@ void BtsPort::handleMessage(BinaryMessage msg)
         }
         case common::MessageId::Sms:
         {
-            handler->handleSmsReceived(from, reader.readReamainingText());
+            handler->handleSmsReceive(from, reader.readRemainingText());
             break;
         }
         default:

@@ -32,7 +32,7 @@ public:
 
     void handleDisconnected() override;
 
-    void handleSmsReceive( common::PhoneNumber sender, std::string text) ;
+    void handleSmsReceive( common::PhoneNumber sender, std::string text) override;
 
 private:
     Context context;
