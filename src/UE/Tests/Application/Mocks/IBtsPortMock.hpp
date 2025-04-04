@@ -16,6 +16,7 @@ public:
     MOCK_METHOD(void, handleAttachAccept, (), (final));
     MOCK_METHOD(void, handleAttachReject, (), (final));
     MOCK_METHOD(void, handleDisconnected, (), (final));
+    MOCK_METHOD(void, handleSmsReceive, (common::PhoneNumber sender, std::string text), (override));
 
 };
 
