@@ -7,7 +7,7 @@ namespace ue
 {
 
 struct SmsEntity {
-    common::PhoneNumber from;
+    std::uint8_t from;
     std::string text;
 };
 inline bool operator == (const SmsEntity& lhs, const SmsEntity& rhs)
