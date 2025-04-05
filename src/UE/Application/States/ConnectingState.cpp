@@ -32,4 +32,10 @@ void ConnectingState::handleTimeout()
     context.setState<NotConnectedState>();
 }
 
+void ConnectingState::handleDisconnect()
+{
+    context.user.showNotConnected();
+    context.setState<NotConnectedState>();
+}
+
 }
