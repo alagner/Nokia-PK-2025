@@ -4,6 +4,7 @@
 #include "SmsRepository/SmsRepository.h"
 #include "SmsRepository/SmsEntity.h"
 #include "Messages/PhoneNumber.hpp"
+#include "Mocks/ILoggerMock.hpp"
 
 namespace ue
 {
@@ -12,7 +13,8 @@ using namespace ::testing;
 class SmsRepositoryTestSuite : public Test
 {
 protected:
-    SmsRepository objectUnderTest;
+    NiceMock<common::ILoggerMock> loggerMock;
+    SmsRepository objectUnderTest{loggerMock};
 };
 
 TEST_F(SmsRepositoryTestSuite, shallStartStop)

@@ -2,17 +2,12 @@
 
 namespace ue
 {
-SmsRepository::SmsRepository()
+SmsRepository::SmsRepository(common::ILogger &logger) : logger(logger, "[SMS REPOSITORY]")
 {
 
 }
 
-SmsRepository::~SmsRepository()
-{
-
-}
-
-void SmsRepository::save(const SmsEntity &)
+void SmsRepository::save(const SmsEntity & newSms)
 {
 
 }
