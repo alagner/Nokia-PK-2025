@@ -34,7 +34,7 @@ jobs:
           dir: $HOME/work/Nokia-PK-2025/Qt
 
       - name: cmake
-        run: cmake .
+        run: cmake -DCMAKE_PREFIX_PATH="$HOME/work/Nokia-PK-2025/Qt/5.15.2/gcc_64" .
 
       - name: make all targets
         run: make all
