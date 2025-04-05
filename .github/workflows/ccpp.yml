@@ -8,40 +8,44 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+
     defaults:
       run:
         shell: bash
         working-directory: src
-        
+
     steps:
-    - uses: actions/checkout@v2
-    - name: Install Qt
-    - name: Clean Qt dir
-      run: |
-        if [ -d "$HOME/work/Nokia-PK-2025/Qt" ]; then
-          echo "Cleaning existing Qt directory"
-          rm -rf "$HOME/work/Nokia-PK-2025/Qt"
-        fi
-      uses: jurplel/install-qt-action@v2
-    - name: cmake
-      run: cmake .
-    - name: make all targets
-      run: make all
+      - uses: actions/checkout@v2
 
-    - name: UT for BtsApplication
-      run: make BtsApplicationUT 
+      - name: Clean Qt dir
+        run: rm -rf '${{ github.workspace }}/Qt'
 
-    - name: run BTS ut
-      run: ./BTS/Tests/Application/BtsApplicationUT
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: '5.15.2'
+          host: 'linux'
+          target: 'desktop'
+          dir: '${{ github.workspace }}/Qt'
 
-    - name: UT for COMMON
-      run: make COMMON_UT
+      - name: cmake
+        run: cmake -DCMAKE_PREFIX_PATH='${{ github.workspace }}/Qt/5.15.2/gcc_64' .
 
-    - name: UT for UeApplication
-      run: make UeApplicationUT
+      - name: make all targets
+        run: make all
 
-    - name: Next Steps
-      run: echo "Add your next steps here"
+      - name: UT for BtsApplication
+        run: make BtsApplicationUT
 
+      - name: run BTS ut
+        run: ./BTS/Tests/Application/BtsApplicationUT
+
+      - name: UT for COMMON
+        run: make COMMON_UT
+
+      - name: UT for UeApplication
+        run: make UeApplicationUT
+
+      - name: Next Steps
+        run: echo "Add your next steps here"
