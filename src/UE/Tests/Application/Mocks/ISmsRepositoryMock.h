@@ -17,7 +17,7 @@ public:
     ~ISmsRepositoryMock() override;
 
     MOCK_METHOD(void, save, (const SmsEntity&), (final));
-    MOCK_METHOD(std::vector<SmsEntity>, getAll, (const common::PhoneNumber&), (final));
+    MOCK_METHOD(std::vector<SmsEntity>, getAll, (), (final));
 };
 }
 

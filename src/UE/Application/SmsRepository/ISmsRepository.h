@@ -13,7 +13,7 @@ public:
     virtual ~ISmsRepository() = default;
 
     virtual void save(const SmsEntity&) = 0;
-    virtual std::vector<SmsEntity> getAll(const common::PhoneNumber&) = 0;
+    virtual std::vector<SmsEntity> getAll() = 0;
 };
 
 }
