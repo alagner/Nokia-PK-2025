@@ -17,7 +17,7 @@ void SmsRepository::save(const SmsEntity & newSms)
         this->file.write(reinterpret_cast<char*>(nonConstFrom), sizeof(std::uint8_t));
         this->file.write(reinterpret_cast<char*>(&textSize), sizeof(textSize));
         this->file.write(newSms.text.c_str(), textSize);
-        this->logger.Debug("Zapisano!");
+        this->logger.logDebug("Zapisano!");
     }
     this->file.close();
 }
