@@ -27,5 +27,8 @@ void ConnectingState::handleTimeout()
 {
     context.setState<NotConnectedState>();
 }
+void ConnectingState::handleSms(common::PhoneNumber from, std::string text)
+{
+}
 
 }

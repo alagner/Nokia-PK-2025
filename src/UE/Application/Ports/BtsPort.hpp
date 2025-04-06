@@ -17,6 +17,7 @@ public:
 
     void sendAttachRequest(common::BtsId) override;
 
+
 private:
     void handleMessage(BinaryMessage msg);
 
