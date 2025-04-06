@@ -58,6 +58,8 @@ namespace ue
         ICallMode &setCallMode() override;
         ITextMode &setAlertMode() override;
         ITextMode &setViewTextMode() override;
+        void setIncomingCallMode(PhoneNumber from) override;
+        void setTalkingMode(PhoneNumber peer) override;
         ISmsComposeMode &setComposeSmsMode() override;
         ISmsComposeMode& getSmsComposeMode() const override;
 
@@ -114,6 +116,8 @@ namespace ue
         QtSmsComposeMode smsComposeMode;
         QtAlertMode alertMode;
         QtTextViewMode textViewMode;
+        // QtIncomingCallMode incomingCallMode;
+        // QtTalkingMode talkingMode;
 
     private slots:
         void onAcceptClicked();

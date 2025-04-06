@@ -233,6 +233,27 @@ namespace ue
         emit setNewMessageSignal(present);
     }
 
+    void QtUeGui::setIncomingCallMode(PhoneNumber from)
+    {
+        logger.logDebug("GUI: Activating Incoming Call Mode for ", common::to_string(from));
+        auto& mode = setAlertMode();
+        std::string alertText = "Incoming Call:\n";
+        alertText += common::to_string(from);
+        alertText += "\n\nAccept (Green) / Reject (Red)";
+
+        mode.setText(alertText);
+    }
+
+    void QtUeGui::setTalkingMode(PhoneNumber peer)
+    {
+        logger.logDebug("GUI: Activating Talking Mode with ", common::to_string(peer));
+        auto& mode = setCallMode();
+        mode.clearIncomingText();
+        mode.clearOutgoingText();
+        phoneNumberEdit.setText(QString::fromStdString("Talking with: " + common::to_string(peer)));
+
+    }
+
     void QtUeGui::showPeerUserNotAvailable(PhoneNumber peer)
     {
         setAlertMode().setText("Not available: " + to_string(peer));
