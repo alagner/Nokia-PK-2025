@@ -18,7 +18,10 @@ namespace common
     ACTION(CallRequest)             \
     ACTION(CallAccepted)            \
     ACTION(CallDropped)             \
+    ACTION(CallReject)              \
+    ACTION(CallEnd)                 \
     ACTION(CallTalk)                \
+    ACTION(Invalid)                \
 
 #define MESSAGE_ID_ENTRY(X) X,
 enum class MessageId : std::uint8_t
