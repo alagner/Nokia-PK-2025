@@ -17,6 +17,8 @@ public:
     class IDialMode;
     class ICallMode;
     class ITextMode;
+    class IIncomingCallMode;
+    class ITalkingMode;
 
     using AcceptClose = bool;
     using CloseGuard = std::function<AcceptClose()>;
@@ -42,6 +44,8 @@ public:
     virtual ICallMode& setCallMode() = 0;
     virtual ITextMode& setAlertMode() = 0;
     virtual ITextMode& setViewTextMode() = 0;
+    virtual void setIncomingCallMode(PhoneNumber from) = 0;
+    virtual void setTalkingMode(PhoneNumber peer) = 0;
     virtual ISmsComposeMode& setComposeSmsMode() = 0;
     virtual ISmsComposeMode& getSmsComposeMode() const = 0;
 };

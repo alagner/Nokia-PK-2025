@@ -28,7 +28,8 @@ public:
     virtual void showAlert(const std::string& title, const std::string& message) = 0;
     virtual void showSmsCompose() = 0;
 
-    
+    virtual void showIncomingCall(common::PhoneNumber from) = 0;
+    virtual void showTalkingScreen(common::PhoneNumber peer) = 0;
 
     virtual common::PhoneNumber getSmsRecipient() const = 0;
     virtual std::string getSmsText() const = 0;

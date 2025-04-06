@@ -33,9 +33,11 @@ namespace ue
         virtual void handleUiAction(std::optional<std::size_t> selectedIndex) = 0;
         // Called when user presses "Reject/Back/Cancel" in the current view
         virtual void handleUiBack() = 0;
-        virtual void handleSmsReceived(common::PhoneNumber from, std::string text) = 0;
-        virtual void handleSmsSentResult(common::PhoneNumber to, bool success) = 0;
+        // virtual void handleSmsReceived(common::PhoneNumber from, std::string text) = 0;
+        // virtual void handleSmsSentResult(common::PhoneNumber to, bool success) = 0;
         virtual void handleSmsComposeResult(common::PhoneNumber recipient, const std::string& text) = 0;
+        // virtual void handleCallRequest(common::PhoneNumber from) = 0;
+        // virtual void handleCallEnd(common::PhoneNumber peer) = 0;
 
     };
 
