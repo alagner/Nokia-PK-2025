@@ -2,11 +2,11 @@
 #include "NotConnectedState.hpp"
 #include "ViewingSmsListState.hpp" 
 #include "ComposingSmsState.hpp"
-#include <vector> // Include vector
+#include "IncomingCallState.hpp"
+#include <vector>
 
 namespace ue
 {
-    // Constructor calls showMainMenu now
     ConnectedState::ConnectedState(Context &context)
         : BaseState(context, "ConnectedState")
     {
@@ -16,7 +16,7 @@ namespace ue
     void ConnectedState::showMainMenu()
     {
         logger.logInfo("Entering Main Menu");
-        context.user.showConnected(); // This UserPort method now shows the menu
+        context.user.showConnected();
     }
 
     void ConnectedState::handleDisconnected()
@@ -28,13 +28,11 @@ namespace ue
     void ConnectedState::handleSmsReceived(common::PhoneNumber from, std::string text)
     {
         logger.logInfo("SMS received from: ", from);
-        // Use the correct add method
         std::size_t smsIndex = context.smsDb.addReceivedSms(from, text);
         logger.logDebug("SMS stored at index: ", smsIndex);
         context.user.showNewSms();
     }
 
-    // Handle selection from the main menu list
     void ConnectedState::handleUiAction(std::optional<std::size_t> selectedIndex)
     {
         if (!selectedIndex.has_value()) {
@@ -46,12 +44,12 @@ namespace ue
     
         switch (selectedIndex.value())
         {
-        case 0: // "Compose SMS"
+        case 0:
             logger.logInfo("Compose SMS selected");
             context.setState<ComposingSmsState>();
             break;
             
-        case 1: // "View SMS"
+        case 1:
             logger.logInfo("View SMS selected");
             context.setState<ViewingSmsListState>();
             break;
@@ -76,6 +74,12 @@ namespace ue
             }
             context.user.showAlert("SMS Failed", "Could not send SMS to " + common::to_string(to));
         }
+    }
+
+    void ConnectedState::handleCallRequest(common::PhoneNumber from)
+    {
+        logger.logInfo("Handling incoming call request from: ", from);
+        context.setState<IncomingCallState>(from);
     }
 
 

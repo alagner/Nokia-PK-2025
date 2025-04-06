@@ -20,6 +20,8 @@ set(APPLICATION_SOURCES
     States/ViewingSmsListState.cpp     
     States/ViewingSingleSmsState.cpp   
     States/ComposingSmsState.cpp
+    States/IncomingCallState.cpp
+    States/TalkingState.cpp
 )
 
 

@@ -66,4 +66,14 @@ namespace ue
         logger.logError("Unexpected: handleUiBack");
     }
 
+    void BaseState::handleCallRequest(common::PhoneNumber from)
+    {
+        logger.logError("Unexpected: handleCallRequest from: ", from);
+    }
+
+    void BaseState::handleCallEnd(common::PhoneNumber peer)
+    {
+        logger.logError("Unexpected: handleCallEnd from: ", peer);
+    }
+
 }

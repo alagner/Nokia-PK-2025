@@ -87,4 +87,22 @@ namespace ue
         context.setState<ConnectedState>();
     }
 
+    void Application::handleCallRequest(common::PhoneNumber from)
+    {
+        logger.logDebug("Application handling CallRequest from: ", from);
+        if (context.state)
+            context.state->handleCallRequest(from);
+        else
+            logger.logError("No state object to handle CallRequest from: ", from);
+    }
+
+    void Application::handleCallEnd(common::PhoneNumber peer)
+    {
+        logger.logDebug("Application handling CallEnd from: ", peer);
+        if (context.state)
+            context.state->handleCallEnd(peer);
+        else
+            logger.logError("No state object to handle CallEnd from: ", peer);
+    }
+
 }
