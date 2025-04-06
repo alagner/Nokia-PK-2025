@@ -6,6 +6,7 @@ namespace ue
 ConnectingState::ConnectingState(Context &context)
     : BaseState(context, "ConnectingState")
 {
+    context.user.showConnecting();
 }
 
 }
