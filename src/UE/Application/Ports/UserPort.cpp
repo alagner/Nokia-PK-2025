@@ -158,6 +158,20 @@ namespace ue
         composeMode.setPhoneNumber(common::PhoneNumber{});
     }
 
+    void UserPort::showIncomingCall(common::PhoneNumber from)
+    {
+        currentViewMode = details::VIEW_MODE_UNKNOWN;
+        logger.logInfo("Showing incoming call screen from: ", from);
+        gui.setIncomingCallMode(from);
+    }
+
+    void UserPort::showTalkingScreen(common::PhoneNumber peer)
+    {
+         currentViewMode = details::VIEW_MODE_UNKNOWN;
+         logger.logInfo("Showing talking screen with: ", peer);
+         gui.setTalkingMode(peer);
+    }
+
     void UserPort::acceptCallback()
     {
         if (!handler)
@@ -179,9 +193,9 @@ namespace ue
             auto indexPair = listView.getCurrentItemIndex();
             selectedIndexOpt = indexPair.first ? std::optional<std::size_t>(indexPair.second) : std::nullopt;
 
-            if (selectedIndexOpt.has_value())
+            if (selectedIndexOpt.has_value() && currentViewMode == details::VIEW_MODE_SMS_MENU)
             {
-                if (selectedIndexOpt.value() == 0) // "Compose SMS"
+                if (selectedIndexOpt.value() == 0)
                 {
                     logger.logInfo("Compose SMS selected from SMS menu");
                     showSmsCompose();

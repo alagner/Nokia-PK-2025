@@ -5,10 +5,10 @@
 #include "IUeGui.hpp"
 #include "Messages/PhoneNumber.hpp"
 #include "IEventsHandler.hpp"
-#include "UeGui/ISmsComposeMode.hpp" 
+#include "UeGui/ISmsComposeMode.hpp"
+#include "SmsDb.hpp" 
 #include <optional>
 #include <vector>
-#include "SmsDb.hpp"
 
 namespace ue
 {
@@ -20,7 +20,6 @@ namespace ue
         void start(IEventsHandler &handler);
         void stop();
 
-        // Existing IUserPort methods
         void showNotConnected() override;
         void showConnecting() override;
         void showConnected() override;
@@ -30,6 +29,9 @@ namespace ue
         void showSmsView(const SmsMessage &message);
         void showAlert(const std::string &title, const std::string &message);
         void showSmsCompose() override;
+
+        void showIncomingCall(common::PhoneNumber from) override;
+        void showTalkingScreen(common::PhoneNumber peer) override;
 
         common::PhoneNumber getSmsRecipient() const override;
         std::string getSmsText() const override;

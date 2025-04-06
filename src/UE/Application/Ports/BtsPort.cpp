@@ -67,6 +67,18 @@ namespace ue
                 if (handler) handler->handleSmsSentResult(originalRecipient, false);
                 break;
             }
+            case common::MessageId::CallRequest:
+            {
+                logger.logInfo("Received CallRequest from: ", from);
+                if (handler) handler->handleCallRequest(from);
+                break;
+            }
+            case common::MessageId::CallEnd:
+            {
+                logger.logInfo("Received CallEnd from: ", from);
+                if (handler) handler->handleCallEnd(from);
+                break;
+            }
             default:
                 logger.logError("unknow message: ", msgId, ", from: ", from);
             }
@@ -100,6 +112,27 @@ namespace ue
                                     phoneNumber,  
                                     to};                
         msg.writeText(text);
+        transport.sendMessage(msg.getMessage());
+    }
+
+    void BtsPort::sendCallAccept(common::PhoneNumber to)
+    {
+        logger.logInfo("Sending CallAccept to: ", to);
+        common::OutgoingMessage msg{common::MessageId::CallAccepted, phoneNumber, to};
+        transport.sendMessage(msg.getMessage());
+    }
+
+    void BtsPort::sendCallReject(common::PhoneNumber to)
+    {
+        logger.logInfo("Sending CallReject to: ", to);
+        common::OutgoingMessage msg{common::MessageId::CallReject, phoneNumber, to};
+        transport.sendMessage(msg.getMessage());
+    }
+
+    void BtsPort::sendCallEnd(common::PhoneNumber to)
+    {
+        logger.logInfo("Sending CallEnd to: ", to);
+        common::OutgoingMessage msg{common::MessageId::CallEnd, phoneNumber, to};
         transport.sendMessage(msg.getMessage());
     }
 
