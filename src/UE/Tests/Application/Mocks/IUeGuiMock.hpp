@@ -35,6 +35,8 @@ struct IUeGuiMock : public IUeGui
     MOCK_METHOD(ITextMode&, setViewTextMode, (), (final));
     MOCK_METHOD(ISmsComposeMode&, setComposeSmsMode, (), (override));
     MOCK_METHOD((ISmsComposeMode&), getSmsComposeMode, (), (const, override));
+    MOCK_METHOD(void, setIncomingCallMode, (PhoneNumber from), (override));
+    MOCK_METHOD(void, setTalkingMode, (PhoneNumber peer), (override));
 
 };
 

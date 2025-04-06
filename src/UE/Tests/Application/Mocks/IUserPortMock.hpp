@@ -1,12 +1,10 @@
-// Mocks/IUserPortMock.hpp
 #pragma once
 
 #include <gmock/gmock.h>
 #include "Ports/IUserPort.hpp"
-#include <vector>   // <-- Add include
-#include <string>   // <-- Add include
-// Need SmsMessage definition
-#include "Application/SmsDb.hpp" // <-- Add include
+#include "Application/SmsDb.hpp"
+#include <vector>
+#include <string>
 
 namespace ue
 {
@@ -34,6 +32,8 @@ public:
     MOCK_METHOD(void, showSmsView, (const SmsMessage& message), (override));
     MOCK_METHOD(void, showAlert, (const std::string& title, const std::string& message), (override));
     MOCK_METHOD(void, showSmsCompose, (), (override));
+    MOCK_METHOD(void, showIncomingCall, (common::PhoneNumber from), (override));
+    MOCK_METHOD(void, showTalkingScreen, (common::PhoneNumber peer), (override));
     MOCK_METHOD(common::PhoneNumber, getSmsRecipient, (), (const, override));
     MOCK_METHOD(std::string, getSmsText, (), (const, override));
 };

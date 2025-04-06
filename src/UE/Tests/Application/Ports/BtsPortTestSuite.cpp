@@ -1,6 +1,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include "Mocks/IEventsHandlerMock.hpp"
 #include "Ports/BtsPort.hpp"
 #include "Mocks/ILoggerMock.hpp"
 #include "Mocks/IBtsPortMock.hpp"
@@ -20,7 +21,7 @@ namespace ue
         const common::PhoneNumber PHONE_NUMBER{112};
         const common::BtsId BTS_ID{13121981ll};
         NiceMock<common::ILoggerMock> loggerMock;
-        StrictMock<IBtsEventsHandlerMock> handlerMock;
+        StrictMock<IEventsHandlerMock> handlerMock;
         NiceMock<common::ITransportMock> transportMock;
         common::ITransport::MessageCallback messageCallback;
         common::ITransport::DisconnectedCallback disconnectedCallback;
