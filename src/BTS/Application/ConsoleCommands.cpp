@@ -1,5 +1,11 @@
 #include "ConsoleCommands.hpp"
 #include "TestCommands/TestCommands.hpp"
+#include "Messages/OutgoingMessage.hpp"
+#include "Messages/MessageId.hpp"
+#include "Messages/PhoneNumber.hpp"
+#include "Logger/ILogger.hpp"
+#include <sstream>
+#include <stdexcept>
 
 namespace bts
 {
@@ -28,6 +34,7 @@ void ConsoleCommands::start()
     console.addCommand("s", "Show status", std::bind(&ConsoleCommands::showStatus, this, argsArgument, streamArgument));
     console.addCommand("l", "List attached ue", std::bind(&ConsoleCommands::listAttachedUe, this, argsArgument, streamArgument));
     console.addCloseCommand();
+    console.addCommand("call", "Initiate call: call <target_phone> <source_phone>", std::bind(&ConsoleCommands::handleCall, this, argsArgument, streamArgument));
     console.addHelpCommand();
     console.addCommand("t", "Test commands - details in implementation",std::bind(&ConsoleCommands::testCommands, this, argsArgument, streamArgument));
 }
@@ -61,6 +68,52 @@ void ConsoleCommands::listAttachedUe(std::string, std::ostream& os)
     {
         os << "\t#" << ++i << ": " << ue << "\n";
     });
+}
+
+void ConsoleCommands::handleCall(std::string args, std::ostream &os)
+{
+    SyncLock lock(*syncGuard);
+    std::istringstream ss(args);
+    common::PhoneNumber targetPhoneNumberValue;
+    common::PhoneNumber sourcePhoneNumberValue;
+
+    if (!(ss >> targetPhoneNumberValue >> sourcePhoneNumberValue))
+    {
+
+        os << "Error: Invalid arguments.\nUsage: call <target_phone> <source_phone>\n";
+        logger.logError("Invalid 'call' command arguments: ", args);
+        return;
+    }
+
+    std::string remaining;
+    if (ss >> remaining)
+    {
+         os << "Error: Too many arguments.\nUsage: call <target_phone> <source_phone>\n";
+         logger.logError("Too many 'call' command arguments: ", args);
+         return;
+    }
+
+
+    logger.logInfo("Attempting to initiate call from ", sourcePhoneNumberValue, " to ", targetPhoneNumberValue);
+
+    common::OutgoingMessage callMsg(common::MessageId::CallRequest, sourcePhoneNumberValue, targetPhoneNumberValue);
+
+    try
+    {
+        ueRelay->sendMessage(callMsg.getMessage(), targetPhoneNumberValue);
+        os << "CallRequest sent from " << sourcePhoneNumberValue << " to " << targetPhoneNumberValue << "\n";
+        logger.logInfo("CallRequest sent to UE: ", targetPhoneNumberValue);
+    }
+    catch (const std::exception& e)
+    {
+        os << "Error sending CallRequest: " << e.what() << "\n";
+        logger.logError("Failed to send CallRequest to UE ", targetPhoneNumberValue, ": ", e.what());
+    }
+    catch (...)
+    {
+        os << "Unknown error sending CallRequest to " << targetPhoneNumberValue << "\n";
+        logger.logError("Unknown error sending CallRequest to UE ", targetPhoneNumberValue);
+    }
 }
 
 void ConsoleCommands::testCommands(std::string args, std::ostream &os)
