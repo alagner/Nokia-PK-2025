@@ -6,18 +6,20 @@
 namespace ue
 {
 
-class TalkingState : public BaseState
-{
-public:
-    TalkingState(Context& context, common::PhoneNumber peerNumber);
-    ~TalkingState() override = default;
+    class TalkingState : public BaseState
+    {
+    public:
+        TalkingState(Context &context, common::PhoneNumber peerNumber);
+        ~TalkingState() override = default;
 
-    void handleUiBack() override;
-    void handleCallEnd(common::PhoneNumber peer) override;
-    void handleDisconnected() override;
+        void handleUiBack() override;
+        void handleCallEnd(common::PhoneNumber peer) override;
+        void handleDisconnected() override;
+        void handleUiAction(std::optional<std::size_t>) override;
+        void handleCallTalk(common::PhoneNumber from, const std::string &text) override;
 
-private:
-    common::PhoneNumber peerPhoneNumber;
-};
+    private:
+        common::PhoneNumber peerPhoneNumber;
+    };
 
 }

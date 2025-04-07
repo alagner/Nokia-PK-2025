@@ -76,4 +76,24 @@ namespace ue
         logger.logError("Unexpected: handleCallEnd from: ", peer);
     }
 
+    void BaseState::handleCallAccept(common::PhoneNumber peer)
+    {
+        logger.logInfo("Unexpected: handleCallAccept from: ", peer);
+    }
+
+    void BaseState::handleCallDropped()
+    {
+        logger.logError("Unexpected: handleCallDropped");
+    }
+
+    void BaseState::handleUnknownRecipient(common::PhoneNumber peer)
+    {
+        logger.logInfo("Unexpected: handleUnknownRecipient from: ", peer);
+    }
+
+    void BaseState::handleCallTalk(common::PhoneNumber, const std::string &)
+    {
+        logger.logInfo("Unexpected: CallTalk");
+    }
+
 }

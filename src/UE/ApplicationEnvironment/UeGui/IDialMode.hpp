@@ -6,11 +6,11 @@
 namespace ue
 {
 
-class IUeGui::IDialMode
-{
-public:
-    virtual ~IDialMode() = default;
-    virtual PhoneNumber getPhoneNumber() const = 0;
-};
+    class IUeGui::IDialMode
+    {
+    public:
+        virtual ~IDialMode() = default;
+        virtual PhoneNumber getPhoneNumber() const = 0;
+    };
 
 }

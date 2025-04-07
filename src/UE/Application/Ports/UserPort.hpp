@@ -6,7 +6,7 @@
 #include "Messages/PhoneNumber.hpp"
 #include "IEventsHandler.hpp"
 #include "UeGui/ISmsComposeMode.hpp"
-#include "SmsDb.hpp" 
+#include "SmsDb.hpp"
 #include <optional>
 #include <vector>
 
@@ -32,9 +32,14 @@ namespace ue
 
         void showIncomingCall(common::PhoneNumber from) override;
         void showTalkingScreen(common::PhoneNumber peer) override;
+        void showDialMode();
 
         common::PhoneNumber getSmsRecipient() const override;
         std::string getSmsText() const override;
+
+        void appendIncomingText(const std::string &text) override;
+        void clearOutgoingText() override;
+        std::string getCallText() const override;
 
     private:
         void acceptCallback();

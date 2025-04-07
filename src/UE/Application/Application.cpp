@@ -105,4 +105,41 @@ namespace ue
             logger.logError("No state object to handle CallEnd from: ", peer);
     }
 
+    void Application::handleCallAccept(common::PhoneNumber peer)
+    {
+        logger.logInfo("Handling CallAccept from: ", peer);
+        if (context.state)
+            context.state->handleCallAccept(peer);
+    }
+
+    void Application::handleCallDropped()
+    {
+        logger.logInfo("Call dropped by BTS");
+        context.user.showAlert("Call dropped", "");
+        context.setState<ConnectedState>();
+    }
+
+    void Application::handleUnknownRecipient(common::PhoneNumber peer)
+    {
+        if (context.smsDb.markLastOutgoingSmsAsFailed())
+        {
+            logger.logInfo("SMS failed to deliver (Unknown recipient): ", peer);
+            context.user.showAlert("SMS failed", "User not available");
+            context.user.showConnected();
+        }
+        else
+        {
+            logger.logInfo("Call failed (Unknown recipient): ", peer);
+            context.user.showAlert("Call failed", "User not connected");
+            context.setState<ConnectedState>();
+        }
+    }
+
+    void Application::handleCallTalk(common::PhoneNumber from, const std::string &text)
+    {
+        logger.logInfo("Received CallTalk from ", from);
+        if (context.state)
+            context.state->handleCallTalk(from, text);
+    }
+
 }

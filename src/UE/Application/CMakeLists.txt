@@ -22,6 +22,7 @@ set(APPLICATION_SOURCES
     States/ComposingSmsState.cpp
     States/IncomingCallState.cpp
     States/TalkingState.cpp
+    States/CallingState.cpp
 )
 
 

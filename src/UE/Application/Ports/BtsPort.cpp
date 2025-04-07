@@ -57,28 +57,56 @@ namespace ue
             case common::MessageId::Sms:
             {
                 std::string text = reader.readRemainingText();
-                if (handler) handler->handleSmsReceived(from, text);
+                if (handler)
+                    handler->handleSmsReceived(from, text);
                 break;
             }
             case common::MessageId::UnknownRecipient:
             {
                 auto originalRecipient = reader.readPhoneNumber();
-                logger.logError("SMS delivery failed - Unknown recipient: ", originalRecipient);
-                if (handler) handler->handleSmsSentResult(originalRecipient, false);
+                logger.logInfo("Received UnknownRecipient: ", originalRecipient);
+
+                if (handler)
+                    handler->handleUnknownRecipient(originalRecipient);
                 break;
             }
+
             case common::MessageId::CallRequest:
             {
                 logger.logInfo("Received CallRequest from: ", from);
-                if (handler) handler->handleCallRequest(from);
+                if (handler)
+                    handler->handleCallRequest(from);
                 break;
             }
             case common::MessageId::CallEnd:
             {
                 logger.logInfo("Received CallEnd from: ", from);
-                if (handler) handler->handleCallEnd(from);
+                if (handler)
+                    handler->handleCallEnd(from);
                 break;
             }
+            case common::MessageId::CallAccepted:
+            {
+                logger.logInfo("Received CallAccepted from: ", from);
+                if (handler)
+                    handler->handleCallAccept(from);
+                break;
+            }
+            case common::MessageId::CallDropped:
+            {
+                logger.logInfo("Received CallDropped");
+                if (handler)
+                    handler->handleCallDropped();
+                break;
+            }
+            case common::MessageId::CallTalk:
+            {
+                std::string text = reader.readRemainingText();
+                if (handler)
+                    handler->handleCallTalk(from, text);
+                break;
+            }
+
             default:
                 logger.logError("unknow message: ", msgId, ", from: ", from);
             }
@@ -105,12 +133,12 @@ namespace ue
         msg.writeBtsId(btsId);
         transport.sendMessage(msg.getMessage());
     }
-    void BtsPort::sendSms(common::PhoneNumber to, const std::string& text)
+    void BtsPort::sendSms(common::PhoneNumber to, const std::string &text)
     {
         logger.logInfo("Sending SMS to: ", to);
         common::OutgoingMessage msg{common::MessageId::Sms,
-                                    phoneNumber,  
-                                    to};                
+                                    phoneNumber,
+                                    to};
         msg.writeText(text);
         transport.sendMessage(msg.getMessage());
     }
@@ -133,6 +161,21 @@ namespace ue
     {
         logger.logInfo("Sending CallEnd to: ", to);
         common::OutgoingMessage msg{common::MessageId::CallEnd, phoneNumber, to};
+        transport.sendMessage(msg.getMessage());
+    }
+
+    void BtsPort::sendCallRequest(common::PhoneNumber to)
+    {
+        logger.logInfo("Sending CallRequest to: ", to);
+        common::OutgoingMessage msg{common::MessageId::CallRequest, phoneNumber, to};
+        transport.sendMessage(msg.getMessage());
+    }
+
+    void BtsPort::sendCallTalk(common::PhoneNumber to, const std::string &text)
+    {
+        logger.logInfo("Sending CallTalk to: ", to);
+        common::OutgoingMessage msg{common::MessageId::CallTalk, phoneNumber, to};
+        msg.writeText(text);
         transport.sendMessage(msg.getMessage());
     }
 

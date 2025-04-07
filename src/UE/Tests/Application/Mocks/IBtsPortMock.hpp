@@ -17,8 +17,7 @@ namespace ue
         MOCK_METHOD(void, handleAttachReject, (), (final));
         MOCK_METHOD(void, handleDisconnected, (), (final));
         MOCK_METHOD(void, handleSmsReceived, (common::PhoneNumber from, std::string text), (override));
-        MOCK_METHOD(void, handleSmsSentResult, (common::PhoneNumber to, bool success), (override)); 
-        
+        MOCK_METHOD(void, handleSmsSentResult, (common::PhoneNumber to, bool success), (override));
     };
 
     class IBtsPortMock : public IBtsPort
@@ -28,10 +27,12 @@ namespace ue
         ~IBtsPortMock() override;
 
         MOCK_METHOD(void, sendAttachRequest, (common::BtsId), (final));
-        MOCK_METHOD(void, sendSms, (common::PhoneNumber to, const std::string& text), (override));
+        MOCK_METHOD(void, sendSms, (common::PhoneNumber to, const std::string &text), (override));
         MOCK_METHOD(void, sendCallAccept, (common::PhoneNumber to), (override));
         MOCK_METHOD(void, sendCallReject, (common::PhoneNumber to), (override));
         MOCK_METHOD(void, sendCallEnd, (common::PhoneNumber to), (override));
+        MOCK_METHOD(void, sendCallRequest, (common::PhoneNumber), (override));
+        MOCK_METHOD(void, sendCallTalk, (common::PhoneNumber to, const std::string &text), (override));
     };
 
 }
