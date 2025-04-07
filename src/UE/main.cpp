@@ -25,6 +25,5 @@ int main(int argc, char* argv[])
     appEnv->startMessageLoop();
     bts.stop();
     user.stop();
-    timer.stop();
 }
 
