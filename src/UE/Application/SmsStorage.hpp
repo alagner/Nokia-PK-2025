@@ -1,24 +1,27 @@
 #pragma once
 
 #include "Messages/PhoneNumber.hpp"
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
-
 
 namespace ue
 {
 
-struct SmsMessage{
+struct SmsMessage
+{
 
     common::PhoneNumber sender;
     std::string text;
     bool isRead;
 
-    SmsMessage(common::PhoneNumber sender, std::string text, bool isRead = false) : sender(sender), text(text), isRead(isRead){}
+    SmsMessage(common::PhoneNumber sender, std::string text, bool isRead = false)
+        : sender(sender), text(text), isRead(isRead)
+    {}
 };
 
-class SmsStorage{
+class SmsStorage
+{
 
 private:
     std::vector<SmsMessage> messages;
@@ -33,11 +36,6 @@ public:
     std::size_t getUnreadCount() const;
 
     bool markAsRead(std::size_t idx);
-
-
-
 };
-
-
 
 }
