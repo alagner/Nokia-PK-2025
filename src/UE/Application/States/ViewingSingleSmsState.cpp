@@ -1,6 +1,6 @@
 #include "ViewingSingleSmsState.hpp"
 #include "ViewingSmsListState.hpp" // Include for state transition back
-#include "Application.hpp"         // Include Application for getSmsDb/markSmsAsRead
+#include "Application.hpp"         // Include Application for getSmsDb/markSmsAsRead/storeReceivedSms
 
 namespace ue
 {
@@ -18,13 +18,11 @@ ViewingSingleSmsState::ViewingSingleSmsState(Context& context, std::size_t smsIn
         // Mark as read after displaying
         if (!sms.isRead) {
              context.app.markSmsAsRead(smsIndex);
-             // updateSmsIndicator is called within markSmsAsRead
         }
     }
     else
     {
         logger.logError("Invalid SMS index provided: ", smsIndex);
-        // Immediately transition back if index is bad
         context.setState<ViewingSmsListState>();
     }
 }
@@ -39,10 +37,18 @@ void ViewingSingleSmsState::handleUserAction(const std::string& id)
     }
     else
     {
-        // CORRECTED: Use logInfo instead of logWarning
         logger.logInfo("Ignoring unexpected user action in this state: ", id);
-        // BaseState::handleUserAction(id); // Optionally call base to log as error
     }
 }
 
-} // namespace ue
+// Add handleSms override implementation
+void ViewingSingleSmsState::handleSms(const common::PhoneNumber& from, const std::string& text)
+{
+    logger.logInfo("Received SMS from: ", from, " while viewing single SMS (storing in background).");
+    // Store the SMS using the application method
+    context.app.storeReceivedSms(from, text);
+    // updateSmsIndicator() is called automatically by storeReceivedSms
+}
+
+
+}

@@ -1,8 +1,10 @@
 #pragma once
 
 #include <gmock/gmock.h>
-#include "Ports/IUserPort.hpp"
-#include <string> // Include for handleUserAction parameter
+#include "Ports/IUserPort.hpp" // Includes IUserEventsHandler definition
+#include <string>            // Include for handleUserAction parameter
+#include <vector>            // Include for displaySmsList parameter
+#include "Data/SmsData.hpp"  // Include for displaySmsList/viewSms parameters
 
 namespace ue
 {
@@ -14,7 +16,7 @@ public:
     IUserEventsHandlerMock();
     ~IUserEventsHandlerMock() override;
 
-    // CORRECTED: Added MOCK_METHOD for handleUserAction
+    // Ensure MOCK_METHOD for handleUserAction is present
     MOCK_METHOD(void, handleUserAction, (const std::string& id), (override));
 };
 
@@ -25,13 +27,16 @@ public:
     IUserPortMock();
     ~IUserPortMock() override;
 
+    // Ensure all IUserPort methods are mocked
     MOCK_METHOD(void, showNotConnected, (), (override));
     MOCK_METHOD(void, showConnecting, (), (override));
     MOCK_METHOD(void, showConnected, (), (override));
-    // Need mocks for the other IUserPort methods added previously
     MOCK_METHOD(void, showNewSms, (bool present), (override));
     MOCK_METHOD(void, displaySmsList, (const std::vector<data::SmsData>& smsList), (override));
     MOCK_METHOD(void, viewSms, (const data::SmsData& sms), (override));
+    MOCK_METHOD(void, displaySmsCompose, (), (override));
+    MOCK_METHOD(bool, getComposedSmsData, (common::PhoneNumber& recipient, std::string& text), (override));
+
 };
 
-} // namespace ue
+}

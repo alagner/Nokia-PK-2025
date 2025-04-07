@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaseState.hpp"
-#include <cstddef> // For std::size_t
+#include <cstddef>
 
 namespace ue
 {
@@ -9,13 +9,14 @@ namespace ue
 class ViewingSingleSmsState : public BaseState
 {
 public:
-    // Constructor takes the index of the SMS to view
     ViewingSingleSmsState(Context& context, std::size_t smsIndex);
 
     void handleUserAction(const std::string& id) override;
+    // Add handleSms override declaration
+    void handleSms(const common::PhoneNumber& from, const std::string& text) override;
 
 private:
-    std::size_t smsIndex; // Store the index of the SMS being viewed
+    std::size_t smsIndex;
 };
 
-} // namespace ue
+} 

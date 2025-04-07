@@ -1,14 +1,14 @@
 #pragma once
 
 #include "Logger/PrefixedLogger.hpp"
-#include "Messages/PhoneNumber.hpp" // Include PhoneNumber
+#include "Messages/PhoneNumber.hpp"
 #include "IEventsHandler.hpp"
-#include "Context.hpp"            // Context only needs forward declarations now
-// REMOVED: #include "States/BaseState.hpp" // No longer needed here
+#include "Context.hpp"
+#include "States/BaseState.hpp"
 #include "Data/SmsData.hpp"
 #include <vector>
 #include <string>
-#include <memory> // For unique_ptr usage in Context (indirectly)
+#include <memory>
 
 
 namespace ue
@@ -25,7 +25,7 @@ public:
                 IBtsPort& bts,
                 IUserPort& user,
                 ITimerPort& timer);
-    ~Application(); // Declaration
+    ~Application();
 
     // --- Interface methods ---
     void handleTimeout() override;
@@ -38,6 +38,8 @@ public:
 
     // --- App specific methods ---
     void storeReceivedSms(const common::PhoneNumber& from, const std::string& text);
+    // Added for Sending SMS
+    void storeSentSms(const common::PhoneNumber& to, const std::string& text);
     void updateSmsIndicator();
     const std::vector<data::SmsData>& getSmsDb() const;
     void markSmsAsRead(std::size_t index);
@@ -45,7 +47,7 @@ public:
 
 
 private:
-    Context context; // Requires only forward declarations now via Context.hpp
+    Context context;
     common::PrefixedLogger logger;
     std::vector<data::SmsData> smsDb;
     common::PhoneNumber phoneNumber;
@@ -57,4 +59,4 @@ inline common::PhoneNumber Application::getOwnPhoneNumber() const
     return phoneNumber;
 }
 
-} // namespace ue
+}

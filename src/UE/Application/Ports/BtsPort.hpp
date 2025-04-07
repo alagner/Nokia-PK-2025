@@ -1,12 +1,17 @@
 #pragma once
 
-#include "IBtsPort.hpp"
+#include "IBtsPort.hpp"                     // Defines IBtsEventsHandler, IBtsPort
 #include "Logger/PrefixedLogger.hpp"
-#include "ITransport.hpp"
+#include "CommonEnvironment/ITransport.hpp" // Defines common::ITransport
 #include "Messages/PhoneNumber.hpp"
+#include "Messages/BinaryMessage.hpp"       // CORRECTED: Include definition of common::BinaryMessage
+#include <string>
 
 namespace ue
 {
+
+// REMOVED Incorrect using alias:
+// using BinaryMessage = common::ITransport::BinaryMessage;
 
 class BtsPort : public IBtsPort
 {
@@ -15,17 +20,20 @@ public:
     void start(IBtsEventsHandler& handler);
     void stop();
 
-    void sendAttachRequest(common::BtsId) override;
+    // IBtsPort interface overrides
+    void sendAttachRequest(common::BtsId btsId) override;
+    void sendSms(const common::PhoneNumber& recipient, const std::string& text) override;
 
 private:
-    void handleMessage(BinaryMessage msg);
+    // CORRECTED: Use correct type common::BinaryMessage
+    void handleMessage(common::BinaryMessage msg);
     void handleDisconnect();
 
     common::PrefixedLogger logger;
     common::ITransport& transport;
-    common::PhoneNumber phoneNumber;
+    common::PhoneNumber phoneNumber; // Own number
 
     IBtsEventsHandler* handler = nullptr;
 };
 
-}
+} // namespace ue

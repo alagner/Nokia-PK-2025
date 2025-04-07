@@ -1,21 +1,17 @@
 #pragma once
 
-#include "Messages/PhoneNumber.hpp" // Include for PhoneNumber
-#include "Data/SmsData.hpp"       // CORRECTED: Include SmsData definition
-#include <vector>                 // CORRECTED: Include vector for std::vector
-#include <string>                 // Include string for handleUserAction
+#include "Messages/PhoneNumber.hpp"
+#include "Data/SmsData.hpp"
+#include <vector>
+#include <string>
 
 namespace ue
 {
-
-// Forward declaration (if needed, though SmsData.hpp is included)
-// namespace data { struct SmsData; }
 
 class IUserEventsHandler
 {
 public:
     virtual ~IUserEventsHandler() = default;
-    // Added handleUserAction for menu selections etc.
     virtual void handleUserAction(const std::string& id) = 0;
 };
 
@@ -27,11 +23,12 @@ public:
     virtual void showNotConnected() = 0;
     virtual void showConnecting() = 0;
     virtual void showConnected() = 0;
-    // Method signature matches IUeGui::showNewSms
     virtual void showNewSms(bool present) = 0;
-    // Methods added for View SMS feature
     virtual void displaySmsList(const std::vector<data::SmsData>& smsList) = 0;
     virtual void viewSms(const data::SmsData& sms) = 0;
+    virtual void displaySmsCompose() = 0;
+    // Added helper for ComposingSmsState
+    virtual bool getComposedSmsData(common::PhoneNumber& recipient, std::string& text) = 0;
 };
 
 } // namespace ue

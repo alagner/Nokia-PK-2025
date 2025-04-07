@@ -1,10 +1,11 @@
 #include "UserPort.hpp"
-#include "Application.hpp" // Include Application to access handler
+#include "Application.hpp"
 #include "UeGui/IListViewMode.hpp"
-#include "UeGui/ITextMode.hpp" // Include for setViewTextMode
-#include "IUeGui.hpp" // Include IUeGui for showNewSms etc.
-#include <sstream> // Include for formatting SMS list items
-#include <vector>  // Include for vector used in displaySmsList
+#include "UeGui/ITextMode.hpp"
+#include "UeGui/ISmsComposeMode.hpp" // Include compose mode interface
+#include "IUeGui.hpp"
+#include <sstream>
+#include <vector>
 
 namespace ue
 {
@@ -17,47 +18,45 @@ UserPort::UserPort(common::ILogger &logger, IUeGui &gui, common::PhoneNumber pho
 
 void UserPort::start(IUserEventsHandler &handler_param)
 {
-    this->handler = &handler_param; // Assign parameter address to the member variable
+    this->handler = &handler_param;
     gui.setTitle("Nokia " + common::to_string(phoneNumber));
 
-    // Set only the generic Reject callback here (likely used for "Back" or "Cancel")
     gui.setRejectCallback([this]() {
-         if(this->handler) { // Access member via this->
+         if(this->handler) {
              logger.logDebug("Reject callback triggered");
-             this->handler->handleUserAction("REJECT"); // Or maybe "BACK" depending on context?
+             this->handler->handleUserAction("REJECT");
         } else {
              logger.logError("Reject callback triggered, but handler is null");
          }
     });
-    // Accept callback will be set contextually by modes that need it (like list views)
-    gui.setAcceptCallback(nullptr); // Clear any previous accept callback initially
+    gui.setAcceptCallback(nullptr);
 }
 
 void UserPort::stop()
 {
-    this->handler = nullptr; // Set handler to null
+    this->handler = nullptr;
 }
 
 void UserPort::showNotConnected()
 {
-    gui.setAcceptCallback(nullptr); // No accept action
+    gui.setAcceptCallback(nullptr);
     gui.showNotConnected();
 }
 
 void UserPort::showConnecting()
 {
-    gui.setAcceptCallback(nullptr); // No accept action
+    gui.setAcceptCallback(nullptr);
     gui.showConnecting();
 }
 
 void UserPort::showConnected()
 {
+    currentSmsComposeMode = nullptr; // Ensure compose mode ptr is null
     logger.logInfo("Showing Connected state main menu");
     IUeGui::IListViewMode& menu = gui.setListViewMode();
     menu.clearSelectionList();
-    gui.setTitle("Nokia " + common::to_string(phoneNumber)); // Reset title for main menu
+    gui.setTitle("Nokia " + common::to_string(phoneNumber));
 
-    // Define items and their corresponding action IDs
     const std::vector<std::pair<std::string, std::string>> items = {
         {"Compose SMS", "sms.compose"},
         {"View SMS", "sms.view"},
@@ -65,11 +64,10 @@ void UserPort::showConnected()
     };
 
     for(const auto& item : items) {
-        menu.addSelectionListItem(item.first, item.second); // Label and action ID
+        menu.addSelectionListItem(item.first, item.second);
     }
 
-    // Set the Accept callback specifically for this menu
-    gui.setAcceptCallback([this, &menu, items](){
+    gui.setAcceptCallback([this, &menu, items](){ // Capture menu by reference
         IUeGui::IListViewMode::OptionalSelection selection = menu.getCurrentItemIndex();
         if (selection.first && selection.second < items.size()) {
             const std::string& actionId = items[selection.second].second;
@@ -80,12 +78,9 @@ void UserPort::showConnected()
                  logger.logError("Accept callback (main menu) triggered, but handler is null");
             }
         } else {
-             // CORRECTED: Use logInfo instead of logWarning
              logger.logInfo("Accept callback (main menu) triggered, but no valid item selected.");
         }
     });
-
-    // Explicitly hide SMS indicator when showing main menu
     gui.showNewSms(false);
 }
 
@@ -97,26 +92,26 @@ void UserPort::showNewSms(bool present)
 
 void UserPort::displaySmsList(const std::vector<data::SmsData>& smsList)
 {
+    currentSmsComposeMode = nullptr; // Ensure compose mode ptr is null
     logger.logInfo("Displaying SMS list with ", smsList.size(), " items.");
-    IUeGui::IListViewMode& menu = gui.setListViewMode();
+    IUeGui::IListViewMode& menu = gui.setListViewMode(); // Get reference
     menu.clearSelectionList();
-    gui.setTitle("Received SMS"); // Set the overall GUI title
+    gui.setTitle("Received SMS");
 
-    std::size_t listSize = smsList.size(); // For capture
+    std::size_t listSize = smsList.size();
 
     if (smsList.empty()) {
          menu.addSelectionListItem("No SMS messages", "sms.list.empty");
-         gui.setAcceptCallback(nullptr); // No accept action if list is empty
+         gui.setAcceptCallback(nullptr);
     } else {
         for (std::size_t i = 0; i < listSize; ++i) {
             const auto& sms = smsList[i];
             std::stringstream ss;
             ss << (sms.isRead ? "  " : "[N] ") << "From: " << common::to_string(sms.from);
-            // Add item with label. We'll use index in callback. Tooltip not used here.
             menu.addSelectionListItem(ss.str(), "");
         }
 
-        // Set the Accept callback specifically for the SMS list
+        // Capture menu by reference for use in lambda
         gui.setAcceptCallback([this, &menu, listSize](){
             IUeGui::IListViewMode::OptionalSelection selection = menu.getCurrentItemIndex();
             if (selection.first && selection.second < listSize) {
@@ -128,30 +123,67 @@ void UserPort::displaySmsList(const std::vector<data::SmsData>& smsList)
                     logger.logError("Accept callback (SMS list) triggered, but handler is null");
                 }
             } else {
-                // CORRECTED: Use logInfo instead of logWarning
                 logger.logInfo("Accept callback (SMS list) triggered, but no valid item selected.");
             }
         });
     }
-     // Rely on generic RejectCallback set in start() for "Back" functionality
 }
 
 void UserPort::viewSms(const data::SmsData& sms)
 {
+    currentSmsComposeMode = nullptr; // Ensure compose mode ptr is null
     logger.logInfo("Viewing SMS from: ", sms.from);
     IUeGui::ITextMode& view = gui.setViewTextMode();
-    gui.setTitle("View SMS"); // Set the overall GUI title
+    gui.setTitle("View SMS");
     std::stringstream ss;
     ss << "From: " << common::to_string(sms.from) << "\n\n";
     ss << sms.text;
     view.setText(ss.str());
-    // Accept/Reject callbacks should handle going "Back" (Reject likely)
-    // Setting Accept callback to null if no action needed on green button press
-    gui.setAcceptCallback(nullptr);
+    gui.setAcceptCallback(nullptr); // No specific accept action here
 }
 
-// This handler is not needed anymore as selection is handled via AcceptCallback
-// void UserPort::handleMenuSelection(const std::string& id) { ... }
+// Added implementation for displaySmsCompose
+void UserPort::displaySmsCompose()
+{
+    logger.logInfo("Displaying SMS compose screen.");
+    gui.setTitle("Compose SMS");
+    // Get the compose mode interface and store pointer
+    currentSmsComposeMode = &gui.setSmsComposeMode();
+    currentSmsComposeMode->clearSmsText(); // Clear any previous text
 
+    // Set Accept callback to handle sending
+    gui.setAcceptCallback([this](){
+        if (this->handler && this->currentSmsComposeMode) {
+             // We don't retrieve data here, the state will do it via the pointer
+             logger.logDebug("Compose SMS Accept triggered.");
+             this->handler->handleUserAction("ACCEPT"); // State handles ACCEPT
+        } else {
+            logger.logError("Accept callback (compose SMS) triggered, but handler or mode is null");
+        }
+    });
+    // Reject callback is already set globally to handle "Back/Cancel"
+}
+
+// Helper needed by ComposingSmsState to get data from the GUI mode
+// This isn't ideal (breaks encapsulation slightly) but avoids complex callback data passing
+// Returns true if data retrieval is successful
+bool UserPort::getComposedSmsData(common::PhoneNumber& recipient, std::string& text)
+{
+     if (!currentSmsComposeMode) {
+         logger.logError("Attempted to get composed SMS data, but compose mode is not active.");
+         return false;
+     }
+     try {
+          recipient = currentSmsComposeMode->getPhoneNumber();
+          text = currentSmsComposeMode->getSmsText();
+          logger.logInfo("Retrieved composed SMS to: ", recipient, ", text: '", text, "'");
+          return true;
+     } catch (const std::exception& e) {
+          // IUeGui::ISmsComposeMode can throw if number is invalid
+          logger.logError("Error retrieving composed SMS data: ", e.what());
+          // Optionally: Display error to user via GUI? gui.setAlertMode().setText(e.what());
+          return false;
+     }
+}
 
 } // namespace ue

@@ -1,10 +1,10 @@
 #include "ViewingSmsListState.hpp"
 #include "ViewingSingleSmsState.hpp" // Include for state transition
 #include "ConnectedState.hpp"       // Include for state transition back
-#include "Application.hpp"          // Include Application for getSmsDb
-#include <string>                   // For string manipulation (find, substr)
-#include <charconv>                 // For from_chars
-#include <system_error>             // For std::errc
+#include "Application.hpp"          // Include Application for getSmsDb/storeReceivedSms
+#include <string>                   
+#include <charconv>               
+#include <system_error>           
 
 namespace ue
 {
@@ -39,9 +39,7 @@ void ViewingSmsListState::handleUserAction(const std::string& id)
                  context.setState<ViewingSingleSmsState>(index);
              } else {
                  logger.logError("Selected SMS index ", index, " is out of bounds.");
-                 // Optional: show error to user? For now, just log.
-                 // Stay in current state, redisplay list
-                 context.user.displaySmsList(context.app.getSmsDb());
+                 context.user.displaySmsList(context.app.getSmsDb()); // Redisplay list
              }
         }
         else
@@ -57,10 +55,19 @@ void ViewingSmsListState::handleUserAction(const std::string& id)
     }
      else
     {
-        // CORRECTED: Use logInfo instead of logWarning
         logger.logInfo("Ignoring unexpected user action in this state: ", id);
-        // BaseState::handleUserAction(id); // Optionally call base to log as error
     }
 }
 
-} // namespace ue
+// Add handleSms override implementation
+void ViewingSmsListState::handleSms(const common::PhoneNumber& from, const std::string& text)
+{
+    logger.logInfo("Received SMS from: ", from, " while viewing list (storing in background).");
+    // Store the SMS using the application method
+    context.app.storeReceivedSms(from, text);
+    // updateSmsIndicator() is called automatically by storeReceivedSms
+    // No need to refresh the list view itself as per spec (optional)
+}
+
+
+} 

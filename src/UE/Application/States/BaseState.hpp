@@ -26,7 +26,6 @@ public:
     void handleSms(const common::PhoneNumber& from, const std::string& text) override;
 
     // IUserEventsHandler interface
-    // CORRECTED: Added virtual handleUserAction override
     virtual void handleUserAction(const std::string& id) override;
 
 protected:
@@ -34,4 +33,4 @@ protected:
     common::PrefixedLogger logger;
 };
 
-} // namespace ue
+}

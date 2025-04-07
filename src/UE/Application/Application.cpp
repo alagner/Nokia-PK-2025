@@ -1,18 +1,18 @@
-#include "Application.hpp" // Includes Context.hpp
-#include "Context.hpp"     // Include again just to be safe? Not really needed.
+#include "Application.hpp"
+#include "Context.hpp"
 
-// Include needed State headers here for setState calls and destructor context
 #include "States/BaseState.hpp"
 #include "States/NotConnectedState.hpp"
 #include "States/ConnectingState.hpp"
 #include "States/ConnectedState.hpp"
-// Add other state headers if Application calls setState with them directly
-
+#include "States/ViewingSmsListState.hpp"
+#include "States/ViewingSingleSmsState.hpp"
+#include "States/ComposingSmsState.hpp"
 
 namespace ue
 {
 
-// REMOVED: setState definition (moved to Context.cpp)
+// Definition of Context::setState is now in Context.hpp
 
 Application::Application(common::PhoneNumber phoneNumber,
                          common::ILogger &iLogger,
@@ -24,49 +24,27 @@ Application::Application(common::PhoneNumber phoneNumber,
       phoneNumber(phoneNumber)
 {
     logger.logInfo("Started");
-    // setState definition must be visible here. If it's in Context.cpp,
-    // this call might require explicit instantiation in Context.cpp OR
-    // the template definition needs to be accessible (e.g., move back to Context.hpp
-    // but ensure Context.hpp only includes BaseState.fwd.hpp type header - complex).
-    // Let's rely on the explicit instantiation in Context.cpp for now.
     context.setState<NotConnectedState>();
 }
 
-// Definition of the destructor
 Application::~Application()
 {
     logger.logInfo("Stopped");
-    // Context destructor called here, needs definition of BaseState (included above)
 }
 
-// ... rest of the Application method implementations (no changes from previous version)...
+// ... handleTimeout, handleSib, handleAttachAccept, handleAttachReject ...
+// (No changes needed from previous version)
+void Application::handleTimeout() { if (context.state) context.state->handleTimeout(); }
+void Application::handleSib(common::BtsId btsId) { if (context.state) context.state->handleSib(btsId); }
+void Application::handleAttachAccept() { if (context.state) context.state->handleAttachAccept(); }
+void Application::handleAttachReject() { if (context.state) context.state->handleAttachReject(); }
 
-void Application::handleTimeout()
-{
-    if (context.state) context.state->handleTimeout();
-}
-
-void Application::handleSib(common::BtsId btsId)
-{
-    if (context.state) context.state->handleSib(btsId);
-}
-
-void Application::handleAttachAccept()
-{
-    if (context.state) context.state->handleAttachAccept();
-}
-
-void Application::handleAttachReject()
-{
-    if (context.state) context.state->handleAttachReject();
-}
 
 void Application::handleDisconnect()
 {
      logger.logInfo("Handle disconnect event from transport");
      context.timer.stopTimer();
      context.user.showNotConnected();
-     // setState definition needs to be visible here too.
      context.setState<NotConnectedState>();
 }
 
@@ -85,10 +63,21 @@ void Application::handleUserAction(const std::string& id)
 
 void Application::storeReceivedSms(const common::PhoneNumber& from, const std::string& text)
 {
-    logger.logInfo("Storing SMS from: ", from);
-    smsDb.push_back({from, text, false});
+    logger.logInfo("Storing received SMS from: ", from);
+    // 'to' field remains std::nullopt for received messages
+    smsDb.push_back({from, std::nullopt, text, false, false}); // from, to, text, isRead, isSent
     updateSmsIndicator();
 }
+
+// Added implementation for storeSentSms
+void Application::storeSentSms(const common::PhoneNumber& to, const std::string& text)
+{
+     logger.logInfo("Storing sent SMS to: ", to);
+     // 'from' field is own number, 'to' is the recipient
+     smsDb.push_back({phoneNumber, to, text, true, true}); // from, to, text, isRead=true(N/A), isSent=true
+     // No indicator update needed for sent SMS
+}
+
 
 const std::vector<data::SmsData>& Application::getSmsDb() const
 {
@@ -99,9 +88,14 @@ void Application::markSmsAsRead(std::size_t index)
 {
     if (index < smsDb.size())
     {
-         logger.logInfo("Marking SMS at index ", index, " as read.");
-         smsDb[index].isRead = true;
-         updateSmsIndicator();
+         if (!smsDb[index].isSent && !smsDb[index].isRead) // Only mark received, unread messages
+         {
+            logger.logInfo("Marking SMS at index ", index, " as read.");
+            smsDb[index].isRead = true;
+            updateSmsIndicator(); // Update indicator potentially
+         } else {
+            logger.logDebug("SMS at index ", index, " is already read or was sent, not marking as read.");
+         }
     }
     else
     {
@@ -113,7 +107,8 @@ void Application::updateSmsIndicator()
 {
     bool unread_remain = false;
     for(const auto& sms : smsDb) {
-        if (!sms.isRead) {
+        // Indicator only counts received, unread messages
+        if (!sms.isSent && !sms.isRead) {
             unread_remain = true;
             break;
         }
@@ -123,4 +118,4 @@ void Application::updateSmsIndicator()
 }
 
 
-} // namespace ue
+}

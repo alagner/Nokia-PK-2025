@@ -9,6 +9,7 @@ NotConnectedState::NotConnectedState(Context &context)
 {
 
 }
+
 void NotConnectedState::handleSib(common::BtsId btsId)
 {
     using namespace std::chrono_literals;

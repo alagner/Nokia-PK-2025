@@ -1,7 +1,8 @@
 #include "ConnectedState.hpp"
 #include "NotConnectedState.hpp"
 #include "Application.hpp"
-#include "ViewingSmsListState.hpp" // CORRECTED: Include header for transition
+#include "ViewingSmsListState.hpp"
+#include "ComposingSmsState.hpp"
 
 namespace ue
 {
@@ -25,20 +26,23 @@ void ConnectedState::handleUserAction(const std::string& id)
     if (id == "sms.view")
     {
         logger.logInfo("User selected View SMS. Transitioning to ViewingSmsListState.");
-        // CORRECTED: Add state transition
         context.setState<ViewingSmsListState>();
     }
-    // Add handlers for "sms.compose", "call.dial", "ACCEPT", "REJECT" later
+    else if (id == "sms.compose")
+    {
+        logger.logInfo("User selected Compose SMS. Transitioning to ComposingSmsState.");
+        context.setState<ComposingSmsState>();
+    }
+    // Add handlers for "call.dial" later
     else if (id == "ACCEPT" || id == "REJECT")
     {
         logger.logInfo("Ignoring Accept/Reject in main menu state.");
-        // Stay in this state, maybe refresh view if needed
-        context.user.showConnected();
+        context.user.showConnected(); // Refresh potentially?
     }
     else
     {
-        BaseState::handleUserAction(id); // Default handling (log error)
+        BaseState::handleUserAction(id);
     }
 }
 
-} // namespace ue
+}

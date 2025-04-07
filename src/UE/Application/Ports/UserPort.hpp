@@ -1,11 +1,12 @@
 #pragma once
 
-#include "IUserPort.hpp"
+#include "IUserPort.hpp" // Includes IUserEventsHandler, defines IUserPort
 #include "Logger/PrefixedLogger.hpp"
-#include "IUeGui.hpp"
+#include "IUeGui.hpp"           // Defines IUeGui and nested mode interfaces
 #include "Messages/PhoneNumber.hpp"
-#include "Data/SmsData.hpp" // Include SmsData for displaySmsList/viewSms
-#include <vector>          // Include vector
+#include "Data/SmsData.hpp"
+#include <vector>
+#include <string>
 
 namespace ue
 {
@@ -17,22 +18,24 @@ public:
     void start(IUserEventsHandler& handler);
     void stop();
 
-    // IUserPort interface
+    // IUserPort interface overrides
     void showNotConnected() override;
     void showConnecting() override;
     void showConnected() override;
-    // CORRECTED: Override matches IUeGui::showNewSms
     void showNewSms(bool present) override;
-    void displaySmsList(const std::vector<data::SmsData>& smsList) override; // Added for View SMS
-    void viewSms(const data::SmsData& sms) override; // Added for View SMS
+    void displaySmsList(const std::vector<data::SmsData>& smsList) override;
+    void viewSms(const data::SmsData& sms) override;
+    void displaySmsCompose() override;
+    // CORRECTED: Added override declaration for getComposedSmsData
+    bool getComposedSmsData(common::PhoneNumber& recipient, std::string& text) override;
 
 private:
-    void handleMenuSelection(const std::string& id); // Added for View SMS
-
     common::PrefixedLogger logger;
     IUeGui& gui;
     common::PhoneNumber phoneNumber;
     IUserEventsHandler* handler = nullptr;
+    // Pointer to current compose mode to retrieve data
+    IUeGui::ISmsComposeMode* currentSmsComposeMode = nullptr;
 };
 
-}
+} // namespace ue

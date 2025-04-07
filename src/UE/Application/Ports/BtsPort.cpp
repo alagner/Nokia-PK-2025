@@ -1,10 +1,11 @@
-#include "BtsPort.hpp"
+#include "BtsPort.hpp" // Includes BinaryMessage.hpp via its own include now
 #include "Messages/IncomingMessage.hpp"
 #include "Messages/OutgoingMessage.hpp"
-#include "Messages/MessageId.hpp" // Ensure MessageId enum is included
+#include "Messages/MessageId.hpp"
 
-#include <vector>  // Include for std::vector
-#include <string>  // Include for std::string
+#include <vector>
+#include <string>
+#include <exception> // Include for std::exception
 
 namespace ue
 {
@@ -12,12 +13,13 @@ namespace ue
 BtsPort::BtsPort(common::ILogger &logger, common::ITransport &transport, common::PhoneNumber phoneNumber)
     : logger(logger, "[BTS-PORT]"),
       transport(transport),
-      phoneNumber(phoneNumber)
+      phoneNumber(phoneNumber) // Store own phone number
 {}
 
 void BtsPort::start(IBtsEventsHandler &handler)
 {
-    transport.registerMessageCallback([this](BinaryMessage msg) {handleMessage(msg);});
+    // CORRECTED: Use fully qualified type common::BinaryMessage for lambda parameter
+    transport.registerMessageCallback([this](common::BinaryMessage msg) {handleMessage(msg);});
     transport.registerDisconnectedCallback([this]() {handleDisconnect();});
     this->handler = &handler;
 }
@@ -29,66 +31,59 @@ void BtsPort::stop()
     handler = nullptr;
 }
 
-void BtsPort::handleMessage(BinaryMessage msg)
+// CORRECTED: Use common::BinaryMessage for parameter type here too
+void BtsPort::handleMessage(common::BinaryMessage msg)
 {
     try
     {
         common::IncomingMessage reader{msg};
         auto msgId = reader.readMessageId();
         auto from = reader.readPhoneNumber();
-        auto to = reader.readPhoneNumber(); // Read 'to' even if not always used by handler
+        auto to = reader.readPhoneNumber();
 
-        // Basic check if the message is for this UE (can be refined)
         if (to != phoneNumber and
-            msgId != common::MessageId::Sib and // SIB is broadcast
-            msgId != common::MessageId::AttachResponse // AttachResponse is for us
+            msgId != common::MessageId::Sib and
+            msgId != common::MessageId::AttachResponse
            )
         {
              logger.logInfo("Received message addressed to different UE (", to, "), ignoring. MsgId: ", msgId);
              return;
         }
 
+        // Ensure handler is not null before calling methods on it
+        if (!handler) {
+            logger.logError("Message received but handler is null!");
+            return;
+        }
 
         switch (msgId)
         {
         case common::MessageId::Sib:
-        {
-            auto btsId = reader.readBtsId();
-            if (handler) handler->handleSib(btsId);
+            handler->handleSib(reader.readBtsId());
             break;
-        }
         case common::MessageId::AttachResponse:
-        {
-            bool accept = reader.readNumber<std::uint8_t>() != 0u;
-            if (handler)
-            {
-                if (accept)
-                    handler->handleAttachAccept();
-                else
-                    handler->handleAttachReject();
+            { // Added scope for variable
+                bool accept = reader.readNumber<std::uint8_t>() != 0u;
+                if (accept) handler->handleAttachAccept();
+                else handler->handleAttachReject();
             }
             break;
-        }
-        case common::MessageId::Sms: // Handle incoming SMS
-        {
-            // SMS format (Table 8): Header, encryption (optional, skip for now), text
-            // Assuming no encryption for now as per basic feature requirements.
-            // CORRECTED: Use readRemainingText()
-            std::string text = reader.readRemainingText();
-            logger.logDebug("Received SMS from ", from, " with text: ", text);
-            if (handler) handler->handleSms(from, text);
+        case common::MessageId::Sms:
+            { // Added scope for variable
+                // Basic implementation assumes no encryption
+                std::string text = reader.readRemainingText();
+                logger.logDebug("Received SMS from ", from, " with text: ", text);
+                handler->handleSms(from, text);
+            }
             break;
-        }
-        // Add cases for other message types later (CallRequest, CallAccept, etc.)
-        case common::MessageId::UnknownRecipient: // Log errors as per spec 3.4
+        case common::MessageId::UnknownRecipient:
         case common::MessageId::UnknownSender:
-            logger.logError("Received error message from BTS: ", msgId, ", original sender: ", from);
-            // Optionally parse the failed message header if needed for context
-            break;
+             logger.logError("Received error message from BTS: ", msgId, ", original sender: ", from);
+             // TODO: Could parse failing header and call handler->handleUnknownRecipientSms etc.
+             break;
         default:
             logger.logError("Unknown message received: ", msgId, ", from: ", from, ", to: ", to);
-            break; // Use break instead of logError return
-
+            break;
         }
     }
     catch (std::exception const& ex)
@@ -101,9 +96,7 @@ void BtsPort::handleMessage(BinaryMessage msg)
 void BtsPort::sendAttachRequest(common::BtsId btsId)
 {
     logger.logDebug("sendAttachRequest: ", btsId);
-    common::OutgoingMessage msg{common::MessageId::AttachRequest,
-                                phoneNumber,
-                                common::PhoneNumber{}}; // 'to' field not used for AttachRequest
+    common::OutgoingMessage msg{common::MessageId::AttachRequest, phoneNumber, {}};
     msg.writeBtsId(btsId);
     transport.sendMessage(msg.getMessage());
 }
@@ -114,4 +107,22 @@ void BtsPort::handleDisconnect()
         if (handler) handler->handleDisconnect();
 }
 
+void BtsPort::sendSms(const common::PhoneNumber& recipient, const std::string& text)
+{
+    logger.logInfo("Sending SMS from ", phoneNumber, " to ", recipient);
+    try
+    {
+        common::OutgoingMessage msg{common::MessageId::Sms, phoneNumber, recipient};
+        // No encryption mode
+        msg.writeNumber<std::uint8_t>(0u);
+        msg.writeText(text);
+        transport.sendMessage(msg.getMessage());
+        logger.logDebug("SMS message sent.");
+    }
+    catch (const std::exception& e)
+    {
+        logger.logError("Failed to construct or send SMS: ", e.what());
+    }
 }
+
+} // namespace ue

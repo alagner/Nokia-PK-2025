@@ -6,7 +6,7 @@ namespace ue
 
 BaseState::BaseState(Context &context, const std::string &name)
     : context(context),
-      logger(context.logger, "[" + name + "]") // Prefix is set here
+      logger(context.logger, "[" + name + "]")
 {
     logger.logDebug("entry");
 }
@@ -55,4 +55,4 @@ void BaseState::handleUserAction(const std::string& id)
 }
 
 
-} // namespace ue
+}
