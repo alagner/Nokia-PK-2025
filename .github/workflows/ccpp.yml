@@ -35,6 +35,36 @@ jobs:
       run: |
         cppcheck --std=c++20 --enable=warning,style,performance --library=qt.cfg,googletest.cfg -igoogletest .
 
+    - name: Run C/C++ Linter
+    - uses: actions/checkout@v4
+    - uses: cpp-linter/cpp-linter-action@v2
+      id: linter
+      permissions:
+        contents: read
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        style: 'file'  # Use .clang-format config file
+        tidy-checks: 'bugprone-*,performance-*,readability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*'
+        # only 'update' a single comment in a pull request thread.
+        thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
+        files-changed-only: true
+        extra-args: '-std=c++20 -Wall -Wextra'
+        ignore: 
+          ".github|
+           docs|
+           lectures|
+           src/bin|
+           src/BTS|
+           src/COMMON|
+           src/googletest|
+           src/lib
+          "
+
+    - name: Halt if linter found errors
+      if: steps.linter.outputs.checks-failed > 0
+      run: exit 1
+
     - name: Make project
       run: |
         cmake .
