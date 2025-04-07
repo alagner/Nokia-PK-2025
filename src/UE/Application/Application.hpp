@@ -30,7 +30,6 @@ public:
     void handleAttachReject() override;
     void handleDisconnected() override;
 
-protected:
     Context& getContext() { return context; }
 
 private:
