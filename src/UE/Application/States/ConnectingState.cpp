@@ -24,20 +24,6 @@ void ConnectingState::handleAttachReject()
     context.setState<NotConnectedState>();
 }
 
-void ConnectingState::handleAttachAccept()
-{
-    context.timer.stopTimer();
-    context.setState<ConnectedState>();
-}
-
-void ConnectingState::handleAttachReject()
-{
-    context.timer.stopTimer();
-    context.user.showNotConnected();
-    context.setState<NotConnectedState>();
-
-}
-
 void ConnectingState::handleTimeout()
 {
     context.timer.stopTimer();
