@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Messages/BtsId.hpp"
+#include "Messages/PhoneNumber.hpp"
+#include <string> // Required for std::string
 
 namespace ue
 {
@@ -14,6 +16,8 @@ public:
     virtual void handleAttachAccept() = 0;
     virtual void handleAttachReject() = 0;
     virtual void handleDisconnect() = 0;
+    // Add SMS handling
+    virtual void handleSms(const common::PhoneNumber& from, const std::string& text) = 0;
 };
 
 class IBtsPort

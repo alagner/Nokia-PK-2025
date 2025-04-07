@@ -1,11 +1,12 @@
 #include "BaseState.hpp"
+#include "NotConnectedState.hpp" // Include for default disconnect handling if needed
 
 namespace ue
 {
 
 BaseState::BaseState(Context &context, const std::string &name)
     : context(context),
-      logger(context.logger, "[" + name + "]")
+      logger(context.logger, "[" + name + "]") // Prefix is set here
 {
     logger.logDebug("entry");
 }
@@ -37,7 +38,21 @@ void BaseState::handleAttachReject()
 
 void BaseState::handleDisconnect()
 {
-    logger.logError("Uexpected: handleDisconnect");
+    // This is handled globally in Application::handleDisconnect now for consistency
+    // Log message will automatically include the state name prefix
+    logger.logInfo("Disconnect event received"); // CORRECTED: Removed redundant logger.getPrefix()
+    // State-specific cleanup could happen here if needed, but transition is handled by Application
 }
 
+void BaseState::handleSms(const common::PhoneNumber& from, const std::string& text)
+{
+    logger.logError("Unexpected: handleSms from: ", from, " text: ", text);
 }
+
+void BaseState::handleUserAction(const std::string& id)
+{
+    logger.logError("Unexpected user action: ", id);
+}
+
+
+} // namespace ue

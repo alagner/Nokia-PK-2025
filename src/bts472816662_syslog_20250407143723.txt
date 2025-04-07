@@ -1,0 +1,35 @@
+#1,tid:133741022873536[DEBUG]:[Application]started
+#2,tid:133741022873536[DEBUG]:[SPAWNER]Listen to new connections
+#3,tid:133741022873536[DEBUG]:[Console]Add: `a` for "Show address"
+#4,tid:133741022873536[DEBUG]:[Console]Add: `s` for "Show status"
+#5,tid:133741022873536[DEBUG]:[Console]Add: `l` for "List attached ue"
+#6,tid:133741022873536[DEBUG]:[Console]Add close: `q` for "quit"
+#7,tid:133741022873536[DEBUG]:[Console]Add help: `h` for "help"
+#8,tid:133741022873536[DEBUG]:[Console]Add: `t` for "Test commands - details in implementation"
+#9,tid:133741022873536[DEBUG]:Application loop started
+#10,tid:133740965660352[DEBUG]:[SIB]started
+#11,tid:133740955174592[DEBUG]:Console loop started
+#12,tid:133741022873536[DEBUG]:Session opened
+#13,tid:133741022873536:server started, port: 8181
+#14,tid:133741022873536[DEBUG]:New connection from: ::ffff:127.0.0.1-41700
+#15,tid:133741022873536[DEBUG]:[SPAWNER]new connection: ::ffff:127.0.0.1-41700
+#16,tid:133741022873536[DEBUG]:Send message to: ::ffff:127.0.0.1-41700
+#17,tid:133741022873536[DEBUG]:Message received from: ::ffff:127.0.0.1-41700 body: 016e001c2e9c16
+#18,tid:133741022873536[DEBUG]:[RELAY]Attached: ::ffff:127.0.0.1-41700:000:I
+#19,tid:133741022873536:[UE:::ffff:127.0.0.1-41700:110:A]Attached
+#20,tid:133741022873536[DEBUG]:Send message to: ::ffff:127.0.0.1-41700
+#21,tid:133741022873536[DEBUG]:Connection lost from: ::ffff:127.0.0.1-41700
+#22,tid:133741022873536:[UE:::ffff:127.0.0.1-41700:110:A]Disconnected
+#23,tid:133741022873536[DEBUG]:[RELAY]Removed attached: ::ffff:127.0.0.1-41700:110:A
+#24,tid:133741022873536[DEBUG]:QtTransport: bye
+#25,tid:133741022873536[DEBUG]:New connection from: ::ffff:127.0.0.1-41712
+#26,tid:133741022873536[DEBUG]:[SPAWNER]new connection: ::ffff:127.0.0.1-41712
+#27,tid:133741022873536[DEBUG]:Send message to: ::ffff:127.0.0.1-41712
+#28,tid:133741022873536[DEBUG]:Message received from: ::ffff:127.0.0.1-41712 body: 016e001c2e9c16
+#29,tid:133741022873536[DEBUG]:[RELAY]Attached: ::ffff:127.0.0.1-41712:000:I
+#30,tid:133741022873536:[UE:::ffff:127.0.0.1-41712:110:A]Attached
+#31,tid:133741022873536[DEBUG]:Send message to: ::ffff:127.0.0.1-41712
+#32,tid:133741022873536[DEBUG]:Connection lost from: ::ffff:127.0.0.1-41712
+#33,tid:133741022873536:[UE:::ffff:127.0.0.1-41712:110:A]Disconnected
+#34,tid:133741022873536[DEBUG]:[RELAY]Removed attached: ::ffff:127.0.0.1-41712:110:A
+#35,tid:133741022873536[DEBUG]:QtTransport: bye
