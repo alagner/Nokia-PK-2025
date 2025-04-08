@@ -4,6 +4,7 @@
 #include "Logger/PrefixedLogger.hpp"
 #include "IUeGui.hpp"
 #include "Messages/PhoneNumber.hpp"
+#include "SmsRepository/SmsRepository.h"
 
 namespace ue
 {
@@ -19,6 +20,7 @@ public:
     void showConnecting() override;
     void showConnected() override;
     void showNewSms() override;
+    void addReceivedSms(common::PhoneNumber from,std::string text) override;
 
 
 
@@ -27,6 +29,7 @@ private:
     IUeGui& gui;
     common::PhoneNumber phoneNumber;
     IUserEventsHandler* handler = nullptr;
+    SmsRepository smsDb;
 };
 
 }

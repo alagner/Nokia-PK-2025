@@ -17,8 +17,5 @@ void NotConnectedState::handleSib(common::BtsId btsId)
     context.bts.sendAttachRequest(btsId);
     context.setState<ConnectingState>();
 }
-void NotConnectedState::handleSms(common::PhoneNumber from, std::string text)
-{
-}
 
 }

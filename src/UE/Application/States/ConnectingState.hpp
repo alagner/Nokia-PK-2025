@@ -13,7 +13,6 @@ public:
     // IBtsEventsHandler interface
     void handleAttachAccept() override;
     void handleAttachReject() override;
-    void handleSms(common::PhoneNumber from, std::string text) override;
 
     // ITimerEventsHandler interface
     void handleTimeout() override;

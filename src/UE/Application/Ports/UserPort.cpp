@@ -8,8 +8,11 @@ namespace ue
 UserPort::UserPort(common::ILogger &logger, IUeGui &gui, common::PhoneNumber phoneNumber)
     : logger(logger, "[USER-PORT]"),
       gui(gui),
-      phoneNumber(phoneNumber)
-{}
+      phoneNumber(phoneNumber),
+      smsDb(phoneNumber, this->logger)
+
+{
+}
 
 void UserPort::start(IUserEventsHandler &handler)
 {
@@ -45,5 +48,7 @@ void UserPort::showNewSms()
     gui.showNewSms(true);
 
 }
-
+void UserPort::addReceivedSms(common::PhoneNumber from, std::string text){
+    smsDb.save(SmsEntity(from.value, phoneNumber.value,text));
+}
 }

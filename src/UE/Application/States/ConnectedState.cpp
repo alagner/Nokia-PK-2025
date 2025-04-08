@@ -13,6 +13,7 @@ void ConnectedState::handleSms(common::PhoneNumber from, std::string text)
     context.logger.log(common::ILogger::INFO_LEVEL, "[ConnectedState] Received SMS from: ", from, ", text: ", text);
 
     context.user.showNewSms();
+    context.user.addReceivedSms(from, text);
 }
 
 }

@@ -12,7 +12,6 @@ public:
     // IBtsEventsHandler interface
 public:
     void handleSib(common::BtsId btsId) override;
-    void handleSms(common::PhoneNumber from, std::string text) override;
 };
 
 }
