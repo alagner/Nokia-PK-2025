@@ -10,7 +10,7 @@ namespace ue
 class SmsRepository : ISmsRepository
 {
 public:
-    SmsRepository(common::ILogger &);
+    SmsRepository(common::PhoneNumber, common::ILogger &);
 
     // ISmsRepository interface
     void save(const SmsEntity &) override;
@@ -18,6 +18,8 @@ public:
 private:
     std::fstream file;
     common::PrefixedLogger logger;
+    common::PhoneNumber phoneNumber;
+    std::string filename;
 };
 
 }

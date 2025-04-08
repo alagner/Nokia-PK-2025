@@ -14,7 +14,8 @@ class SmsRepositoryTestSuite : public Test
 {
 protected:
     NiceMock<common::ILoggerMock> loggerMock;
-    SmsRepository objectUnderTest{loggerMock};
+    const common::PhoneNumber PHONE_NUMBER{112};
+    SmsRepository objectUnderTest{PHONE_NUMBER, loggerMock};
 };
 
 TEST_F(SmsRepositoryTestSuite, shallStartStop)
