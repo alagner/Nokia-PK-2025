@@ -3,6 +3,8 @@
 #include "Application.hpp"
 #include "ViewingSmsListState.hpp"
 #include "ComposingSmsState.hpp"
+#include "DialingState.hpp"
+#include "ReceivingCallState.hpp"
 
 namespace ue
 {
@@ -43,6 +45,27 @@ void ConnectedState::handleUserAction(const std::string& id)
     {
         BaseState::handleUserAction(id);
     }
+}
+
+void ConnectedState::handleCallRequest(common::PhoneNumber from)
+{
+    logger.logInfo("Received Call Request from: ", from, ". Transitioning to ReceivingCallState.");
+    context.setState<ReceivingCallState>(from);
+}
+
+void ConnectedState::handleCallAccepted(common::PhoneNumber from)
+{
+    logger.logError("Unexpected CallAccepted in ConnectedState.");
+}
+
+void ConnectedState::handleCallDropped(common::PhoneNumber from)
+{
+    logger.logError("Unexpected CallDropped in ConnectedState.");
+}
+
+void ConnectedState::handleCallTalk(common::PhoneNumber from, const std::string& text)
+{
+    logger.logError("Unexpected CallTalk in ConnectedState.");
 }
 
 }
