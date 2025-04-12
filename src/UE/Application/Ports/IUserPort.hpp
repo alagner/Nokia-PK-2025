@@ -34,6 +34,7 @@ public:
     virtual bool getDialedNumber(common::PhoneNumber& recipient) = 0;
     virtual void showIncomingCall(const common::PhoneNumber& caller) = 0;
 
+
 };
 
 } // namespace ue
