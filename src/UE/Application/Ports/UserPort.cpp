@@ -3,6 +3,7 @@
 #include "UeGui/IListViewMode.hpp"
 #include "UeGui/ITextMode.hpp"
 #include "UeGui/ISmsComposeMode.hpp" // Include compose mode interface
+#include "UeGui/IDialMode.hpp"
 #include "IUeGui.hpp"
 #include <sstream>
 #include <vector>
@@ -142,7 +143,6 @@ void UserPort::viewSms(const data::SmsData& sms)
     gui.setAcceptCallback(nullptr); // No specific accept action here
 }
 
-// Added implementation for displaySmsCompose
 void UserPort::displaySmsCompose()
 {
     logger.logInfo("Displaying SMS compose screen.");
@@ -184,6 +184,63 @@ bool UserPort::getComposedSmsData(common::PhoneNumber& recipient, std::string& t
           // Optionally: Display error to user via GUI? gui.setAlertMode().setText(e.what());
           return false;
      }
+}
+
+void UserPort::showDialing()
+{
+    logger.logInfo("Switching UI to dialing mode.");
+    // Ustawiamy tryb dialingu w GUI
+    currentDialMode = &gui.setDialMode(); 
+
+    // Nadpisujemy callbacki Accept i Reject na "ACCEPT" i "REJECT"
+    gui.setAcceptCallback([this]()
+    {
+        if (this->handler)
+        {
+            logger.logDebug("Dialing Accept callback");
+            this->handler->handleUserAction("ACCEPT");
+        }
+        else
+        {
+            logger.logError("Dialing Accept callback triggered, but handler is null");
+        }
+    });
+
+    gui.setRejectCallback([this]()
+    {
+        if (this->handler)
+        {
+            logger.logDebug("Dialing Reject callback");
+            this->handler->handleUserAction("REJECT");
+        }
+        else
+        {
+            logger.logError("Dialing Reject callback triggered, but handler is null");
+        }
+    });
+}
+
+bool UserPort::getDialedNumber(common::PhoneNumber& recipient)
+{
+    if (!currentDialMode) {
+        logger.logError("Dial mode not active - cannot retrieve dialed number.");
+        return false;
+    }
+    try {
+        recipient = currentDialMode->getPhoneNumber();
+        logger.logInfo("Retrieved dialed number: ", recipient);
+        return true;
+    } catch(const std::exception& e) {
+        logger.logError("Error retrieving dialed number: ", e.what());
+        return false;
+    }
+}
+
+void UserPort::showIncomingCall(const common::PhoneNumber& caller)
+{
+    logger.logInfo("Switching UI to incoming call mode for caller: ", caller);
+    IUeGui::ITextMode& alert = gui.setAlertMode();
+    alert.setText("Incoming call from: " + common::to_string(caller));
 }
 
 } // namespace ue

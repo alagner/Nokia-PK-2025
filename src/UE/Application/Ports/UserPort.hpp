@@ -26,9 +26,11 @@ public:
     void displaySmsList(const std::vector<data::SmsData>& smsList) override;
     void viewSms(const data::SmsData& sms) override;
     void displaySmsCompose() override;
-    // CORRECTED: Added override declaration for getComposedSmsData
     bool getComposedSmsData(common::PhoneNumber& recipient, std::string& text) override;
 
+    void showDialing() override;                            // ADDED
+    bool getDialedNumber(common::PhoneNumber& recipient) override; // ADDED
+    void showIncomingCall(const common::PhoneNumber& caller) override; // ADDED
 private:
     common::PrefixedLogger logger;
     IUeGui& gui;
@@ -36,6 +38,9 @@ private:
     IUserEventsHandler* handler = nullptr;
     // Pointer to current compose mode to retrieve data
     IUeGui::ISmsComposeMode* currentSmsComposeMode = nullptr;
+
+    // Additional pointer for dialing mode
+    IUeGui::IDialMode* currentDialMode = nullptr;
 };
 
 } // namespace ue
