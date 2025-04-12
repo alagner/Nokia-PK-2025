@@ -4,14 +4,12 @@
 #include "Logger/PrefixedLogger.hpp"
 #include "CommonEnvironment/ITransport.hpp" // Defines common::ITransport
 #include "Messages/PhoneNumber.hpp"
-#include "Messages/BinaryMessage.hpp"       // CORRECTED: Include definition of common::BinaryMessage
+#include "Messages/BinaryMessage.hpp"      
 #include <string>
 
 namespace ue
 {
 
-// REMOVED Incorrect using alias:
-// using BinaryMessage = common::ITransport::BinaryMessage;
 
 class BtsPort : public IBtsPort
 {
@@ -24,8 +22,12 @@ public:
     void sendAttachRequest(common::BtsId btsId) override;
     void sendSms(const common::PhoneNumber& recipient, const std::string& text) override;
 
+    void sendCallRequest(const common::PhoneNumber& recipient);
+    void sendCallAccepted(const common::PhoneNumber& recipient);
+    void sendCallDropped(const common::PhoneNumber& recipient); 
+    void sendCallTalk(const common::PhoneNumber& recipient, const std::string& text); 
+
 private:
-    // CORRECTED: Use correct type common::BinaryMessage
     void handleMessage(common::BinaryMessage msg);
     void handleDisconnect();
 
