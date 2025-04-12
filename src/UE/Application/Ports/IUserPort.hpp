@@ -29,6 +29,11 @@ public:
     virtual void displaySmsCompose() = 0;
     // Added helper for ComposingSmsState
     virtual bool getComposedSmsData(common::PhoneNumber& recipient, std::string& text) = 0;
+
+    virtual void showDialing() = 0;
+    virtual bool getDialedNumber(common::PhoneNumber& recipient) = 0;
+    virtual void showIncomingCall(const common::PhoneNumber& caller) = 0;
+
 };
 
 } // namespace ue
