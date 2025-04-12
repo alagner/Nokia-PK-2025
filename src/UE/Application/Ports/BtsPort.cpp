@@ -90,6 +90,8 @@ void BtsPort::handleMessage(common::BinaryMessage msg)
             }
             break;
         case common::MessageId::UnknownRecipient:
+            logger.logError("Received error message from BTS: UnknownRecipient");
+            break;
         case common::MessageId::UnknownSender:
              logger.logError("Received error message from BTS: ", msgId, ", original sender: ", from);
              // TODO: Could parse failing header and call handler->handleUnknownRecipientSms etc.
