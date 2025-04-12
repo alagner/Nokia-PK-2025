@@ -36,6 +36,11 @@ public:
     void handleSms(const common::PhoneNumber& from, const std::string& text) override;
     void handleUserAction(const std::string& id) override;
 
+    void handleCallRequest(common::PhoneNumber from) override;
+    void handleCallAccepted(common::PhoneNumber from) override;
+    void handleCallDropped(common::PhoneNumber from) override;
+    void handleCallTalk(common::PhoneNumber from, const std::string& text) override;
+
     // --- App specific methods ---
     void storeReceivedSms(const common::PhoneNumber& from, const std::string& text);
     // Added for Sending SMS
