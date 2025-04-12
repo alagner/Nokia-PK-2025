@@ -28,6 +28,11 @@ public:
     // IUserEventsHandler interface
     virtual void handleUserAction(const std::string& id) override;
 
+    virtual void handleCallRequest(common::PhoneNumber from) override;
+    virtual void handleCallAccepted(common::PhoneNumber from) override;
+    virtual void handleCallDropped(common::PhoneNumber from) override;
+    virtual void handleCallTalk(common::PhoneNumber from, const std::string& text) override;
+
 protected:
     Context& context;
     common::PrefixedLogger logger;

@@ -54,5 +54,17 @@ void BaseState::handleUserAction(const std::string& id)
     logger.logError("Unexpected user action: ", id);
 }
 
+void BaseState::handleCallRequest(common::PhoneNumber from) {
+    logger.logError("Unexpected call request in state ");
+}
+void BaseState::handleCallAccepted(common::PhoneNumber from) {
+    logger.logError("Unexpected call accepted in state ");
+}
+void BaseState::handleCallDropped(common::PhoneNumber from) {
+    logger.logError("Unexpected call dropped in state ");
+}
+void BaseState::handleCallTalk(common::PhoneNumber from, const std::string& text) {
+    logger.logError("Unexpected call talk in state ");
+}
 
 }
