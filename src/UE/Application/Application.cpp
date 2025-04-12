@@ -8,6 +8,7 @@
 #include "States/ViewingSmsListState.hpp"
 #include "States/ViewingSingleSmsState.hpp"
 #include "States/ComposingSmsState.hpp"
+#include "UeGui/IDialMode.hpp"
 
 namespace ue
 {
@@ -131,5 +132,11 @@ void Application::updateSmsIndicator()
     context.user.showNewSms(unread_remain);
 }
 
+void Application::handleUnknownRecipient(common::MessageId msgId, common::PhoneNumber from)
+{
+    logger.logInfo("App received unknownRecipient(", msgId, ") from: ", from);
+    if (context.state)
+        context.state->handleUnknownRecipient(msgId, from);
+}
 
 }
