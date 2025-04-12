@@ -2,6 +2,7 @@
 
 #include "Messages/BtsId.hpp"
 #include "Messages/PhoneNumber.hpp"
+#include "Messages/MessageId.hpp"
 #include <string>
 
 namespace ue
@@ -22,6 +23,8 @@ public:
     virtual void handleCallAccepted(common::PhoneNumber from) = 0;
     virtual void handleCallDropped(common::PhoneNumber from) = 0;
     virtual void handleCallTalk(common::PhoneNumber from, const std::string& text) = 0;
+
+    virtual void handleUnknownRecipient(common::MessageId originalMessageId, common::PhoneNumber from) = 0;
 };
 
 class IBtsPort
