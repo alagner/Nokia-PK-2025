@@ -18,7 +18,6 @@ BtsPort::BtsPort(common::ILogger &logger, common::ITransport &transport, common:
 
 void BtsPort::start(IBtsEventsHandler &handler)
 {
-    // CORRECTED: Use fully qualified type common::BinaryMessage for lambda parameter
     transport.registerMessageCallback([this](common::BinaryMessage msg) {handleMessage(msg);});
     transport.registerDisconnectedCallback([this]() {handleDisconnect();});
     this->handler = &handler;
@@ -31,7 +30,6 @@ void BtsPort::stop()
     handler = nullptr;
 }
 
-// CORRECTED: Use common::BinaryMessage for parameter type here too
 void BtsPort::handleMessage(common::BinaryMessage msg)
 {
     try
@@ -69,11 +67,26 @@ void BtsPort::handleMessage(common::BinaryMessage msg)
             }
             break;
         case common::MessageId::Sms:
-            { // Added scope for variable
+            {
                 // Basic implementation assumes no encryption
                 std::string text = reader.readRemainingText();
                 logger.logDebug("Received SMS from ", from, " with text: ", text);
                 handler->handleSms(from, text);
+            }
+            break;
+            case common::MessageId::CallRequest: 
+            handler->handleCallRequest(from); 
+            break;
+        case common::MessageId::CallAccepted:
+            handler->handleCallAccepted(from);
+            break;
+        case common::MessageId::CallDropped:
+            handler->handleCallDropped(from); 
+            break;
+        case common::MessageId::CallTalk:
+            {
+                std::string text = reader.readRemainingText();
+                handler->handleCallTalk(from, text);
             }
             break;
         case common::MessageId::UnknownRecipient:
@@ -122,6 +135,56 @@ void BtsPort::sendSms(const common::PhoneNumber& recipient, const std::string& t
     catch (const std::exception& e)
     {
         logger.logError("Failed to construct or send SMS: ", e.what());
+    }
+}
+
+// Implementation for sending call-related messages
+void BtsPort::sendCallRequest(const common::PhoneNumber& recipient)
+{
+    logger.logDebug("sendCallRequest: to ", recipient);
+    try {
+        common::OutgoingMessage msg{common::MessageId::CallRequest, phoneNumber, recipient};
+        transport.sendMessage(msg.getMessage());
+        logger.logDebug("CallRequest message sent.");
+    } catch (const std::exception& e) {
+        logger.logError("Failed to send CallRequest: ", e.what());
+    }
+}
+
+void BtsPort::sendCallAccepted(const common::PhoneNumber& recipient)
+{
+    logger.logDebug("sendCallAccepted: to ", recipient);
+    try {
+        common::OutgoingMessage msg{common::MessageId::CallAccepted, phoneNumber, recipient};
+        transport.sendMessage(msg.getMessage());
+        logger.logDebug("CallAccepted message sent.");
+    } catch (const std::exception& e) {
+        logger.logError("Failed to send CallAccepted: ", e.what());
+    }
+}
+
+void BtsPort::sendCallDropped(const common::PhoneNumber& recipient)
+{
+    logger.logDebug("sendCallDropped: to ", recipient);
+    try {
+        common::OutgoingMessage msg{common::MessageId::CallDropped, phoneNumber, recipient};
+        transport.sendMessage(msg.getMessage());
+        logger.logDebug("CallDropped message sent.");
+    } catch (const std::exception& e) {
+        logger.logError("Failed to send CallDropped: ", e.what());
+    }
+}
+
+void BtsPort::sendCallTalk(const common::PhoneNumber& recipient, const std::string& text)
+{
+    logger.logDebug("sendCallTalk: to ", recipient, " text: ", text);
+    try {
+        common::OutgoingMessage msg{common::MessageId::CallTalk, phoneNumber, recipient};
+        msg.writeText(text);
+        transport.sendMessage(msg.getMessage());
+        logger.logDebug("CallTalk message sent.");
+    } catch (const std::exception& e) {
+        logger.logError("Failed to send CallTalk: ", e.what());
     }
 }
 
