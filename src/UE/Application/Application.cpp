@@ -32,8 +32,6 @@ Application::~Application()
     logger.logInfo("Stopped");
 }
 
-// ... handleTimeout, handleSib, handleAttachAccept, handleAttachReject ...
-// (No changes needed from previous version)
 void Application::handleTimeout() { if (context.state) context.state->handleTimeout(); }
 void Application::handleSib(common::BtsId btsId) { if (context.state) context.state->handleSib(btsId); }
 void Application::handleAttachAccept() { if (context.state) context.state->handleAttachAccept(); }
@@ -58,6 +56,22 @@ void Application::handleUserAction(const std::string& id)
 {
     logger.logDebug("User action: ", id);
     if (context.state) context.state->handleUserAction(id);
+}
+
+void Application::handleCallRequest(common::PhoneNumber from) {
+    if (context.state) context.state->handleCallRequest(from);
+}
+
+void Application::handleCallAccepted(common::PhoneNumber from) {
+    if (context.state) context.state->handleCallAccepted(from);
+}
+
+void Application::handleCallDropped(common::PhoneNumber from) {
+    if (context.state) context.state->handleCallDropped(from);
+}
+
+void Application::handleCallTalk(common::PhoneNumber from, const std::string& text) {
+    if (context.state) context.state->handleCallTalk(from, text);
 }
 
 
