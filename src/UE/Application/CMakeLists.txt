@@ -16,6 +16,8 @@ target_sources(UeApplication
         States/ViewingSmsListState.cpp
         States/ViewingSingleSmsState.cpp
         States/ComposingSmsState.cpp
+        States/DialingState.cpp
+        States/ReceivingCallState.cpp
 )
 
 target_include_directories(UeApplication
