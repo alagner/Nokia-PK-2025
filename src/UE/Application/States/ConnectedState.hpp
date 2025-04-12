@@ -11,8 +11,13 @@ public:
     ConnectedState(Context& context);
 
     void handleSms(const common::PhoneNumber& from, const std::string& text) override;
-    // CORRECTED: Added handleUserAction override declaration
     void handleUserAction(const std::string& id) override;
+
+    void handleCallRequest(common::PhoneNumber from) override;
+    void handleCallAccepted(common::PhoneNumber from) override;
+    void handleCallDropped(common::PhoneNumber from) override;
+    void handleCallTalk(common::PhoneNumber from, const std::string& text) override;
+
 };
 
 } // namespace ue
