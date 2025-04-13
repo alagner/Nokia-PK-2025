@@ -35,15 +35,15 @@ void ConnectedState::handleUserAction(const std::string& id)
         logger.logInfo("User selected Compose SMS. Transitioning to ComposingSmsState.");
         context.setState<ComposingSmsState>();
     }
-    else if (id == "call.dial") 
+    else if (id == "call.dial")
     {
         logger.logInfo("User selected Dial Call. Transitioning to DialingState.");
-        context.setState<DialingState>(); 
+        context.setState<DialingState>();
     }
     else if (id == "ACCEPT" || id == "REJECT")
     {
         logger.logInfo("Ignoring Accept/Reject in main menu state.");
-        context.user.showConnected(); // Refresh potentially?
+        context.user.showConnected(); 
     }
     else
     {
