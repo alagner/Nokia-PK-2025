@@ -1,33 +1,35 @@
 #include "DialingState.hpp"
 #include "ConnectedState.hpp"
+#include "NotConnectedState.hpp"
 #include <chrono>
+#include "Messages/MessageId.hpp" 
 
 namespace ue
 {
 
-DialingState::DialingState(Context& context)
+  DialingState::DialingState(Context& context)
   : BaseState(context, "DialingState")
 {
-    context.user.showDialing();
-    context.timer.startTimer(std::chrono::seconds(60));
+  context.user.showDialing();
+  context.timer.startTimer(std::chrono::seconds(60));
+  logger.logInfo("Entered DialingState.");
 }
 
 void DialingState::handleUserAction(const std::string& id)
 {
     logger.logDebug("DialingState handleUserAction: ", id);
     if(id == "ACCEPT") {
-        // Pobieramy wprowadzony numer z GUI
-        common::PhoneNumber dialed;
-        bool success = context.user.getDialedNumber(dialed);
-        if(success) {
-            context.bts.sendCallRequest(dialed);
-            logger.logInfo("Call request sent to ", dialed);
+        if (context.user.getDialedNumber(dialedNumber)) {
+            context.bts.sendCallRequest(dialedNumber);
+            logger.logInfo("Call request sent to ", dialedNumber);
         } else {
             logger.logError("Failed to retrieve dialed phone number");
         }
     }
     else if(id == "REJECT") {
         logger.logInfo("User cancelled dialing. Transitioning back to ConnectedState.");
+        context.bts.sendCallDropped(dialedNumber);
+        context.timer.stopTimer();
         context.setState<ConnectedState>();
     }
     else {
@@ -37,6 +39,7 @@ void DialingState::handleUserAction(const std::string& id)
 
 void DialingState::handleTimeout() {
     logger.logInfo("DialingState timeout occurred. No response to call request.");
+    context.timer.stopTimer();
     context.setState<ConnectedState>();
 }
 
@@ -50,6 +53,20 @@ void DialingState::handleCallDropped(common::PhoneNumber from) {
     context.timer.stopTimer();
     logger.logInfo("Received CallDropped in DialingState. Transitioning to ConnectedState.");
     context.setState<ConnectedState>();
+}
+
+void DialingState::handleUnknownRecipient(common::MessageId msgId, common::PhoneNumber from)
+{
+    logger.logInfo("DialingState: UnknownRecipient. Transitioning to ConnectedState.");
+    context.timer.stopTimer();
+    context.setState<ConnectedState>();
+}
+
+void DialingState::handleDisconnect()
+{
+    logger.logInfo("DialingState: transport lost.");
+    context.timer.stopTimer();
+    context.setState<NotConnectedState>();
 }
 
 } // namespace ue
