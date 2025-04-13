@@ -17,6 +17,8 @@ public:
     // ITimerPort interface
     void startTimer(Duration duration) override;
     void stopTimer() override;
+    void setHandler(ITimerEventsHandler* handler) override;
+    void timeout();
 
 private:
     common::PrefixedLogger logger;

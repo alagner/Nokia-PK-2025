@@ -22,6 +22,7 @@ public:
 
     virtual void startTimer(Duration) = 0;
     virtual void stopTimer() = 0;
+    virtual void setHandler(ITimerEventsHandler* handler) = 0;
 };
 
 }

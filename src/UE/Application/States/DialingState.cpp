@@ -11,7 +11,7 @@ namespace ue
   : BaseState(context, "DialingState")
 {
   context.user.showDialing();
-  context.timer.startTimer(std::chrono::seconds(60));
+  context.timer.startTimer(std::chrono::seconds(30));
   logger.logInfo("Entered DialingState.");
 }
 

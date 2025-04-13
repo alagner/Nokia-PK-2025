@@ -24,6 +24,7 @@ Application::Application(common::PhoneNumber phoneNumber,
       logger(iLogger, "[APP] "),
       phoneNumber(phoneNumber)
 {
+    timer.setHandler(this);
     logger.logInfo("Started");
     context.setState<NotConnectedState>();
 }
@@ -33,7 +34,6 @@ Application::~Application()
     logger.logInfo("Stopped");
 }
 
-void Application::handleTimeout() { if (context.state) context.state->handleTimeout(); }
 void Application::handleSib(common::BtsId btsId) { if (context.state) context.state->handleSib(btsId); }
 void Application::handleAttachAccept() { if (context.state) context.state->handleAttachAccept(); }
 void Application::handleAttachReject() { if (context.state) context.state->handleAttachReject(); }
@@ -139,4 +139,9 @@ void Application::handleUnknownRecipient(common::MessageId msgId, common::PhoneN
         context.state->handleUnknownRecipient(msgId, from);
 }
 
+void Application::handleTimeout()
+{
+    if (context.state)
+        context.state->handleTimeout();
+}
 }
