@@ -3,6 +3,7 @@
 #include "IUserPort.hpp" // Includes IUserEventsHandler, defines IUserPort
 #include "Logger/PrefixedLogger.hpp"
 #include "IUeGui.hpp"           // Defines IUeGui and nested mode interfaces
+#include "UeGui/IDialMode.hpp"
 #include "Messages/PhoneNumber.hpp"
 #include "Data/SmsData.hpp"
 #include <vector>
