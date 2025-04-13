@@ -8,6 +8,7 @@ on:
       - ci
       - oskar
       - michal
+      - bartek
   pull_request:
     branches:
       - master
