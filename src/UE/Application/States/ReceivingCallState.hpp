@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseState.hpp"
+#include "NotConnectedState.hpp"
 
 namespace ue
 {
@@ -17,6 +18,9 @@ public:
     void handleCallAccepted(common::PhoneNumber from) override;
     void handleCallDropped(common::PhoneNumber from) override;
     void handleCallTalk(common::PhoneNumber from, const std::string& text) override;
+
+    virtual void handleDisconnect() override;
+    virtual void handleUnknownRecipient(common::MessageId msgId, common::PhoneNumber from) override;
 
 private:
     common::PhoneNumber caller;

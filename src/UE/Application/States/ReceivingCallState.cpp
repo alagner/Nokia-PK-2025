@@ -1,5 +1,6 @@
 #include "ReceivingCallState.hpp"
 #include "ConnectedState.hpp"
+#include "UeGui/IDialMode.hpp"
 #include <chrono>
 
 namespace ue
@@ -34,6 +35,7 @@ void ReceivingCallState::handleUserAction(const std::string& id)
 
 void ReceivingCallState::handleTimeout() {
     logger.logInfo("ReceivingCallState timeout occurred. Treating as rejection.");
+    context.timer.stopTimer();
     context.bts.sendCallDropped(caller);
     context.setState<ConnectedState>();
 }
@@ -50,6 +52,20 @@ void ReceivingCallState::handleCallDropped(common::PhoneNumber from) {
 
 void ReceivingCallState::handleCallTalk(common::PhoneNumber from, const std::string& text) {
     logger.logError("Unexpected CallTalk in ReceivingCallState");
+}
+
+void ReceivingCallState::handleDisconnect()
+{
+    logger.logInfo("ReceivingCallState: transport lost.");
+    context.timer.stopTimer();
+    context.setState<NotConnectedState>();
+}
+
+void ReceivingCallState::handleUnknownRecipient(common::MessageId msgId, common::PhoneNumber from)
+{
+    logger.logInfo("ReceivingCallState: UnknownRecipient received. Transitioning to ConnectedState.");
+    context.timer.stopTimer();
+    context.setState<ConnectedState>();
 }
 
 } // namespace ue
