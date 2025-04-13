@@ -54,17 +54,29 @@ void BaseState::handleUserAction(const std::string& id)
     logger.logError("Unexpected user action: ", id);
 }
 
-void BaseState::handleCallRequest(common::PhoneNumber from) {
-    logger.logError("Unexpected call request in state ");
+void BaseState::handleCallRequest(common::PhoneNumber from)
+{
+    logger.logError("Unexpected call request in this state");
 }
-void BaseState::handleCallAccepted(common::PhoneNumber from) {
-    logger.logError("Unexpected call accepted in state ");
+
+void BaseState::handleCallAccepted(common::PhoneNumber from)
+{
+    logger.logError("Unexpected call accepted in this state");
 }
-void BaseState::handleCallDropped(common::PhoneNumber from) {
-    logger.logError("Unexpected call dropped in state ");
+
+void BaseState::handleCallDropped(common::PhoneNumber from)
+{
+    logger.logError("Unexpected call dropped in this state");
 }
-void BaseState::handleCallTalk(common::PhoneNumber from, const std::string& text) {
-    logger.logError("Unexpected call talk in state ");
+
+void BaseState::handleCallTalk(common::PhoneNumber from, const std::string& text)
+{
+    logger.logError("Unexpected call talk in this state");
+}
+
+void BaseState::handleUnknownRecipient(common::MessageId originalMessageId, common::PhoneNumber from)
+{
+    logger.logError("Unexpected unknown recipient in this state: ", to_string(originalMessageId));
 }
 
 }

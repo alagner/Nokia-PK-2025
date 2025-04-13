@@ -5,6 +5,7 @@
 #include "Context.hpp"
 #include "Messages/PhoneNumber.hpp" // Include for PhoneNumber
 #include <string>                  // Include for string
+#include "Messages/MessageId.hpp"
 
 namespace ue
 {
@@ -32,6 +33,7 @@ public:
     virtual void handleCallAccepted(common::PhoneNumber from) override;
     virtual void handleCallDropped(common::PhoneNumber from) override;
     virtual void handleCallTalk(common::PhoneNumber from, const std::string& text) override;
+    virtual void handleUnknownRecipient(common::MessageId, common::PhoneNumber from) override;
 
 protected:
     Context& context;
