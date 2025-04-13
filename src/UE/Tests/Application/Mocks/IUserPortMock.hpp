@@ -36,7 +36,11 @@ public:
     MOCK_METHOD(void, viewSms, (const data::SmsData& sms), (override));
     MOCK_METHOD(void, displaySmsCompose, (), (override));
     MOCK_METHOD(bool, getComposedSmsData, (common::PhoneNumber& recipient, std::string& text), (override));
+    MOCK_METHOD(void, showDialing, (), (override));
+    MOCK_METHOD(bool, getDialedNumber, (common::PhoneNumber&), (override));
+    MOCK_METHOD(void, showIncomingCall, (const common::PhoneNumber&), (override));
 
+    
 };
 
 }

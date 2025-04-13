@@ -1,12 +1,8 @@
 #include "IBtsPortMock.hpp"
 
-namespace ue
-{
-IBtsEventsHandlerMock::IBtsEventsHandlerMock() = default;
-IBtsEventsHandlerMock::~IBtsEventsHandlerMock() = default;
+namespace ue {
 
 IBtsPortMock::IBtsPortMock() = default;
 IBtsPortMock::~IBtsPortMock() = default;
-
 
 }
