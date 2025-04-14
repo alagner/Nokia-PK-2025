@@ -1,12 +1,10 @@
 #include "NotConnectedState.hpp"
 #include "ConnectingState.hpp"
 
-namespace ue
-{
+namespace ue{
 
 NotConnectedState::NotConnectedState(Context &context)
-    : BaseState(context, "NotConnectedState")
-{
+    : BaseState(context, "NotConnectedState"){
     context.user.showNotConnected();
 }
 
