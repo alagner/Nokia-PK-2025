@@ -2,11 +2,9 @@
 
 #include "BaseState.hpp"
 
-namespace ue
-{
+namespace ue{
 
-class ConnectingState : public BaseState
-{
+class ConnectingState : public BaseState{
 public:
     ConnectingState(Context& context);
 
@@ -17,6 +15,8 @@ public:
     void handleTimeout() override;
     void handleDisconnected() override;
 
+private:
+    common::BtsId btsId;
 };
 
 

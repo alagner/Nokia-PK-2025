@@ -37,22 +37,18 @@ void QtUeGui::start()
 
 void QtUeGui::initGUI()
 {
-    // TODO: change the fixed sizes into relative values
     QSize cellPhoneSize(400,750);
     mainWindow.setFixedSize(cellPhoneSize);
     mainWindow.setWindowTitle("UE <no-number>");
 
-    // move to the center
     mainWindow.setCentralWidget(&centralWidget);
     mainWindow.move(QApplication::desktop()->screen()->rect().center() - mainWindow.rect().center());
 
-    // set background to centralWidget
     centralWidget.setObjectName("centralWidget");
     centralWidget.setStyleSheet("#centralWidget{"
                                 "border-image:url(\"images/cell_phone.png\") "
                                 "0 0 0 0 stretch stretch;}");
 
-    // init stacked widget
     frame.setFrameStyle(QFrame::Box | QFrame::Raised);
     frame.setFixedSize(cellPhoneSize.width()*307/412,cellPhoneSize.height()*540/800);
     frame.move(cellPhoneSize.width()*53/412,cellPhoneSize.height()*90/800);
@@ -96,7 +92,6 @@ void QtUeGui::addPhoneNumberControls()
 {
     phoneNumberEdit.setMaximumHeight(30);
     phoneNumberEdit.setMinimumHeight(30);
-    //phoneNumberTextEdit.viewport()->setAutoFillBackground(false);
 
     connectedStateLabel.setFont(QFont( "Arial Narrow", 12, QFont::Bold));
     connectedStateLabel.setText(" C");
@@ -113,8 +108,6 @@ void QtUeGui::addPhoneNumberControls()
 void QtUeGui::addButtons()
 {
     int buttonsCOmmonY = 620;
-
-    //TODO: remove duplicated code
 
     setButtonLayout(acceptButton);
     setButtonLayout(rejectButton);
@@ -200,6 +193,11 @@ void QtUeGui::setRejectCallback(Callback callback)
     rejectCallback = callback;
 }
 
+void QtUeGui::setMessageCallback(Callback callback)
+{
+
+    messageCallback = callback;
+}
 void QtUeGui::setTitle(const std::string& title)
 {
     mainWindow.setWindowTitle(QString::fromStdString(title));
@@ -252,6 +250,17 @@ ModeObject& QtUeGui::activateMode(ModeObject& modeObject)
 {
     modeObject.activate();
     return modeObject;
+}
+
+IUeGui::ISmsComposeMode &QtUeGui::setComposeSmsMode()
+{
+    return activateMode(smsComposeMode);
+}
+
+IUeGui::ISmsComposeMode &QtUeGui::getSmsComposeMode() const
+{
+
+    return const_cast<ISmsComposeMode &>(static_cast<const ISmsComposeMode &>(smsComposeMode));
 }
 
 IUeGui::IListViewMode& QtUeGui::setListViewMode()

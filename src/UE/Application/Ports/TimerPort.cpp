@@ -1,31 +1,26 @@
 #include "TimerPort.hpp"
 
-namespace ue
-{
+namespace ue{
 
 TimerPort::TimerPort(common::ILogger &logger)
     : logger(logger, "[TIMER PORT]")
 {}
 
-void TimerPort::start(ITimerEventsHandler &handler)
-{
+void TimerPort::start(ITimerEventsHandler &handler){
     logger.logDebug("Started");
     this->handler = &handler;
 }
 
-void TimerPort::stop()
-{
+void TimerPort::stop(){
     logger.logDebug("Stoped");
     handler = nullptr;
 }
 
-void TimerPort::startTimer(Duration duration)
-{
+void TimerPort::startTimer(Duration duration){
     logger.logDebug("Start timer: ", duration.count(), "ms");
 }
 
-void TimerPort::stopTimer()
-{
+void TimerPort::stopTimer(){
     logger.logDebug("Stop timer");
 }
 

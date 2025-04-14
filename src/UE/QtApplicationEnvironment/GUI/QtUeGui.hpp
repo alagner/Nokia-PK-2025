@@ -43,6 +43,7 @@ public:
     void setCloseGuard(CloseGuard closeGuard) override;
     void setAcceptCallback(Callback) override;
     void setRejectCallback(Callback) override;
+    void setMessageCallback(Callback) override;
 
     void setTitle(const std::string& title) override;
     void showConnected() override;
@@ -58,6 +59,8 @@ public:
     ICallMode& setCallMode() override;
     ITextMode& setAlertMode() override;
     ITextMode& setViewTextMode() override;
+    ISmsComposeMode &setComposeSmsMode() override;
+    ISmsComposeMode& getSmsComposeMode() const override;
 
     int addModeWidget(QWidget *widget);
 
@@ -70,10 +73,10 @@ signals:
 
 private:
 
-    // callbacks
     IUeGui::Callback acceptCallback;
     IUeGui::Callback rejectCallback;
     IUeGui::Callback homeCallback;
+    IUeGui::Callback messageCallback;
 
     void initGUI();
     void initInternalSignals();
@@ -85,23 +88,20 @@ private:
     void initModes();
 
     ILogger& logger;
-    // part of main widget
+
     QtMainWindow mainWindow;
     QWidget centralWidget;
     QFrame frame;
 
-    // here CALL mode widgets will be placed
     QtStackedWidget stackedWidget;
 
     QVBoxLayout mainLayout;
 
-    // part of phone number layout
     QHBoxLayout phoneNumberLayout;
     QtPhoneNumberEdit phoneNumberEdit;
     QLabel connectedStateLabel;
     QLabel newMessageLabel;
 
-    // navigate buttons
     QPushButton acceptButton;
     QPushButton rejectButton;
     QPushButton homeButton;

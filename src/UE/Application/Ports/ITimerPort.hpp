@@ -2,19 +2,16 @@
 
 #include <chrono>
 
-namespace ue
-{
+namespace ue{
 
-class ITimerEventsHandler
-{
+class ITimerEventsHandler{
 public:
     virtual ~ITimerEventsHandler() = default;
 
     virtual void handleTimeout() = 0;
 };
 
-class ITimerPort
-{
+class ITimerPort{
 public:
     using Duration = std::chrono::milliseconds;
 
