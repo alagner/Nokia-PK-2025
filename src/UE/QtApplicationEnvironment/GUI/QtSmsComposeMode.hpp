@@ -19,7 +19,8 @@ public:
     PhoneNumber getPhoneNumber() const override;
     std::string getSmsText() const override;
     void clearSmsText() override;
-
+    std::pair<common::PhoneNumber, std::string> getComposedSmsData() override;
+    void setPhoneNumber(const PhoneNumber& phoneNumber) override;
     void activateForViewingSms();
     void setSmsText(const std::string&);
 

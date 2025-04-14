@@ -15,10 +15,9 @@ void QtCallMode::constructGUI()
     addChildWidget(&outgoingTextEdit);
     addChildWidget(&incomingTextEdit);
 
-    // TODO: temp
     incomingTextEdit.setText("Outgoing text");
     incomingTextEdit.setText("Incoming text");
-    //
+
     incomingTextEdit.setReadOnly(true);
 
     incomingTextEdit.show();
