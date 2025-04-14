@@ -4,11 +4,9 @@
 #include "Messages/PhoneNumber.hpp"
 #include <string>
 
-namespace ue
-{
+namespace ue {
 
-class IBtsEventsHandler
-{
+class IBtsEventsHandler {
 public:
     virtual ~IBtsEventsHandler() = default;
 
@@ -16,15 +14,16 @@ public:
     virtual void handleAttachAccept() = 0;
     virtual void handleAttachReject() = 0;
     virtual void handleDisconnected() = 0;
-    virtual void handleSmsReceive(common::PhoneNumber from, std::string text) = 0;
+    virtual void handleMessageReceive(common::PhoneNumber from, std::string text) = 0;
+    virtual void handleMessageSentResult(common::PhoneNumber to, bool success) = 0;
 };
 
-class IBtsPort
-{
+class IBtsPort {
 public:
     virtual ~IBtsPort() = default;
 
     virtual void sendAttachRequest(common::BtsId) = 0;
+    virtual void sendMessage(common::PhoneNumber to, const std::string& text) = 0;
 };
 
 }
