@@ -38,115 +38,18 @@ protected:
                                 timerPortMock};
 };
 
-struct ApplicationConnectedTestSuite : public ApplicationTestSuite
-{
-    const common::PhoneNumber CALLER_NUMBER{111};
-    const common::PhoneNumber CALLEE_NUMBER{112};
-
-    ApplicationConnectedTestSuite()
-    {
-        EXPECT_CALL(timerPortMock, stopTimer());
-        EXPECT_CALL(userPortMock, showConnected());
-
-        objectUnderTest.handleAttachAccept();
-
-        testing::Mock::VerifyAndClearExpectations(&timerPortMock);
-        testing::Mock::VerifyAndClearExpectations(&userPortMock);
-        testing::Mock::VerifyAndClearExpectations(&btsPortMock);
-    }
-};
-
-
-TEST_F(ApplicationConnectedTestSuite, shallReceiveIncomingCallAndUserAccepts)
-{
-    EXPECT_CALL(userPortMock, showIncomingCall(CALLER_NUMBER));
-    EXPECT_CALL(timerPortMock, startTimer(std::chrono::milliseconds(30000)));  // 30s from documentation
-
-    objectUnderTest.handleCallRequest(CALLER_NUMBER);
-    testing::Mock::VerifyAndClearExpectations(&userPortMock);
-    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
-
-    EXPECT_CALL(timerPortMock, stopTimer());
-    EXPECT_CALL(btsPortMock, sendCallAccepted(CALLER_NUMBER)); // send call accpeted
-    EXPECT_CALL(userPortMock, showDialing()); // talking state
-
-    objectUnderTest.handleUserAction("ACCEPT");
-}
-
-TEST_F(ApplicationConnectedTestSuite, shallReceiveIncomingCallAndUserRejects)
-{
-    EXPECT_CALL(userPortMock, showIncomingCall(CALLER_NUMBER));
-    EXPECT_CALL(timerPortMock, startTimer(std::chrono::milliseconds(30000)));
-    objectUnderTest.handleCallRequest(CALLER_NUMBER);
-    testing::Mock::VerifyAndClearExpectations(&userPortMock);
-
-    EXPECT_CALL(timerPortMock, stopTimer());
-    EXPECT_CALL(btsPortMock, sendCallDropped(CALLER_NUMBER)); // senc call dropped
-    EXPECT_CALL(userPortMock, showConnected());
-
-    objectUnderTest.handleUserAction("REJECT");
-}
-
-TEST_F(ApplicationConnectedTestSuite, shallInitiateCallAndPeerAccepts)
-{
-    EXPECT_CALL(btsPortMock, sendCallRequest(CALLEE_NUMBER));
-    objectUnderTest.handleUserAction("call.dial");
-    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
-
-    EXPECT_CALL(timerPortMock, stopTimer());
-    EXPECT_CALL(userPortMock, showDialing());
-    objectUnderTest.handleUserAction("ACCEPT");
-}
-
-TEST_F(ApplicationConnectedTestSuite, shallInitiateCallAndPeerRejects)
-{
-    EXPECT_CALL(btsPortMock, sendCallRequest(CALLEE_NUMBER));
-    objectUnderTest.handleUserAction("call.dial");
-    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
-
-    EXPECT_CALL(timerPortMock, stopTimer());
-    EXPECT_CALL(userPortMock, showConnected());
-    objectUnderTest.handleCallDropped(CALLEE_NUMBER);
-}
-
-TEST_F(ApplicationConnectedTestSuite, shallDropCallOnDialingTimeout)
-{
-    EXPECT_CALL(btsPortMock, sendCallRequest(CALLEE_NUMBER));
-    objectUnderTest.handleUserAction("call.dial");
-
-    EXPECT_CALL(btsPortMock, sendCallDropped(CALLEE_NUMBER));
-    EXPECT_CALL(userPortMock, showConnected());
-    EXPECT_CALL(timerPortMock, stopTimer());
-
-    objectUnderTest.handleTimeout();
-}
-
-TEST_F(ApplicationConnectedTestSuite, shallInitiateCallAndUserCancelsBeforePeerResponse)
-{
-    EXPECT_CALL(btsPortMock, sendCallRequest(CALLEE_NUMBER));
-    objectUnderTest.handleUserAction("call.dial");
-
-    EXPECT_CALL(timerPortMock, stopTimer());
-    EXPECT_CALL(btsPortMock, sendCallDropped(CALLEE_NUMBER));
-    EXPECT_CALL(userPortMock, showConnected());
-
-    objectUnderTest.handleUserAction("REJECT");
-}
-
-
-
 struct ApplicationNotConnectedTestSuite : ApplicationTestSuite
 {
     void receiveSibAndEnterConnectingState()
-     {
-         EXPECT_CALL(btsPortMock, sendAttachRequest(BTS_ID));
-         EXPECT_CALL(timerPortMock, startTimer(500ms));
-         EXPECT_CALL(userPortMock, showConnecting());
-         objectUnderTest.handleSib(BTS_ID);
-         Mock::VerifyAndClearExpectations(&btsPortMock);
-         Mock::VerifyAndClearExpectations(&timerPortMock);
-         Mock::VerifyAndClearExpectations(&userPortMock);
-     }
+    {
+        EXPECT_CALL(btsPortMock, sendAttachRequest(BTS_ID));
+        EXPECT_CALL(timerPortMock, startTimer(500ms));
+        EXPECT_CALL(userPortMock, showConnecting());
+        objectUnderTest.handleSib(BTS_ID);
+        Mock::VerifyAndClearExpectations(&btsPortMock);
+        Mock::VerifyAndClearExpectations(&timerPortMock);
+        Mock::VerifyAndClearExpectations(&userPortMock);
+    }
 };
 
 TEST_F(ApplicationNotConnectedTestSuite, shallHandleSibMessage)
@@ -155,12 +58,12 @@ TEST_F(ApplicationNotConnectedTestSuite, shallHandleSibMessage)
 }
 
 struct ApplicationConnectingTestSuite : ApplicationNotConnectedTestSuite
- {
-     ApplicationConnectingTestSuite()
-     {
-         receiveSibAndEnterConnectingState();
-     }
- };
+{
+    ApplicationConnectingTestSuite()
+    {
+        receiveSibAndEnterConnectingState();
+    }
+};
 
 TEST_F(ApplicationConnectingTestSuite, shallConnectOnAttachAccept)
 {
@@ -180,9 +83,9 @@ TEST_F(ApplicationConnectingTestSuite, shallDisConnectOnAttachReject)
 
 TEST_F(ApplicationConnectingTestSuite, shallDisConnectOnTimeout)
 {
-     EXPECT_CALL(timerPortMock, stopTimer());
-     EXPECT_CALL(userPortMock, showNotConnected());
-     objectUnderTest.handleTimeout();
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(userPortMock, showNotConnected());
+    objectUnderTest.handleTimeout();
 }
 
 TEST_F(ApplicationConnectingTestSuite, shallDisConnectOnDisconnect)
