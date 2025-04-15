@@ -41,6 +41,7 @@ protected:
 struct ApplicationConnectedTestSuite : public ApplicationTestSuite
 {
     const common::PhoneNumber CALLER_NUMBER{111};
+    const common::PhoneNumber CALLE_NUMBER{112};
 
     ApplicationConnectedTestSuite()
     {
@@ -69,7 +70,7 @@ TEST_F(ApplicationConnectedTestSuite, shallReceiveIncomingCallAndUserAccepts)
     EXPECT_CALL(btsPortMock, sendCallAccepted(CALLER_NUMBER)); // send call accpeted
     EXPECT_CALL(userPortMock, showDialing()); // talking state
 
-    objectUnderTest.handleCallAccepted(CALLER_NUMBER);
+    objectUnderTest.handleUserAction("ACCEPT");
 }
 
 TEST_F(ApplicationConnectedTestSuite, shallReceiveIncomingCallAndUserRejects)
@@ -83,7 +84,7 @@ TEST_F(ApplicationConnectedTestSuite, shallReceiveIncomingCallAndUserRejects)
     EXPECT_CALL(btsPortMock, sendCallDropped(CALLER_NUMBER)); // senc call dropped
     EXPECT_CALL(userPortMock, showConnected());
 
-    objectUnderTest.handleCallDropped(CALLER_NUMBER);
+    objectUnderTest.handleUserAction("REJECT");
 }
 
 
