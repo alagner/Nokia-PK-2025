@@ -8,18 +8,17 @@
 #include "Mocks/ITimerPortMock.hpp"
 #include "Messages/PhoneNumber.hpp"
 #include <memory>
-#include <chrono> // Include chrono
+#include <chrono>
 
 namespace ue
 {
 using namespace ::testing;
-using namespace std::chrono_literals; // Add namespace for literals like ms
+using namespace std::chrono_literals;
 
 using LoggerNiceMock = NiceMock<common::ILoggerMock>;
 using BtsPortStrictMock = StrictMock<IBtsPortMock>;
 using UserPortStrictMock = StrictMock<IUserPortMock>;
-using TimerPortStrictMock = StrictMock<ITimerPortMock>;
-
+using TimerPortNiceMock = NiceMock<ITimerPortMock>;
 
 class ApplicationTestSuite : public Test
 {
@@ -29,7 +28,7 @@ protected:
     LoggerNiceMock loggerMock;
     BtsPortStrictMock btsPortMock;
     UserPortStrictMock userPortMock;
-    TimerPortStrictMock timerPortMock;
+    TimerPortNiceMock timerPortMock;
 
     Application objectUnderTest{PHONE_NUMBER,
                                 loggerMock,
