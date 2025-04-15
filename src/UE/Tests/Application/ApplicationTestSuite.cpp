@@ -41,7 +41,7 @@ protected:
 struct ApplicationConnectedTestSuite : public ApplicationTestSuite
 {
     const common::PhoneNumber CALLER_NUMBER{111};
-    const common::PhoneNumber CALLE_NUMBER{112};
+    const common::PhoneNumber CALLEE_NUMBER{112};
 
     ApplicationConnectedTestSuite()
     {
@@ -86,6 +86,53 @@ TEST_F(ApplicationConnectedTestSuite, shallReceiveIncomingCallAndUserRejects)
 
     objectUnderTest.handleUserAction("REJECT");
 }
+
+TEST_F(ApplicationConnectedTestSuite, shallInitiateCallAndPeerAccepts)
+{
+    EXPECT_CALL(btsPortMock, sendCallRequest(CALLEE_NUMBER));
+    objectUnderTest.handleUserAction("call.dial");
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(userPortMock, showDialing());
+    objectUnderTest.handleUserAction("ACCEPT");
+}
+
+TEST_F(ApplicationConnectedTestSuite, shallInitiateCallAndPeerRejects)
+{
+    EXPECT_CALL(btsPortMock, sendCallRequest(CALLEE_NUMBER));
+    objectUnderTest.handleUserAction("call.dial");
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(userPortMock, showConnected());
+    objectUnderTest.handleCallDropped(CALLEE_NUMBER);
+}
+
+TEST_F(ApplicationConnectedTestSuite, shallDropCallOnDialingTimeout)
+{
+    EXPECT_CALL(btsPortMock, sendCallRequest(CALLEE_NUMBER));
+    objectUnderTest.handleUserAction("call.dial");
+
+    EXPECT_CALL(btsPortMock, sendCallDropped(CALLEE_NUMBER));
+    EXPECT_CALL(userPortMock, showConnected());
+    EXPECT_CALL(timerPortMock, stopTimer());
+
+    objectUnderTest.handleTimeout();
+}
+
+TEST_F(ApplicationConnectedTestSuite, shallInitiateCallAndUserCancelsBeforePeerResponse)
+{
+    EXPECT_CALL(btsPortMock, sendCallRequest(CALLEE_NUMBER));
+    objectUnderTest.handleUserAction("call.dial");
+
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(btsPortMock, sendCallDropped(CALLEE_NUMBER));
+    EXPECT_CALL(userPortMock, showConnected());
+
+    objectUnderTest.handleUserAction("REJECT");
+}
+
 
 
 struct ApplicationNotConnectedTestSuite : ApplicationTestSuite
