@@ -106,6 +106,13 @@ namespace ue
                     handler->handleCallTalk(from, text);
                 break;
             }
+            case common::MessageId::CallReject:
+            {
+                logger.logInfo("Received CallReject from: ", from);
+                if (handler)
+                    handler->handleCallReject(from);
+                break;
+            }
 
             default:
                 logger.logError("unknow message: ", msgId, ", from: ", from);

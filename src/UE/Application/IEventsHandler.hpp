@@ -43,6 +43,7 @@ namespace ue
         virtual void handleCallDropped() = 0;
         virtual void handleUnknownRecipient(common::PhoneNumber peer) = 0;
         virtual void handleCallTalk(common::PhoneNumber from, const std::string &text) = 0;
+        virtual void handleCallReject(common::PhoneNumber from) = 0;
     };
 
 }

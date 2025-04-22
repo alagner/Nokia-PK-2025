@@ -42,6 +42,7 @@ namespace ue
         void handleCallDropped() override;
         void handleUnknownRecipient(common::PhoneNumber peer) override;
         void handleCallTalk(common::PhoneNumber from, const std::string &text) override;
+        void handleCallReject(common::PhoneNumber peer) override;
 
     private:
         Context context;

@@ -66,6 +66,13 @@ namespace ue
         context.setState<ConnectedState>();
     }
 
+    void CallingState::handleCallReject(common::PhoneNumber peer)
+    {
+        logger.logInfo("Call rejected by: ", peer);
+        context.user.showAlert("Call Rejected", "The recipient rejected your call.");
+        context.setState<ConnectedState>();
+    }
+
     void CallingState::handleDisconnected()
     {
         logger.logError("Disconnected while calling");

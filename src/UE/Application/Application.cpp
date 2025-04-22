@@ -112,6 +112,13 @@ namespace ue
             context.state->handleCallAccept(peer);
     }
 
+    void Application::handleCallReject(common::PhoneNumber peer)
+    {
+        logger.logInfo("Handling CallReject from: ", peer);
+        if (context.state)
+            context.state->handleCallReject(peer);
+    }
+
     void Application::handleCallDropped()
     {
         logger.logInfo("Call dropped by BTS");
