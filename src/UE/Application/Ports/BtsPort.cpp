@@ -78,11 +78,11 @@ namespace ue
                     handler->handleCallRequest(from);
                 break;
             }
-            case common::MessageId::CallEnd:
+            case common::MessageId::CallDropped:
             {
-                logger.logInfo("Received CallEnd from: ", from);
+                logger.logInfo("Received CallDropped from: ", from);
                 if (handler)
-                    handler->handleCallEnd(from);
+                    handler->handleCallDropped(from);
                 break;
             }
             case common::MessageId::CallAccepted:
@@ -90,13 +90,6 @@ namespace ue
                 logger.logInfo("Received CallAccepted from: ", from);
                 if (handler)
                     handler->handleCallAccept(from);
-                break;
-            }
-            case common::MessageId::CallDropped:
-            {
-                logger.logInfo("Received CallDropped");
-                if (handler)
-                    handler->handleCallDropped();
                 break;
             }
             case common::MessageId::CallTalk:
@@ -164,10 +157,10 @@ namespace ue
         transport.sendMessage(msg.getMessage());
     }
 
-    void BtsPort::sendCallEnd(common::PhoneNumber to)
+    void BtsPort::sendCallDropped(common::PhoneNumber to)
     {
-        logger.logInfo("Sending CallEnd to: ", to);
-        common::OutgoingMessage msg{common::MessageId::CallEnd, phoneNumber, to};
+        logger.logInfo("Sending CallDropped to: ", to);
+        common::OutgoingMessage msg{common::MessageId::CallDropped, phoneNumber, to};
         transport.sendMessage(msg.getMessage());
     }
 

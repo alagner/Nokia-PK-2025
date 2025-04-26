@@ -35,7 +35,7 @@ namespace ue
     void CallingState::handleUiBack()
     {
         logger.logInfo("The call was cancelled.");
-        context.bts.sendCallEnd(dialedNumber);
+        context.bts.sendCallDropped(dialedNumber);
         context.setState<ConnectedState>();
     }
 
@@ -52,13 +52,6 @@ namespace ue
         context.setState<ConnectedState>();
     }
 
-    void CallingState::handleCallDropped()
-    {
-        logger.logInfo("Call dropped by BTS");
-        context.user.showAlert("Call Failed", "Recipient dropped the call.");
-        context.setState<ConnectedState>();
-    }
-
     void CallingState::handleUnknownRecipient(common::PhoneNumber peer)
     {
         logger.logInfo("Call failed - Unknown recipient: ", peer);
@@ -69,7 +62,6 @@ namespace ue
     void CallingState::handleCallReject(common::PhoneNumber peer)
     {
         logger.logInfo("Call rejected by: ", peer);
-        context.user.showAlert("Call Rejected", "The recipient rejected your call.");
         context.setState<ConnectedState>();
     }
 

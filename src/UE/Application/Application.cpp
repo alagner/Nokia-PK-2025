@@ -96,17 +96,17 @@ namespace ue
             logger.logError("No state object to handle CallRequest from: ", from);
     }
 
-    void Application::handleCallEnd(common::PhoneNumber peer)
+    void Application::handleCallDropped(common::PhoneNumber peer)
     {
-        logger.logDebug("Application handling CallEnd from: ", peer);
+        logger.logDebug("Application handling CallDropped from: ", peer);
         if (context.state)
         {
-            logger.logInfo("CallEnd received from: ", peer);
-            context.state->handleCallEnd(peer);
+            logger.logInfo("CallDropped received from: ", peer);
+            context.state->handleCallDropped(peer);
         }
         else
         {
-            logger.logError("No state object to handle CallEnd from: ", peer);
+            logger.logError("No state object to handle CallDropped from: ", peer);
         }
     }
 
@@ -122,13 +122,6 @@ namespace ue
         logger.logInfo("Handling CallReject from: ", peer);
         if (context.state)
             context.state->handleCallReject(peer);
-    }
-
-    void Application::handleCallDropped()
-    {
-        logger.logInfo("Call dropped by BTS");
-        context.user.showAlert("Call dropped", "");
-        context.setState<ConnectedState>();
     }
 
     void Application::handleUnknownRecipient(common::PhoneNumber peer)

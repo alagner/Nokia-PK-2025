@@ -16,16 +16,15 @@ namespace ue
     void TalkingState::handleUiBack()
     {
         logger.logInfo("User hangs up call with: ", peerPhoneNumber);
-        context.bts.sendCallEnd(peerPhoneNumber);
+        context.bts.sendCallDropped(peerPhoneNumber);
         context.setState<ConnectedState>();
     }
 
-    void TalkingState::handleCallEnd(common::PhoneNumber peer)
+    void TalkingState::handleCallDropped(common::PhoneNumber peer)
     {
         if (peer == peerPhoneNumber)
         {
-            logger.logInfo("Call ended by peer: ", peer);
-            context.user.showAlert("Call Ended", "The other party has ended the call.");
+            logger.logInfo("Call dropped by peer: ", peer);
             context.user.showConnected();
             context.setState<ConnectedState>();
         }

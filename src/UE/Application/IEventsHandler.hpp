@@ -39,8 +39,7 @@ namespace ue
         // virtual void handleSmsSentResult(common::PhoneNumber to, bool success) = 0;
         virtual void handleSmsComposeResult(common::PhoneNumber recipient, const std::string &text) = 0;
         virtual void handleCallRequest(common::PhoneNumber from) = 0;
-        virtual void handleCallEnd(common::PhoneNumber peer) = 0;
-        virtual void handleCallDropped() = 0;
+        virtual void handleCallDropped(common::PhoneNumber peer) = 0;
         virtual void handleUnknownRecipient(common::PhoneNumber peer) = 0;
         virtual void handleCallTalk(common::PhoneNumber from, const std::string &text) = 0;
         virtual void handleCallReject(common::PhoneNumber from) = 0;

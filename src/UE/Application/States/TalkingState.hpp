@@ -13,7 +13,7 @@ namespace ue
         ~TalkingState() override = default;
 
         void handleUiBack() override;
-        void handleCallEnd(common::PhoneNumber peer) override;
+        void handleCallDropped(common::PhoneNumber peer) override;
         void handleDisconnected() override;
         void handleUiAction(std::optional<std::size_t>) override;
         void handleCallTalk(common::PhoneNumber from, const std::string &text) override;

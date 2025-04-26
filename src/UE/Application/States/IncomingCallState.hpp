@@ -17,7 +17,7 @@ public:
     void handleUiBack() override;
     void handleTimeout() override;
     void handleDisconnected() override;
-    void handleCallEnd(common::PhoneNumber peer) override;
+    void handleCallDropped(common::PhoneNumber peer) override;
 
 private:
     common::PhoneNumber callingPhoneNumber;

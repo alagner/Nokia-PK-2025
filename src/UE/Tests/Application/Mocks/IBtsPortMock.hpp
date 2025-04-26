@@ -30,7 +30,7 @@ namespace ue
         MOCK_METHOD(void, sendSms, (common::PhoneNumber to, const std::string &text), (override));
         MOCK_METHOD(void, sendCallAccept, (common::PhoneNumber to), (override));
         MOCK_METHOD(void, sendCallReject, (common::PhoneNumber to), (override));
-        MOCK_METHOD(void, sendCallEnd, (common::PhoneNumber to), (override));
+        MOCK_METHOD(void, sendCallDropped, (common::PhoneNumber to), (override));
         MOCK_METHOD(void, sendCallRequest, (common::PhoneNumber), (override));
         MOCK_METHOD(void, sendCallTalk, (common::PhoneNumber to, const std::string &text), (override));
     };

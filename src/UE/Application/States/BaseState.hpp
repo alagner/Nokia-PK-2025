@@ -25,11 +25,10 @@ namespace ue
         void handleSmsComposeResult(common::PhoneNumber recipient, const std::string &text) override;
         void handleUiAction(std::optional<std::size_t> selectedIndex) override;
         void handleCallRequest(common::PhoneNumber from) override;
-        void handleCallEnd(common::PhoneNumber peer) override;
+        void handleCallDropped(common::PhoneNumber peer) override;
         void handleCallAccept(common::PhoneNumber peer) override;
         void handleUiBack() override;
         void handleUnknownRecipient(common::PhoneNumber peer) override;
-        void handleCallDropped() override;
         void handleCallTalk(common::PhoneNumber from, const std::string &text) override;
         void handleCallReject(common::PhoneNumber peer) override;
 

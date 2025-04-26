@@ -71,9 +71,9 @@ namespace ue
         logger.logError("Unexpected: handleCallRequest from: ", from);
     }
 
-    void BaseState::handleCallEnd(common::PhoneNumber peer)
+    void BaseState::handleCallDropped(common::PhoneNumber peer)
     {
-        logger.logError("Unexpected: handleCallEnd from: ", peer);
+        logger.logError("Unexpected: handleCallDropped from: ", peer);
     }
 
     void BaseState::handleCallAccept(common::PhoneNumber peer)
@@ -84,11 +84,6 @@ namespace ue
     void BaseState::handleCallReject(common::PhoneNumber peer)
     {
         logger.logError("Unexpected: handleCallReject from: ", peer);
-    }
-
-    void BaseState::handleCallDropped()
-    {
-        logger.logError("Unexpected: handleCallDropped");
     }
 
     void BaseState::handleUnknownRecipient(common::PhoneNumber peer)

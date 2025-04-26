@@ -31,7 +31,7 @@ void IncomingCallState::handleUiAction(std::optional<std::size_t> selectedIndex)
 
 void IncomingCallState::handleUiBack()
 {
-    logger.logInfo("Call rejected from: ", callingPhoneNumber);
+    logger.logInfo("Call rejected");
     context.timer.stopTimer();
     context.bts.sendCallReject(callingPhoneNumber);
     context.setState<ConnectedState>();
@@ -50,11 +50,11 @@ void IncomingCallState::handleDisconnected()
     context.setState<NotConnectedState>();
 }
 
-void IncomingCallState::handleCallEnd(common::PhoneNumber peer)
+void IncomingCallState::handleCallDropped(common::PhoneNumber peer)
 {
     if (peer == callingPhoneNumber)
     {
-        logger.logInfo("Call from ", peer, " was cancelled/ended by the peer before accepting.");
+        logger.logInfo("Call from ", peer, " was cancelled/dropped by the peer before accepting.");
         context.timer.stopTimer();
         context.user.showConnected();
         context.setState<ConnectedState>();
