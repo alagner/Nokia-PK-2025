@@ -25,6 +25,7 @@ namespace ue
         if (peer == peerPhoneNumber)
         {
             logger.logInfo("Call ended by peer: ", peer);
+            context.user.showAlert("Call Ended", "The other party has ended the call.");
             context.user.showConnected();
             context.setState<ConnectedState>();
         }

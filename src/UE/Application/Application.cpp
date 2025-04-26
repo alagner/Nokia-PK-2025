@@ -100,9 +100,14 @@ namespace ue
     {
         logger.logDebug("Application handling CallEnd from: ", peer);
         if (context.state)
+        {
+            logger.logInfo("CallEnd received from: ", peer);
             context.state->handleCallEnd(peer);
+        }
         else
+        {
             logger.logError("No state object to handle CallEnd from: ", peer);
+        }
     }
 
     void Application::handleCallAccept(common::PhoneNumber peer)
