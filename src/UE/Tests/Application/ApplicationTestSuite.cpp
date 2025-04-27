@@ -56,13 +56,20 @@ struct ApplicationConnectingTestSuite : ApplicationNotConnectedTestSuite
     {
         sendAttachRequestOnSib();
     }
+
+    void connectOnHandleAttachResponse();
 };
 
-TEST_F(ApplicationConnectingTestSuite, shallConnectOnAttachAccept)
+void ApplicationConnectingTestSuite::connectOnHandleAttachResponse()
 {
     EXPECT_CALL(timerPortMock, stopTimer());
     EXPECT_CALL(userPortMock, showConnected());
     objectUnderTest.handleAttachAccept();
+}
+
+TEST_F(ApplicationConnectingTestSuite, shallConnectOnAttachAccept)
+{
+    connectOnHandleAttachResponse();
 }
 
 TEST_F(ApplicationConnectingTestSuite, shallDisConnectOnAttachReject)
@@ -81,6 +88,20 @@ TEST_F(ApplicationConnectingTestSuite, shallDisConnectOnTimeout)
 TEST_F(ApplicationConnectingTestSuite, shallDisConnectOnDisConnect)
 {
     EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(userPortMock, showNotConnected());
+    objectUnderTest.handleDisconnect();
+}
+
+struct ApplicationConnectedTestSuite : ApplicationConnectingTestSuite
+{
+    ApplicationConnectedTestSuite()
+    {
+        connectOnHandleAttachResponse();
+    }
+};
+
+TEST_F(ApplicationConnectedTestSuite, shallDisConnectOnDisConnect)
+{
     EXPECT_CALL(userPortMock, showNotConnected());
     objectUnderTest.handleDisconnect();
 }
