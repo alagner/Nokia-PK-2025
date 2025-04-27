@@ -78,9 +78,11 @@ TEST_F(ApplicationConnectingTestSuite, shallDisConnectOnTimeout)
     objectUnderTest.handleTimeout();
 }
 
-TEST_F(ApplicationConnectingTestSuite, shallDisConnectOnDisConnectMessage)
+TEST_F(ApplicationConnectingTestSuite, shallDisConnectOnDisConnect)
 {
-
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(userPortMock, showNotConnected());
+    objectUnderTest.handleDisconnect();
 }
 
 }
