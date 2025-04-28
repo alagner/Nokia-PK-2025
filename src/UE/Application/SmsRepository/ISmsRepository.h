@@ -14,6 +14,7 @@ public:
 
     virtual void save(const SmsEntity&) = 0;
     virtual std::vector<SmsEntity> getAll() = 0;
+    virtual void saveAll(const std::vector<SmsEntity> &, bool) = 0;
 };
 
 }
