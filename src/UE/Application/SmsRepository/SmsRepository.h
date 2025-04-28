@@ -7,7 +7,7 @@
 namespace ue
 {
 
-class SmsRepository : ISmsRepository
+class SmsRepository : public ISmsRepository
 {
 public:
     SmsRepository(common::PhoneNumber, common::ILogger &);

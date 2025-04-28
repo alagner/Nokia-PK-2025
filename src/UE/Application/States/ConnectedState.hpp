@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseState.hpp"
+#include "Messages/PhoneNumber.hpp"
 
 namespace ue
 {
