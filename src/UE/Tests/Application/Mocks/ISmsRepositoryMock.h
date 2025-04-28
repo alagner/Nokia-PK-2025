@@ -18,6 +18,7 @@ public:
 
     MOCK_METHOD(void, save, (const SmsEntity&), (final));
     MOCK_METHOD(std::vector<SmsEntity>, getAll, (), (final));
+    MOCK_METHOD(void, saveAll, (const std::vector<SmsEntity>&, bool ), (final));
 };
 }
 

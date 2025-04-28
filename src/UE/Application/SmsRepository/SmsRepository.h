@@ -15,7 +15,7 @@ public:
     // ISmsRepository interface
     void save(const SmsEntity &) override;
     std::vector<SmsEntity> getAll() override;
-    void saveAll(const std::vector<SmsEntity> &, bool) override;
+    void saveAll(const std::vector<SmsEntity> &, bool = true) override;
 private:
     common::PrefixedLogger logger;
     common::PhoneNumber phoneNumber;
