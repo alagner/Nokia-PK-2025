@@ -1,5 +1,4 @@
 #pragma once
-
 #include <gmock/gmock.h>
 #include "Ports/IBtsPort.hpp"
 
@@ -17,7 +16,6 @@ public:
     MOCK_METHOD(void, handleAttachReject, (), (final));
     MOCK_METHOD(void, handleDisconnect, (), (final));
     MOCK_METHOD(void, handleSms, (common::PhoneNumber, std::string), (override));
-
 };
 
 class IBtsPortMock : public IBtsPort

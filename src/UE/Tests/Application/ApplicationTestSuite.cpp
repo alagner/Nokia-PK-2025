@@ -18,7 +18,7 @@ using namespace std::chrono_literals;
 struct ApplicationTestSuite : Test
 {
     const common::PhoneNumber PHONE_NUMBER{112};
-    const common::PhoneNumber PHONE_NUMBER_1{113};
+    const common::PhoneNumber TEST_SENDER_NUMBER{113};
     const common::BtsId BTS_ID{1024};
     NiceMock<common::ILoggerMock> loggerMock;
     StrictMock<IBtsPortMock> btsPortMock;
@@ -114,8 +114,7 @@ TEST_F(ApplicationConnectedTestSuite, shallUserReceiveNotification)
 {
   EXPECT_CALL(userPortMock,showNewSms());
   EXPECT_CALL(smsRepositoryMock,save(_));
-  objectUnderTest.handleSms(PHONE_NUMBER_1,"Hello World!");
-
+  objectUnderTest.handleSms(TEST_SENDER_NUMBER,"Hello World!");
 }
 
 }

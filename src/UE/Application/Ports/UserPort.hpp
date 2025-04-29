@@ -20,8 +20,6 @@ public:
     void showConnected() override;
     void showNewSms() override;
 
-
-
 private:
     common::PrefixedLogger logger;
     IUeGui& gui;

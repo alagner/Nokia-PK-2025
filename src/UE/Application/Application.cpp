@@ -45,7 +45,6 @@ void Application::handleSms(common::PhoneNumber from, std::string text)
     context.state->handleSms(from, text);
 }
 
-
 void Application::handleAttachReject()
 {
     context.state->handleAttachReject();

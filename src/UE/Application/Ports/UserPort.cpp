@@ -1,7 +1,6 @@
 #include "UserPort.hpp"
 #include "UeGui/IListViewMode.hpp"
 
-
 namespace ue
 {
 
@@ -9,8 +8,7 @@ UserPort::UserPort(common::ILogger &logger, IUeGui &gui, common::PhoneNumber pho
     : logger(logger, "[USER-PORT]"),
       gui(gui),
       phoneNumber(phoneNumber)
-{
-}
+{}
 
 void UserPort::start(IUserEventsHandler &handler)
 {
@@ -40,11 +38,11 @@ void UserPort::showConnected()
     menu.addSelectionListItem("Compose SMS", "");
     menu.addSelectionListItem("View SMS", "");
 }
+
 void UserPort::showNewSms()
 {
     logger.log(common::ILogger::INFO_LEVEL, "New SMS received!");
     gui.showNewSms(true);
-
 }
 
 }

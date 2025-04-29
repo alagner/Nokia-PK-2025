@@ -34,5 +34,4 @@ void ConnectingState::handleTimeout()
     context.setState<NotConnectedState>();
 }
 
-
 }

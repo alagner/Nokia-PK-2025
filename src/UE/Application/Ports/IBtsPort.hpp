@@ -24,8 +24,6 @@ public:
     virtual ~IBtsPort() = default;
 
     virtual void sendAttachRequest(common::BtsId) = 0;
-
-
 };
 
 }
