@@ -24,4 +24,8 @@ void ConnectingState::handleAttachReject(){
 void ConnectingState::handleTimeout(){
     context.setState<NotConnectedState>();
 }
+
+void ConnectingState::handleDisconnect() {
+    context.setState<NotConnectedState>();
+}
 }
