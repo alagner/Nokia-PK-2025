@@ -10,10 +10,10 @@ Application::Application(common::PhoneNumber phoneNumber,
                          IUserPort &user,
                          ITimerPort &timer)
     : context{iLogger, bts, user, timer},
-      logger(iLogger, "[APP] ")
+    logger(iLogger, "[APP] ")
 {
     logger.logInfo("Started");
-    context.setState<NotConnectedState>();
+    context.setState<NotConnectedState>(true);
 }
 
 Application::~Application()

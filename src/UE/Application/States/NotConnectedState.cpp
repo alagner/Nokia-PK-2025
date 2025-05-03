@@ -4,10 +4,12 @@
 namespace ue
 {
 
-NotConnectedState::NotConnectedState(Context &context)
+NotConnectedState::NotConnectedState(Context &context, bool firstState)
     : BaseState(context, "NotConnectedState")
 {
-
+    if(!firstState) {
+        context.user.showNotConnected();
+    }
 }
 
 void NotConnectedState::handleSib(common::BtsId btsId)
