@@ -1,18 +1,20 @@
 #pragma once
 
+#include "IEventsHandler.hpp"
+#include "IUeGui.hpp"
 #include "IUserPort.hpp"
 #include "Logger/PrefixedLogger.hpp"
-#include "IUeGui.hpp"
 #include "Messages/PhoneNumber.hpp"
-#include "IEventsHandler.hpp"
+#include "SmsStorage.hpp"
 #include "UeGui/ISmsComposeMode.hpp"
 #include <optional>
 #include <vector>
-#include "SmsStorage.hpp"
 
-namespace ue{
+namespace ue
+{
 
-class UserPort : public IUserPort{
+class UserPort : public IUserPort
+{
 public:
     UserPort(common::ILogger& logger, IUeGui& gui, common::PhoneNumber phoneNumber);
     void start(IEventsHandler& handler);
@@ -23,13 +25,19 @@ public:
     void showConnected() override;
     void showNewMessage() override;
 
-    void showListMessage(const std::vector<SmsMessage> &messages);
-    void showMessageView(const SmsMessage &message);
-    void showNotify(const std::string &name, const std::string &message);
+    void showListMessage(const std::vector<SmsMessage>& messages);
+    void showMessageView(const SmsMessage& message);
+    void showNotify(const std::string& name, const std::string& message);
     void showMessageComp() override;
+
+    void showIncomingCall(const common::PhoneNumber& caller) override;
+    void showCallInProgress(const common::PhoneNumber& otherPhoneNumber) override;
+    void showEndedCall(const common::PhoneNumber& otherPhoneNumber, const std::string& reason) override;
+    void showCallFailed(const common::PhoneNumber& otherPhoneNumber, const std::string& errorMessage) override;
 
     common::PhoneNumber getMessageRecipient() const override;
     std::string getMessageText() const override;
+    common::PhoneNumber getCallRecipient() const override;
 
 private:
     void acceptCallback();
