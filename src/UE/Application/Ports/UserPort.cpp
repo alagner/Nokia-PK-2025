@@ -38,5 +38,10 @@ void UserPort::showConnected()
     menu.addSelectionListItem("Compose SMS", "");
     menu.addSelectionListItem("View SMS", "");
 }
+void UserPort::showNewSms()
+{
+    logger.log(common::ILogger::INFO_LEVEL, "New SMS received!");
+    gui.showNewSms(true);
 
+}
 }

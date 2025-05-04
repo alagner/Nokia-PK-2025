@@ -44,4 +44,9 @@ void Application::handleDisconnect()
 {
     context.state->handleDisconnect();
 }
+void Application::handleSms(common::PhoneNumber from, std::string text)
+{
+    logger.logInfo("SMS received from: ", from);
+    context.state->handleSms(from, text);
+}
 }

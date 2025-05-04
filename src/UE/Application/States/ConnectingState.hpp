@@ -13,6 +13,7 @@ public:
     void handleAttachReject() override;
     void handleTimeout() override;
     void handleDisconnect() override;
+    void handleSms(common::PhoneNumber from, std::string text) override;
 };
 
 }
