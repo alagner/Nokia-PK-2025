@@ -13,6 +13,10 @@ public:
     BaseState(Context& context, const std::string& name);
     ~BaseState() override;
 
+    // IUserEventsHandler interface
+    void viewSmsList() override;
+    void viewSms(unsigned int) override;
+
     // ITimerEventsHandler interface
     void handleTimeout() override;
 

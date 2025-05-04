@@ -4,6 +4,7 @@
 #include "Logger/PrefixedLogger.hpp"
 #include "IUeGui.hpp"
 #include "Messages/PhoneNumber.hpp"
+#include "SmsRepository/SmsEntity.h"
 
 namespace ue
 {
@@ -19,6 +20,8 @@ public:
     void showConnecting() override;
     void showConnected() override;
     void showNewSms() override;
+    void showSms(const SmsEntity &) override;
+    void showSmsList(const std::vector<SmsEntity> &) override;
 
 private:
     common::PrefixedLogger logger;

@@ -23,6 +23,16 @@ Application::~Application()
     logger.logInfo("Stopped");
 }
 
+void Application::viewSmsList()
+{
+    context.state->viewSmsList();
+}
+
+void Application::viewSms(unsigned int index)
+{
+    context.state->viewSms(index);
+}
+
 void Application::handleTimeout()
 {
     context.state->handleTimeout();

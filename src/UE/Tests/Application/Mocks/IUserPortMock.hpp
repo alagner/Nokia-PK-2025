@@ -12,6 +12,8 @@ public:
     IUserEventsHandlerMock();
     ~IUserEventsHandlerMock() override;
 
+    MOCK_METHOD(void, viewSmsList, (), (final));
+    MOCK_METHOD(void, viewSms, (unsigned), (final));
 };
 
 class IUserPortMock : public IUserPort
@@ -24,6 +26,8 @@ public:
     MOCK_METHOD(void, showConnecting, (), (final));
     MOCK_METHOD(void, showConnected, (), (final));
     MOCK_METHOD(void, showNewSms, (), (override));
+    MOCK_METHOD(void, showSmsList, (const std::vector<SmsEntity> &), (override));
+    MOCK_METHOD(void, showSms, (const SmsEntity &), (override));
 };
 
 }
