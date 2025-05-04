@@ -19,6 +19,7 @@ protected:
     StrictMock<IUserEventsHandlerMock> handlerMock;
     StrictMock<IUeGuiMock> guiMock;
     StrictMock<IListViewModeMock> listViewModeMock;
+    StrictMock<ITextModeMock> textModeMock;
 
     UserPort objectUnderTest{loggerMock, guiMock, PHONE_NUMBER};
 
@@ -54,7 +55,38 @@ TEST_F(UserPortTestSuite, shallShowMenuOnConnected)
     EXPECT_CALL(guiMock, setListViewMode()).WillOnce(ReturnRef(listViewModeMock));
     EXPECT_CALL(listViewModeMock, clearSelectionList());
     EXPECT_CALL(listViewModeMock, addSelectionListItem(_, _)).Times(AtLeast(1));
+    EXPECT_CALL(guiMock, setAcceptCallback(_)).Times(Exactly(1));
+    EXPECT_CALL(guiMock, setRejectCallback(_)).Times(Exactly(1));
+
     objectUnderTest.showConnected();
+}
+
+TEST_F(UserPortTestSuite, shallShowSmsList)
+{
+    std::vector<SmsEntity> smsVector;
+    smsVector.push_back({12,123,"test1"});
+    smsVector.push_back({12,123,"test2"});
+    smsVector.push_back({123,12,"test3"});
+
+    EXPECT_CALL(guiMock, setListViewMode()).WillOnce(ReturnRef(listViewModeMock));
+    EXPECT_CALL(listViewModeMock, clearSelectionList());
+    EXPECT_CALL(listViewModeMock, addSelectionListItem(_, _)).Times(Exactly(3));
+    EXPECT_CALL(guiMock, setAcceptCallback(_)).Times(Exactly(1));
+    EXPECT_CALL(guiMock, setRejectCallback(_)).Times(Exactly(1));
+
+    objectUnderTest.showSmsList(smsVector);
+}
+
+TEST_F(UserPortTestSuite, shallShowSms)
+{
+    SmsEntity testSms{12,123,"test"};
+
+    EXPECT_CALL(guiMock, setViewTextMode()).WillOnce(ReturnRef(textModeMock));
+    EXPECT_CALL(textModeMock, setText("test"));
+    EXPECT_CALL(guiMock, setAcceptCallback(_)).Times(Exactly(1));
+    EXPECT_CALL(guiMock, setRejectCallback(_)).Times(Exactly(1));
+
+    objectUnderTest.showSms(testSms);
 }
 
 }
