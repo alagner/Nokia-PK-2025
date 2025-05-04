@@ -96,6 +96,19 @@ TEST_F(BtsPortTestSuite, shallSendAttachRequest)
     ASSERT_NO_THROW(EXPECT_EQ(BTS_ID, reader.readBtsId()));
     ASSERT_NO_THROW(reader.checkEndOfMessage());
 }
+TEST_F(BtsPortTestSuite, shallHandleSmsMessage)
+{
+    const std::string TEXT = "Hello from BTS";
+    const common::PhoneNumber FROM{123};
+
+    EXPECT_CALL(handlerMock, handleSms(FROM, TEXT));
+
+    common::OutgoingMessage msg{common::MessageId::Sms, FROM, PHONE_NUMBER};
+    msg.writeText(TEXT);
+
+    messageCallback(msg.getMessage());
+}
+
 
 TEST_F(BtsPortTestSuite, shallHandleDisConnect)
 {

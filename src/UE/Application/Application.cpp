@@ -8,9 +8,11 @@ Application::Application(common::PhoneNumber phoneNumber,
                          common::ILogger &iLogger,
                          IBtsPort &bts,
                          IUserPort &user,
-                         ITimerPort &timer)
-    : context{iLogger, bts, user, timer},
-      logger(iLogger, "[APP] ")
+                         ITimerPort &timer,
+                         ISmsRepository &smsDb)
+    : context{iLogger, bts, user, timer, smsDb},
+      logger(iLogger, "[APP] "),
+      phoneNumber(phoneNumber)
 {
     logger.logInfo("Started");
     context.setState<NotConnectedState>();
@@ -34,6 +36,13 @@ void Application::handleSib(common::BtsId btsId)
 void Application::handleAttachAccept()
 {
     context.state->handleAttachAccept();
+}
+
+void Application::handleSms(common::PhoneNumber from, std::string text)
+{
+    logger.logInfo("SMS received from: ", from);
+    context.smsDb.save(SmsEntity(from.value, phoneNumber.value,text));
+    context.state->handleSms(from, text);
 }
 
 void Application::handleAttachReject()

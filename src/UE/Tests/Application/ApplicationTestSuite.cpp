@@ -6,6 +6,7 @@
 #include "Mocks/IBtsPortMock.hpp"
 #include "Mocks/IUserPortMock.hpp"
 #include "Mocks/ITimerPortMock.hpp"
+#include "Mocks/ISmsRepositoryMock.h"
 #include "Messages/PhoneNumber.hpp"
 #include <memory>
 
@@ -17,18 +18,21 @@ using namespace std::chrono_literals;
 struct ApplicationTestSuite : Test
 {
     const common::PhoneNumber PHONE_NUMBER{112};
+    const common::PhoneNumber TEST_SENDER_NUMBER{113};
     const common::BtsId BTS_ID{1024};
     NiceMock<common::ILoggerMock> loggerMock;
     StrictMock<IBtsPortMock> btsPortMock;
     StrictMock<IUserPortMock> userPortMock;
     StrictMock<ITimerPortMock> timerPortMock;
+    StrictMock<ISmsRepositoryMock> smsRepositoryMock;
 
     Expectation showNotConnected = EXPECT_CALL(userPortMock, showNotConnected());
     Application objectUnderTest{PHONE_NUMBER,
                                 loggerMock,
                                 btsPortMock,
                                 userPortMock,
-                                timerPortMock};
+                                timerPortMock,
+                                smsRepositoryMock};
 };
 
 struct ApplicationNotConnectedTestSuite : ApplicationTestSuite
@@ -104,6 +108,13 @@ TEST_F(ApplicationConnectedTestSuite, shallDisConnectOnDisConnect)
 {
     EXPECT_CALL(userPortMock, showNotConnected());
     objectUnderTest.handleDisconnect();
+}
+
+TEST_F(ApplicationConnectedTestSuite, shallUserReceiveNotification)
+{
+  EXPECT_CALL(userPortMock,showNewSms());
+  EXPECT_CALL(smsRepositoryMock,save(_));
+  objectUnderTest.handleSms(TEST_SENDER_NUMBER,"Hello World!");
 }
 
 }

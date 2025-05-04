@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseState.hpp"
+#include "Messages/PhoneNumber.hpp"
 
 namespace ue
 {
@@ -12,6 +13,8 @@ public:
 
     // IBtsEventsHandler interface
     void handleDisconnect() override;
+    void handleSms(common::PhoneNumber from, std::string text) override;
+
 };
 
 }
