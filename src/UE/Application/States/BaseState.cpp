@@ -15,6 +15,16 @@ BaseState::~BaseState()
     logger.logDebug("exit");
 }
 
+void BaseState::viewSmsList()
+{
+    logger.logError("Unexpected: viewSmsList");
+}
+
+void BaseState::viewSms(unsigned int)
+{
+    logger.logError("Unexpected: viewSms");
+}
+
 void BaseState::handleTimeout()
 {
     logger.logError("Unexpected: handleTimeout");

@@ -1,5 +1,7 @@
 #include "UserPort.hpp"
 #include "UeGui/IListViewMode.hpp"
+#include "UeGui/ITextMode.hpp"
+#include "SmsRepository/SmsRepository.h"
 
 namespace ue
 {
@@ -37,12 +39,79 @@ void UserPort::showConnected()
     menu.clearSelectionList();
     menu.addSelectionListItem("Compose SMS", "");
     menu.addSelectionListItem("View SMS", "");
+
+    gui.setAcceptCallback([this, &menu](){
+        auto listIndex = menu.getCurrentItemIndex();
+
+        if (listIndex.first){
+            switch (listIndex.second){
+                case 0: {
+                    logger.logError("Not implemented yet.");
+                    break;
+                }
+                case 1: {
+                    handler->viewSmsList();
+                    break;
+                }
+            }
+        }
+        else{
+            logger.logError("There is no such choice.");
+        }
+    });
+
+    gui.setRejectCallback([this](){});
 }
 
 void UserPort::showNewSms()
 {
     logger.log(common::ILogger::INFO_LEVEL, "New SMS received!");
     gui.showNewSms(true);
+}
+
+void UserPort::showSms(const SmsEntity & sms)
+{
+    IUeGui::ITextMode& smsScreen = gui.setViewTextMode();
+    smsScreen.setText(sms.text);
+
+    gui.setRejectCallback([this](){
+        handler->viewSmsList();
+    });
+
+    gui.setAcceptCallback([this](){});
+}
+
+void UserPort::showSmsList(const std::vector<SmsEntity> & smsList)
+{
+    IUeGui::IListViewMode& menu = gui.setListViewMode();
+    menu.clearSelectionList();
+    int smsAmount = smsList.size();
+
+    for (auto sms = smsList.rbegin(); sms != smsList.rend(); ++sms){
+        if (sms->from == phoneNumber.value)
+            menu.addSelectionListItem("Sms to: " + std::to_string(sms->to), "");
+        else{
+            if (!sms->isRead)
+                menu.addSelectionListItem("Sms from: " + std::to_string(sms->from) + " •", "");
+            else
+                menu.addSelectionListItem("Sms from: " + std::to_string(sms->from), "");
+        }
+    }
+
+    gui.setAcceptCallback([this, &menu, smsAmount](){
+        auto listIndex = menu.getCurrentItemIndex();
+
+        if (listIndex.first){
+            unsigned int realSmsIndex = smsAmount - listIndex.second - 1;
+            handler->viewSms(realSmsIndex);
+        }
+        else
+            logger.logError("There is no such SMS.");
+    });
+
+    gui.setRejectCallback([this](){
+        showConnected();
+    });
 }
 
 }

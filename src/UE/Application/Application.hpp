@@ -23,6 +23,10 @@ public:
                 ISmsRepository& SmsDb);
     ~Application();
 
+    // IUserEventsHandler interface
+    void viewSmsList() override;
+    void viewSms(unsigned int) override;
+
     // ITimerEventsHandler interface
     void handleTimeout() override;
 

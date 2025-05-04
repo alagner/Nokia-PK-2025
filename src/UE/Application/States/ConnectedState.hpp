@@ -15,6 +15,9 @@ public:
     void handleDisconnect() override;
     void handleSms(common::PhoneNumber from, std::string text) override;
 
+    // IUserEventsHandler interface
+    void viewSmsList() override;
+    void viewSms(unsigned int) override;
 };
 
 }
