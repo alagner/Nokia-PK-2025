@@ -2,7 +2,8 @@
 #include "ConnectedState.hpp"
 #include "NotConnectedState.hpp"
 #include <chrono>
-#include "Messages/MessageId.hpp" 
+#include "Messages/MessageId.hpp"
+#include "TalkingState.hpp"
 
 namespace ue
 {
@@ -45,8 +46,8 @@ void DialingState::handleTimeout() {
 
 void DialingState::handleCallAccepted(common::PhoneNumber from) {
     context.timer.stopTimer();
-    logger.logInfo("Received CallAccepted. Transitioning to ConnectedState.");
-    context.setState<ConnectedState>();
+    logger.logInfo("Received CallAccepted. Transitioning to TalkingState.");
+    context.setState<TalkingState>(from);
 }
 
 void DialingState::handleCallDropped(common::PhoneNumber from) {

@@ -1,6 +1,7 @@
 #include "ReceivingCallState.hpp"
 #include "ConnectedState.hpp"
-#include "UeGui/IDialMode.hpp"
+#include "TalkingState.hpp"
+//#include "UeGui/IDialMode.hpp"
 #include <chrono>
 
 namespace ue
@@ -18,9 +19,9 @@ void ReceivingCallState::handleUserAction(const std::string& id)
     logger.logDebug("ReceivingCallState handleUserAction: ", id);
     if(id == "ACCEPT") {
         context.timer.stopTimer();
-        context.bts.sendCallAccepted(caller);
+        //context.bts.sendCallAccepted(caller);
         logger.logInfo("User accepted call from ", caller, ". Transitioning to ConnectedState.");
-        context.setState<ConnectedState>(); // Back to ConnectedState (todo talking)
+        context.setState<TalkingState>(caller); // Back to ConnectedState (todo talking)
     }
     else if(id == "REJECT") {
         context.timer.stopTimer();

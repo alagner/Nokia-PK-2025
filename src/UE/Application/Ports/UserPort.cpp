@@ -241,6 +241,50 @@ void UserPort::showIncomingCall(const common::PhoneNumber& caller)
     logger.logInfo("Switching UI to incoming call mode for caller: ", caller);
     IUeGui::ITextMode& alert = gui.setAlertMode();
     alert.setText("Incoming call from: " + common::to_string(caller));
+
+    gui.setAcceptCallback([this]() {
+        if (this->handler) {
+            logger.logDebug("IncomingCall: ACCEPT");
+            this->handler->handleUserAction("ACCEPT");
+        } else {
+            logger.logError("Accept callback (incoming call) but handler is null");
+        }
+    });
+    gui.setRejectCallback([this]() {
+        if (this->handler) {
+            logger.logDebug("IncomingCall: REJECT");
+            this->handler->handleUserAction("REJECT");
+        } else {
+            logger.logError("Reject callback (incoming call) but handler is null");
+        }
+    });
+}
+
+IUeGui::ICallMode& UserPort::showCallMode()
+{
+    logger.logInfo("Switching UI to call mode");
+    IUeGui::ICallMode& mode = gui.setCallMode();
+
+    gui.setAcceptCallback([this]() {
+        if (handler) handler->handleUserAction("ACCEPT");
+    });
+
+    gui.setRejectCallback([this]() {
+        if (handler) handler->handleUserAction("REJECT");
+    });
+
+    return mode;
+
+}
+
+void UserPort::showTalkingOverlay()
+{
+    gui.setAcceptCallback(nullptr);
+    gui.setRejectCallback(nullptr);
+
+    // color?
+    IUeGui::ITextMode& alert = gui.setAlertMode();
+    alert.setText("Talking");
 }
 
 } // namespace ue

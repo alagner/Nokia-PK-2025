@@ -1,5 +1,6 @@
 #pragma once
 
+#include "IUeGui.hpp"
 #include "IUserPort.hpp" // Includes IUserEventsHandler, defines IUserPort
 #include "Logger/PrefixedLogger.hpp"
 #include "IUeGui.hpp"           // Defines IUeGui and nested mode interfaces
@@ -32,6 +33,9 @@ public:
     void showDialing() override;                            // ADDED
     bool getDialedNumber(common::PhoneNumber& recipient) override; // ADDED
     void showIncomingCall(const common::PhoneNumber& caller) override; // ADDED
+    IUeGui::ICallMode& showCallMode() override; // ADDED
+    void showTalkingOverlay() override; // ADDED
+
 private:
     common::PrefixedLogger logger;
     IUeGui& gui;

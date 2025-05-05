@@ -5,6 +5,7 @@
 #include "ComposingSmsState.hpp"
 #include "DialingState.hpp"
 #include "ReceivingCallState.hpp"
+#include "TalkingState.hpp"
 
 namespace ue
 {
@@ -59,7 +60,8 @@ void ConnectedState::handleCallRequest(common::PhoneNumber from)
 
 void ConnectedState::handleCallAccepted(common::PhoneNumber from)
 {
-    logger.logError("Unexpected CallAccepted in ConnectedState.");
+    logger.logInfo("Peer accepted call from ", from, ". Transitioning to TalkingState.");
+    context.setState<TalkingState>(from);
 }
 
 void ConnectedState::handleCallDropped(common::PhoneNumber from)

@@ -1,14 +1,19 @@
 #pragma once
 
 #include <gmock/gmock.h>
+#include "Ports/IBtsPort.hpp"  // Ten plik powinien zawierać także definicję IBtsEventsHandler
+#include "Messages/PhoneNumber.hpp"
+#include "Messages/MessageId.hpp"
+#include <string>
 
-namespace ue
-{
+namespace ue {
 
-class IBtsEventsHandlerMock : public IBtsEventsHandler
-{
+class IBtsEventsHandlerMock : public IBtsEventsHandler {
 public:
-    MOCK_METHOD(void, handleSib, (common::BtsId), (override));
+    IBtsEventsHandlerMock();
+    ~IBtsEventsHandlerMock() override;
+
+    MOCK_METHOD(void, handleSib, (common::BtsId btsId), (override));
     MOCK_METHOD(void, handleAttachAccept, (), (override));
     MOCK_METHOD(void, handleAttachReject, (), (override));
     MOCK_METHOD(void, handleDisconnect, (), (override));
