@@ -34,6 +34,8 @@ public:
     bool getDialedNumber(common::PhoneNumber& recipient) override; // ADDED
     void showIncomingCall(const common::PhoneNumber& caller) override; // ADDED
     IUeGui::ICallMode& showCallMode() override; // ADDED
+    void showTalkingOverlay() override; // ADDED
+
 private:
     common::PrefixedLogger logger;
     IUeGui& gui;

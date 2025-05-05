@@ -41,6 +41,7 @@ public:
     MOCK_METHOD(bool, getDialedNumber, (common::PhoneNumber&), (override));
     MOCK_METHOD(void, showIncomingCall, (const common::PhoneNumber&), (override));
     MOCK_METHOD(IUeGui::ICallMode&, showCallMode, (), (override));
+    MOCK_METHOD(void, showTalkingOverlay, (), (override));
 
     
 };

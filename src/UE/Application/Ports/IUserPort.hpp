@@ -35,6 +35,7 @@ public:
     virtual bool getDialedNumber(common::PhoneNumber& recipient) = 0;
     virtual void showIncomingCall(const common::PhoneNumber& caller) = 0;
     virtual IUeGui::ICallMode& showCallMode() = 0;
+    virtual void showTalkingOverlay() = 0;
 
 
 };

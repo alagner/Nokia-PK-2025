@@ -8,6 +8,8 @@ namespace ue {
 TalkingState::TalkingState(Context& ctx, common::PhoneNumber peer)
     : BaseState(ctx, "TalkingState"), peer(peer)
 {
+    context.user.showTalkingOverlay();
+
     IUeGui::ICallMode& ui = context.user.showCallMode();
     ui.clearIncomingText();
     ui.clearOutgoingText();

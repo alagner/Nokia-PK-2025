@@ -263,7 +263,28 @@ void UserPort::showIncomingCall(const common::PhoneNumber& caller)
 IUeGui::ICallMode& UserPort::showCallMode()
 {
     logger.logInfo("Switching UI to call mode");
-    return gui.setCallMode();
+    IUeGui::ICallMode& mode = gui.setCallMode();
+
+    gui.setAcceptCallback([this]() {
+        if (handler) handler->handleUserAction("ACCEPT");
+    });
+
+    gui.setRejectCallback([this]() {
+        if (handler) handler->handleUserAction("REJECT");
+    });
+
+    return mode;
+
+}
+
+void UserPort::showTalkingOverlay()
+{
+    gui.setAcceptCallback(nullptr);
+    gui.setRejectCallback(nullptr);
+
+    // color?
+    IUeGui::ITextMode& alert = gui.setAlertMode();
+    alert.setText("Talking");
 }
 
 } // namespace ue
