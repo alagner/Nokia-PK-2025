@@ -37,4 +37,22 @@ void ConnectedState::handleDisconnect()
     context.setState<NotConnectedState>();
 }
 
+void ConnectedState::sendSms(const SmsEntity& sms)
+{
+    auto fromPhoneNumber = context.user.getPhoneNumber().value;
+    auto toPhoneNumber = sms.to;
+    auto messageText = sms.text;
+
+    SmsEntity sentSms(fromPhoneNumber, toPhoneNumber, messageText, false);
+    context.smsDb.save(sentSms);
+    context.user.showConnected();
+    context.bts.sendSms(sentSms);
+}
+
+void ConnectedState::composeSms()
+{
+    logger.logInfo("Composing new SMS");
+    context.user.composeSms();
+}
+
 }

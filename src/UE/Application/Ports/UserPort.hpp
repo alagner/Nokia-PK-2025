@@ -22,6 +22,8 @@ public:
     void showNewSms() override;
     void showSms(const SmsEntity &) override;
     void showSmsList(const std::vector<SmsEntity> &) override;
+    void composeSms() override;
+    common::PhoneNumber getPhoneNumber() const;
 
 private:
     common::PrefixedLogger logger;

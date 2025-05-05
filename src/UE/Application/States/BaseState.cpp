@@ -25,6 +25,11 @@ void BaseState::viewSms(unsigned int)
     logger.logError("Unexpected: viewSms");
 }
 
+void BaseState::sendSms(const SmsEntity& sms)
+{
+    logger.logError("Unexpected: sendSms");
+}
+
 void BaseState::handleTimeout()
 {
     logger.logError("Unexpected: handleTimeout");

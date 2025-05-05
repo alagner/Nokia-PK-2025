@@ -2,6 +2,7 @@
 
 #include "Messages/BtsId.hpp"
 #include "Messages/PhoneNumber.hpp"
+#include "SmsRepository/SmsEntity.h"
 
 namespace ue
 {
@@ -24,6 +25,7 @@ public:
     virtual ~IBtsPort() = default;
 
     virtual void sendAttachRequest(common::BtsId) = 0;
+    virtual void sendSms(const SmsEntity& sms) = 0;
 };
 
 }
