@@ -47,6 +47,7 @@ void UserPort::showConnected()
     menu.clearSelectionList();
     menu.addSelectionListItem("Compose SMS", "");
     menu.addSelectionListItem("View SMS", "");
+    menu.addSelectionListItem("Call", "");
 
     gui.showConnected();
 }
@@ -165,6 +166,17 @@ void UserPort::showEndedCall(const common::PhoneNumber &otherPhoneNumber, const 
 void UserPort::showCallFailed(const common::PhoneNumber &otherPhoneNumber, const std::string &errorMessage)
 {}
 
+void UserPort::showCallMenu()
+{
+    currentViewMode = view_details::VM_CALL_MENU;
+    IUeGui::IListViewMode &menu = gui.setListViewMode();
+    menu.clearSelectionList();
+    menu.addSelectionListItem("Dial Number", "Enter a number to call");
+    menu.addSelectionListItem("Call History", "View recent calls");
+    gui.showConnected(); //zmienić metodę
+}
+
+
 void UserPort::acceptCallback()
 {
     if (!handler)
@@ -192,6 +204,29 @@ void UserPort::acceptCallback()
             {
                 logger.logInfo("Compose SMS selected from SMS menu");
                 showMessageComp();
+                selectedIndexOpt = std::nullopt;
+            }
+        }
+    }
+    else if (currentViewMode == view_details::VM_CALL_MENU)
+    {
+        logger.logDebug("Accept in Call menu - getting selected index");
+        auto &listView = gui.setListViewMode();
+        auto indexPair = listView.getCurrentItemIndex();
+        selectedIndexOpt = indexPair.first ? std::optional<std::size_t>(indexPair.second) : std::nullopt;
+
+        if (selectedIndexOpt.has_value())
+        {
+            if (selectedIndexOpt.value() == 0)
+            {
+                logger.logInfo("Dial Number selected from Call menu");
+                // TODO: Implement dial number UI or action
+                selectedIndexOpt = std::nullopt;
+            }
+            else if (selectedIndexOpt.value() == 1)
+            {
+                logger.logInfo("Call History selected from Call menu");
+                // TODO: Implement call history UI or action
                 selectedIndexOpt = std::nullopt;
             }
         }

@@ -15,6 +15,7 @@ namespace ue{
         constexpr GuiViewMode VM_MESSAGE_VIEW = 3;
         constexpr GuiViewMode VM_MESSAGE_COMPOSE = 4;
         constexpr GuiViewMode VM_MESSAGE_MENU = 5;
+        constexpr GuiViewMode VM_CALL_MENU = 6;
     }
 
 

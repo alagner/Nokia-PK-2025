@@ -35,6 +35,8 @@ public:
     void showEndedCall(const common::PhoneNumber& otherPhoneNumber, const std::string& reason) override;
     void showCallFailed(const common::PhoneNumber& otherPhoneNumber, const std::string& errorMessage) override;
 
+    void showCallMenu() override;
+
     common::PhoneNumber getMessageRecipient() const override;
     std::string getMessageText() const override;
     common::PhoneNumber getCallRecipient() const override;

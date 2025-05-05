@@ -40,6 +40,8 @@ public:
                 (const common::PhoneNumber& otherPhoneNumber, const std::string& errorMessage),
                 (override));
 
+    MOCK_METHOD(void, showCallMenu, (), (override));
+
     MOCK_METHOD(common::PhoneNumber, getMessageRecipient, (), (const, final));
     MOCK_METHOD(std::string, getMessageText, (), (const, final));
     MOCK_METHOD(common::PhoneNumber, getCallRecipient, (), (const, override));

@@ -34,6 +34,8 @@ public:
                                const std::string& reason) = 0; // notify the user that the call has ended and why
     virtual void showCallFailed(const common::PhoneNumber& otherPhoneNumber, const std::string& errorMessage) = 0;
 
+    virtual void showCallMenu() = 0; // new method to show call menu
+
     virtual common::PhoneNumber getMessageRecipient() const = 0;
     virtual std::string getMessageText() const = 0;
     virtual common::PhoneNumber getCallRecipient() const = 0;
