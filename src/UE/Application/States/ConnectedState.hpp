@@ -18,6 +18,8 @@ public:
     // IUserEventsHandler interface
     void viewSmsList() override;
     void viewSms(unsigned int) override;
+    void sendSms(const SmsEntity& sms) override;
+    void composeSms() override;
 };
 
 }

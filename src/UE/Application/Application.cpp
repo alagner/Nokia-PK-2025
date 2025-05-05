@@ -33,6 +33,16 @@ void Application::viewSms(unsigned int index)
     context.state->viewSms(index);
 }
 
+void Application::sendSms(const SmsEntity& sms)
+{
+    context.state->sendSms(sms);
+}
+
+void Application::composeSms()
+{
+    context.state->composeSms();
+}
+
 void Application::handleTimeout()
 {
     context.state->handleTimeout();

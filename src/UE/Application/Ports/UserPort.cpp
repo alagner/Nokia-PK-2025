@@ -2,6 +2,9 @@
 #include "UeGui/IListViewMode.hpp"
 #include "UeGui/ITextMode.hpp"
 #include "SmsRepository/SmsRepository.h"
+#include "IUeGui.hpp"
+#include "UeGui/ISmsComposeMode.hpp"
+
 
 namespace ue
 {
@@ -46,7 +49,7 @@ void UserPort::showConnected()
         if (listIndex.first){
             switch (listIndex.second){
                 case 0: {
-                    logger.logError("Not implemented yet.");
+                    handler->composeSms();
                     break;
                 }
                 case 1: {
@@ -85,6 +88,7 @@ void UserPort::showSmsList(const std::vector<SmsEntity> & smsList)
 {
     IUeGui::IListViewMode& menu = gui.setListViewMode();
     menu.clearSelectionList();
+    gui.showNewSms(false);
     int smsAmount = smsList.size();
 
     for (auto sms = smsList.rbegin(); sms != smsList.rend(); ++sms){
@@ -112,6 +116,28 @@ void UserPort::showSmsList(const std::vector<SmsEntity> & smsList)
     gui.setRejectCallback([this](){
         showConnected();
     });
+}
+
+void UserPort::composeSms()
+{
+    IUeGui::ISmsComposeMode& composeMode = gui.setSmsComposeMode();
+    composeMode.clearSmsText();
+
+    gui.setAcceptCallback([this, &composeMode](){
+        auto number = composeMode.getPhoneNumber();
+        auto text = composeMode.getSmsText();
+        SmsEntity sms(phoneNumber.value, number.value, text, false);
+        handler->sendSms(sms);
+    });
+
+    gui.setRejectCallback([this](){
+        showConnected();
+    });
+}
+
+common::PhoneNumber UserPort::getPhoneNumber() const
+{
+    return phoneNumber;
 }
 
 }

@@ -77,8 +77,14 @@ void BtsPort::sendAttachRequest(common::BtsId btsId)
                                 common::PhoneNumber{}};
     msg.writeBtsId(btsId);
     transport.sendMessage(msg.getMessage());
+}
 
-
+void BtsPort::sendSms(const SmsEntity& sms)
+{
+    common::PhoneNumber phoneTo = static_cast<common::PhoneNumber>(sms.to);
+    common::OutgoingMessage msg(common::MessageId::Sms, phoneNumber, phoneTo);
+    msg.writeText(sms.text);
+    transport.sendMessage(msg.getMessage());
 }
 
 }

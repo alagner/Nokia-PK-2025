@@ -1,6 +1,7 @@
 #pragma once
 #include <gmock/gmock.h>
 #include "Ports/IBtsPort.hpp"
+#include "SmsRepository/SmsEntity.h"
 
 namespace ue
 {
@@ -25,6 +26,7 @@ public:
     ~IBtsPortMock() override;
 
     MOCK_METHOD(void, sendAttachRequest, (common::BtsId), (final));
+    MOCK_METHOD(void, sendSms, (const SmsEntity&), (final));
 };
 
 }

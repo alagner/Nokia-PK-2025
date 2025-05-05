@@ -16,6 +16,7 @@ public:
     void stop();
 
     void sendAttachRequest(common::BtsId) override;
+    void sendSms(const SmsEntity& sms);
 
 private:
     void handleMessage(BinaryMessage msg);

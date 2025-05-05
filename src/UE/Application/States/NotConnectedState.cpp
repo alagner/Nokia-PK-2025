@@ -18,4 +18,16 @@ void NotConnectedState::handleSib(common::BtsId btsId)
     context.setState<ConnectingState>();
 }
 
+void NotConnectedState::sendSms(const SmsEntity& sms)
+{
+    logger.logInfo("Cannot send SMS - not connected to the network");
+    context.user.showNotConnected();
+}
+
+void NotConnectedState::composeSms()
+{
+    logger.logInfo("Cannot compose SMS - not connected to the network");
+    context.user.showNotConnected();
+}
+
 }

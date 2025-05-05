@@ -9,15 +9,17 @@ namespace ue
 
 class IUserEventsHandler
 {
-public:
+   public:
     virtual void viewSmsList() = 0;
     virtual void viewSms(unsigned) = 0;
+    virtual void sendSms(const SmsEntity& sms) = 0;
+    virtual void composeSms() = 0;
     virtual ~IUserEventsHandler() = default;
 };
 
 class IUserPort
 {
-public:
+   public:
     virtual ~IUserPort() = default;
 
     virtual void showNotConnected() = 0;
@@ -25,7 +27,9 @@ public:
     virtual void showConnected() = 0;
     virtual void showSmsList(const std::vector<SmsEntity> &) = 0;
     virtual void showSms(const SmsEntity &) = 0;
+    virtual void composeSms() = 0;
     virtual void showNewSms() = 0;
+    virtual common::PhoneNumber getPhoneNumber() const = 0;
 };
 
 }
