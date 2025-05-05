@@ -144,4 +144,8 @@ void Application::handleTimeout()
     if (context.state)
         context.state->handleTimeout();
 }
+
+Context& Application::getContext() {
+    return context;
+}
 }

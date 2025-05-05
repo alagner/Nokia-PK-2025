@@ -52,6 +52,7 @@ public:
     void markSmsAsRead(std::size_t index);
     common::PhoneNumber getOwnPhoneNumber() const;
 
+    Context& getContext();
 
 private:
     Context context;
