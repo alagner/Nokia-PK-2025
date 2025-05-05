@@ -5,6 +5,7 @@
 #include <string>            // Include for handleUserAction parameter
 #include <vector>            // Include for displaySmsList parameter
 #include "Data/SmsData.hpp"  // Include for displaySmsList/viewSms parameters
+#include "IUeGui.hpp"
 
 namespace ue
 {
@@ -39,6 +40,7 @@ public:
     MOCK_METHOD(void, showDialing, (), (override));
     MOCK_METHOD(bool, getDialedNumber, (common::PhoneNumber&), (override));
     MOCK_METHOD(void, showIncomingCall, (const common::PhoneNumber&), (override));
+    MOCK_METHOD(IUeGui::ICallMode&, showCallMode, (), (override));
 
     
 };
