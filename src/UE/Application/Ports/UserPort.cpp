@@ -88,6 +88,7 @@ void UserPort::showSmsList(const std::vector<SmsEntity> & smsList)
 {
     IUeGui::IListViewMode& menu = gui.setListViewMode();
     menu.clearSelectionList();
+    gui.showNewSms(false);
     int smsAmount = smsList.size();
 
     for (auto sms = smsList.rbegin(); sms != smsList.rend(); ++sms){
@@ -120,7 +121,7 @@ void UserPort::showSmsList(const std::vector<SmsEntity> & smsList)
 void UserPort::composeSms()
 {
     IUeGui::ISmsComposeMode& composeMode = gui.setSmsComposeMode();
-    composeMode.setTitle("Compose SMS");
+    composeMode.clearSmsText();
 
     gui.setAcceptCallback([this, &composeMode](){
         auto number = composeMode.getPhoneNumber();

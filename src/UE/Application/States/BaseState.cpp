@@ -30,6 +30,11 @@ void BaseState::sendSms(const SmsEntity& sms)
     logger.logError("Unexpected: sendSms");
 }
 
+void BaseState::composeSms()
+{
+    logger.logError("Unexpected: composeSms");
+}
+
 void BaseState::handleTimeout()
 {
     logger.logError("Unexpected: handleTimeout");
