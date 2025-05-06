@@ -28,7 +28,6 @@ private:
     void showStatus(std::string args, std::ostream &os);
     void listAttachedUe(std::string args, std::ostream &os);
     void testCommands(std::string args, std::ostream &os);
-    void handleCall(std::string args, std::ostream &os);
 
     SyncGuardPtr syncGuard;
     common::PrefixedLogger logger;
