@@ -104,16 +104,23 @@ struct ApplicationConnectedTestSuite : ApplicationConnectingTestSuite
     }
 
     void showSmsListView(std::vector<SmsEntity>);
+    void recieveSms(std::string);
 };
 
 void ApplicationConnectedTestSuite::showSmsListView(std::vector<SmsEntity> testSmsVector)
 {
-    ON_CALL(smsRepositoryMock, getAll()).WillByDefault(Return(testSmsVector));
-
     EXPECT_CALL(smsRepositoryMock, getAll());
     EXPECT_CALL(userPortMock, showSmsList(testSmsVector));
 
     objectUnderTest.viewSmsList();
+}
+
+void ApplicationConnectedTestSuite::recieveSms(std::string text)
+{
+    EXPECT_CALL(userPortMock,showNewSms());
+    EXPECT_CALL(smsRepositoryMock,save(_));
+
+    objectUnderTest.handleSms(TEST_SENDER_NUMBER, text);
 }
 
 TEST_F(ApplicationConnectedTestSuite, shallDisConnectOnDisConnect)
@@ -124,41 +131,34 @@ TEST_F(ApplicationConnectedTestSuite, shallDisConnectOnDisConnect)
 
 TEST_F(ApplicationConnectedTestSuite, shallUserReceiveNotification)
 {
-    EXPECT_CALL(userPortMock,showNewSms());
-    EXPECT_CALL(smsRepositoryMock,save(_));
-    objectUnderTest.handleSms(TEST_SENDER_NUMBER,"Hello World!");
+    recieveSms("Hello World!");
 }
 
 struct ApplicationSmsListViewTestSuite : ApplicationConnectedTestSuite
 {
-    void showPopulatedSmsList();
+    ApplicationSmsListViewTestSuite(){
+        testSmsVector.push_back({TEST_SENDER_NUMBER.value, PHONE_NUMBER.value, "test1", true});
+        testSmsVector.push_back({PHONE_NUMBER.value, TEST_SENDER_NUMBER.value, "test2", true});
+        testSmsVector.push_back({TEST_SENDER_NUMBER.value, PHONE_NUMBER.value, "test3"});
+
+        smsRepositoryMock.database = testSmsVector;
+    }
     std::vector<SmsEntity> testSmsVector;
 };
 
-void ApplicationSmsListViewTestSuite::showPopulatedSmsList(){
-    testSmsVector.push_back({TEST_SENDER_NUMBER.value, PHONE_NUMBER.value, "test1", true});
-    testSmsVector.push_back({PHONE_NUMBER.value, TEST_SENDER_NUMBER.value, "test2", true});
-    testSmsVector.push_back({TEST_SENDER_NUMBER.value, PHONE_NUMBER.value, "test3"});
-
-    showSmsListView(testSmsVector);
-}
-
 TEST_F(ApplicationSmsListViewTestSuite, shallUserSeePopulatedSmsList)
 {
-    showPopulatedSmsList();
+    showSmsListView(testSmsVector);
 }
 
 TEST_F(ApplicationSmsListViewTestSuite, shallUserSeeEmptyList)
 {
-    showSmsListView(testSmsVector);
+    std::vector<SmsEntity> emptyList;
+    smsRepositoryMock.database.clear();
+    showSmsListView(emptyList);
 }
 
-struct ApplicationSmsViewTestSuite : ApplicationSmsListViewTestSuite
-{
-    ApplicationSmsViewTestSuite(){
-        showPopulatedSmsList();
-    }
-};
+struct ApplicationSmsViewTestSuite : ApplicationSmsListViewTestSuite {};
 
 TEST_F(ApplicationSmsViewTestSuite, shallUserReadSeenSmsAndExit)
 {
@@ -189,9 +189,12 @@ TEST_F(ApplicationSmsViewTestSuite, shallUserReadMultipleSmsAndExit)
 
     showSmsListView(testSmsVector);
 
-    EXPECT_CALL(userPortMock, showSms(testSmsVector[1]));
+    EXPECT_CALL(userPortMock, showSms(testSmsVector[2]));
+    EXPECT_CALL(smsRepositoryMock, saveAll(_, true));
     EXPECT_CALL(smsRepositoryMock, getAll());
-    objectUnderTest.viewSms(1);
+    objectUnderTest.viewSms(2);
+
+    testSmsVector[2].isRead = true;
 
     showSmsListView(testSmsVector);
 }
