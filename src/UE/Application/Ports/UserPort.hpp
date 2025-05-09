@@ -50,7 +50,7 @@ private:
     IUeGui& gui;
     common::PhoneNumber phoneNumber;
     IEventsHandler* handler = nullptr;
-    view_details::GuiViewMode currentViewMode = view_details::GuiViewMode::Default;
+    view_details::GuiViewMode currentViewMode { view_details::GuiViewMode::Default };
 };
 
 }
