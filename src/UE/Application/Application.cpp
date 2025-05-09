@@ -49,10 +49,10 @@ void Application::handleDisconnected(){
     context.state->handleDisconnected();
 }
 
-void Application::handleCallRequest(common::PhoneNumber from) {
-    logger.logInfo("Incoming Call");
-    context.state->handleCallRequest(from);
-}
+//void Application::handleCallRequest(common::PhoneNumber from) {
+//    logger.logInfo("Incoming Call");
+//    context.state->handleCallRequest(from);
+//}
 
 void Application::handleMessageReceive( common::PhoneNumber sender, std::string text){
     logger.logInfo("SMS received, sender: ", sender);
