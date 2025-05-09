@@ -5,7 +5,7 @@
 
 namespace ue
 {
-using view_details::GuiViewMode = view_mode; 
+using view_mode = view_details::GuiViewMode;
 
 UserPort::UserPort(common::ILogger &logger, IUeGui &gui, common::PhoneNumber phoneNumber)
     : logger(logger, "[USER-PORT]"), gui(gui), phoneNumber(phoneNumber)
@@ -142,7 +142,7 @@ void UserPort::showMessageView(const SmsMessage &message)
 void UserPort::showNotify(const std::string &title, const std::string &message)
 {
 
-    currentViewMode = view_mode::default;
+    currentViewMode = view_mode::Default;
     logger.logInfo("Showing Alert: ", title);
     IUeGui::ITextMode &alerter = gui.setAlertMode();
     alerter.setText(title + "\n\n" + message);
