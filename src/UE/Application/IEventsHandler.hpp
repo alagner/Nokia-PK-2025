@@ -8,16 +8,15 @@
 
 namespace ue{
     namespace view_details {
-        using GuiViewMode = int;
 
         enum class GuiViewMode {
-            default,            //0
-            menu,               //1
-            message_list,       //2
-            message_view,       //3
-            message_compose,    //4
-            message_menu,       //5
-            call_menu           //6
+            Default,            //0
+            Menu,               //1
+            Message_list,       //2
+            Message_view,       //3
+            Message_compose,    //4
+            Message_menu,       //5
+            Call_menu           //6
         };
     }
 
