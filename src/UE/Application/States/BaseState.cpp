@@ -52,4 +52,8 @@ void BaseState::handleUiBack(){
     logger.logError("Unexpected: handleUiBack");
 }
 
+void BaseState::handleCallRequest(common::PhoneNumber from) {
+    logger.logError("Unexpected: handleCallRequest");
+}
+
 }

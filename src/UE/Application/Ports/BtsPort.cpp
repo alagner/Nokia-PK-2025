@@ -48,6 +48,10 @@ void BtsPort::handleMessage(BinaryMessage msg){
             handler->handleMessageReceive(from, reader.readRemainingText());
             break;
         }
+        case common::MessageId::CallRequest:{
+            //TODO: handler->
+            break;
+        }
         default:
             logger.logError("unknow message: ", msgId, ", from: ", from);
 

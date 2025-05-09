@@ -34,6 +34,7 @@ public:
     void handleMessageReceive( common::PhoneNumber sender, std::string text) override;
     void handleMessageSentResult(common::PhoneNumber to, bool success) override;
     void handleMessageComposeResult(common::PhoneNumber reciver, const std::string& text) override;
+    void handleCallRequest(common::PhoneNumber from) override;
 
 
 private:
