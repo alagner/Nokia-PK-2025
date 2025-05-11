@@ -139,7 +139,7 @@ namespace ue
     {
         currentViewMode = details::VIEW_MODE_UNKNOWN;
         logger.logInfo("Showing incoming call screen from: ", from);
-        auto& callMode = gui.setCallMode();
+        auto &callMode = gui.setCallMode();
         callMode.appendIncomingText("Incoming call from: " + common::to_string(from));
     }
 
@@ -147,7 +147,7 @@ namespace ue
     {
         currentViewMode = details::VIEW_MODE_UNKNOWN;
         logger.logInfo("Showing talking screen with: ", peer);
-        auto& callMode = gui.setCallMode();
+        auto &callMode = gui.setCallMode();
         callMode.appendIncomingText("Connected with: " + common::to_string(peer));
     }
 
@@ -236,6 +236,11 @@ namespace ue
     void UserPort::clearOutgoingText()
     {
         gui.setCallMode().clearOutgoingText();
+    }
+
+    common::PhoneNumber UserPort::getDialedPhoneNumber() const
+    {
+        return gui.setDialMode().getPhoneNumber();
     }
 
 }

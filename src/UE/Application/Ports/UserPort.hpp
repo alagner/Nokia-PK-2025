@@ -37,6 +37,8 @@ namespace ue
         common::PhoneNumber getSmsRecipient() const override;
         std::string getSmsText() const override;
 
+        common::PhoneNumber getDialedPhoneNumber() const;
+
         void appendIncomingText(const std::string &text) override;
         void clearOutgoingText() override;
         std::string getCallText() const override;
@@ -51,7 +53,7 @@ namespace ue
         common::PhoneNumber phoneNumber;
         IEventsHandler *handler = nullptr;
         details::GuiViewMode currentViewMode = details::VIEW_MODE_UNKNOWN;
-        IUeGui::ISmsComposeMode* currentSmsMode = nullptr;
+        IUeGui::ISmsComposeMode *currentSmsMode = nullptr;
     };
 
 }

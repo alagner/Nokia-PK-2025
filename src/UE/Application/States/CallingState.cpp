@@ -18,7 +18,8 @@ namespace ue
 
     void CallingState::handleUiAction(std::optional<std::size_t>)
     {
-        common::PhoneNumber recipent = context.user.getSmsRecipient();
+        // Change from getSmsRecipient() to getDialedPhoneNumber()
+        common::PhoneNumber recipent = context.user.getDialedPhoneNumber();
 
         logger.logInfo("Dialing started, calling number ", recipent);
 

@@ -35,6 +35,8 @@ namespace ue
         virtual common::PhoneNumber getSmsRecipient() const = 0;
         virtual std::string getSmsText() const = 0;
 
+        virtual common::PhoneNumber getDialedPhoneNumber() const = 0;
+
         virtual void appendIncomingText(const std::string &text) = 0;
         virtual void clearOutgoingText() = 0;
         virtual std::string getCallText() const = 0;
