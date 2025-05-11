@@ -23,7 +23,6 @@ namespace ue
 
         gui.setAcceptCallback(std::bind(&UserPort::acceptCallback, this));
         gui.setRejectCallback(std::bind(&UserPort::rejectCallback, this));
-        gui.setMailCallback(std::bind(&UserPort::mailCallback, this));
     }
 
     void UserPort::stop()
@@ -32,7 +31,6 @@ namespace ue
 
         gui.setAcceptCallback(nullptr);
         gui.setRejectCallback(nullptr);
-        gui.setMailCallback(nullptr);
     }
 
     void UserPort::showNotConnected()
@@ -63,31 +61,7 @@ namespace ue
 
     void UserPort::mailCallback()
     {
-        if (!handler)
-            return;
-
-        logger.logDebug("Mail button pressed (SMS functionality)");
-
-        if (currentViewMode == details::VIEW_MODE_SMS_COMPOSE)
-        {
-            logger.logInfo("Mail button in compose mode - sending message");
-            auto recipient = getSmsRecipient();
-            auto text = getSmsText();
-
-            if (!recipient.isValid() || text.empty())
-            {
-                showAlert("Error", "Invalid recipient or empty text");
-                return;
-            }
-            handler->handleSmsComposeResult(recipient, text);
-
-            gui.getSmsComposeMode().clearSmsText();
-        }
-        else
-        {
-            logger.logDebug("Returning to main menu");
-            showConnected();
-        }
+        acceptCallback();
     }
 
     void UserPort::showNewSms()
@@ -157,24 +131,24 @@ namespace ue
     {
         currentViewMode = details::VIEW_MODE_SMS_COMPOSE;
         logger.logInfo("Showing SMS Compose screen");
-        auto &composeMode = gui.setSmsComposeMode();
-
-        composeMode.clearSmsText();
-        composeMode.setPhoneNumber(common::PhoneNumber{});
+        currentSmsMode = &gui.setSmsComposeMode();
+        currentSmsMode->clearSmsText();
     }
 
     void UserPort::showIncomingCall(common::PhoneNumber from)
     {
         currentViewMode = details::VIEW_MODE_UNKNOWN;
         logger.logInfo("Showing incoming call screen from: ", from);
-        gui.setIncomingCallMode(from);
+        auto& callMode = gui.setCallMode();
+        callMode.appendIncomingText("Incoming call from: " + common::to_string(from));
     }
 
     void UserPort::showTalkingScreen(common::PhoneNumber peer)
     {
         currentViewMode = details::VIEW_MODE_UNKNOWN;
         logger.logInfo("Showing talking screen with: ", peer);
-        gui.setTalkingMode(peer);
+        auto& callMode = gui.setCallMode();
+        callMode.appendIncomingText("Connected with: " + common::to_string(peer));
     }
 
     void UserPort::showDialMode()
@@ -242,12 +216,12 @@ namespace ue
 
     common::PhoneNumber UserPort::getSmsRecipient() const
     {
-        return gui.getSmsComposeMode().getPhoneNumber();
+        return currentSmsMode ? currentSmsMode->getPhoneNumber() : common::PhoneNumber{};
     }
 
     std::string UserPort::getSmsText() const
     {
-        return gui.getSmsComposeMode().getSmsText();
+        return currentSmsMode ? currentSmsMode->getSmsText() : "";
     }
     std::string UserPort::getCallText() const
     {

@@ -51,6 +51,7 @@ namespace ue
         common::PhoneNumber phoneNumber;
         IEventsHandler *handler = nullptr;
         details::GuiViewMode currentViewMode = details::VIEW_MODE_UNKNOWN;
+        IUeGui::ISmsComposeMode* currentSmsMode = nullptr;
     };
 
 }
