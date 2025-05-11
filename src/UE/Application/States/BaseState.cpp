@@ -65,5 +65,14 @@ namespace ue
     {
         logger.logError("Unexpected: handleSmsComposeResult for: ", to, ", text: ", textMessage);
     }
+    void BaseState::handleCallRequest(common::PhoneNumber from)
+    {
+        logger.logError("Unexpected: handleCallRequest for: ", from);
+    }
+    void BaseState::handleDialRequest(common::PhoneNumber to)
+    {
+        logger.logInfo("Ignored dial request to: ", to);
+    }
 
+    
 }

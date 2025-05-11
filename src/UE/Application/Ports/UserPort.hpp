@@ -25,8 +25,10 @@ public:
     void showSmsView(const SmsMessage& textMessage) override;
     void showAlert(const std::string& title, const std::string& textMessage) override;
     void showSmsCompose() override;
+    void showDialCompose() override;
     common::PhoneNumber getSmsRecipient() override;
     std::string getSmsTextMessage() override;
+    void showIncomingCall(common::PhoneNumber from) override;
 
 private:
     void onAccept(); // reff to callback

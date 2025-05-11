@@ -49,6 +49,7 @@ void UserPort::showConnected()
     menu.clearSelectionList();
     menu.addSelectionListItem("Compose SMS", "Write new SMS");
     menu.addSelectionListItem("View SMS", "Check received messages");
+    menu.addSelectionListItem("Dial Menu", "Call Someone");
     gui.showConnected();
 }
 
@@ -120,27 +121,47 @@ void UserPort::onAccept()
     {
         auto& listView = gui.setListViewMode();
         auto [hasSelection, index] = listView.getCurrentItemIndex();
-        if (hasSelection) selectedIndex = index;
+        if (hasSelection)
+            selectedIndex = index;
 
-        if (currentViewMode == details::GuiViewMode::SmsMenu && selectedIndex.has_value())
+        if (currentViewMode == details::GuiViewMode::MainMenu && selectedIndex.has_value())
         {
-            if (selectedIndex.value() == 0)
+            switch (selectedIndex.value())
             {
-                logger.logInfo("Compose SMS selected");
-                showSmsCompose();
-                selectedIndex = std::nullopt;
+                case 2: // Dial Menu
+                    logger.logInfo("Dial Menu selected");
+                    showDialCompose();
+                    selectedIndex = std::nullopt;
+                    break;
+                default:
+                    break;
+            }
+        }
+        else if (currentViewMode == details::GuiViewMode::SmsMenu && selectedIndex.has_value())
+        {
+            switch (selectedIndex.value())
+            {
+                case 0: // Compose SMS
+                    logger.logInfo("Compose SMS selected");
+                    showSmsCompose();
+                    selectedIndex = std::nullopt;
+                    break;
+                default:
+                    break;
             }
         }
     }
-    else if (currentViewMode == details::GuiViewMode::SmsCompose)
+    else if (currentViewMode == details::GuiViewMode::SmsCompose ||
+             currentViewMode == details::GuiViewMode::DialCompose)
     {
-        logger.logDebug("Accept pressed in SMS compose screen");
+        // W tych trybach "Accept" nie przekazuje indeksu
         selectedIndex = std::nullopt;
     }
 
     logger.logDebug("Accept triggered, mode: ", static_cast<int>(currentViewMode));
     handler->handleUiAction(selectedIndex);
 }
+
 
 void UserPort::onReject()
 {
@@ -169,8 +190,21 @@ void UserPort::onEnvelopeClicked()
 
         handler->handleSmsCompose(recipient, text);
         gui.getSmsComposeMode().clearSmsText();
-    }
-    else
+    }else if (currentViewMode == details::GuiViewMode::DialCompose)
+    {
+        logger.logInfo("Dialing number...");
+    
+        auto number = gui.getSmsComposeMode().getPhoneNumber();
+    
+        if (!number.isValid())
+        {
+            showAlert("Error", "Invalid phone number.");
+            return;
+        }
+    
+        handler->handleDialRequest(number);
+        gui.getSmsComposeMode().clearSmsText();
+    }else
     {
         currentViewMode = details::GuiViewMode::SmsMenu;
         auto& menu = gui.setListViewMode();
@@ -189,6 +223,16 @@ void UserPort::showSmsCompose()
     composeMode.clearSmsText();
     composeMode.setPhoneNumber(common::PhoneNumber{});
 }
+void UserPort::showDialCompose()
+{
+    currentViewMode = details::GuiViewMode::DialCompose;
+    logger.logInfo("Opening dial compose window");
+
+    auto& dialMode = gui.setSmsComposeMode(); // Reuse tego samego pola, co SMS
+    dialMode.clearSmsText();
+    dialMode.setPhoneNumber(common::PhoneNumber{});
+}
+
 
 common::PhoneNumber UserPort::getSmsRecipient()
 {
@@ -199,5 +243,14 @@ std::string UserPort::getSmsTextMessage()
 {
     return gui.getSmsComposeMode().getSmsText();
 }
+
+void UserPort::showIncomingCall(common::PhoneNumber from)
+{
+    currentViewMode = details::GuiViewMode::Unknown;
+    logger.logInfo("Incoming call from: ", from);
+    auto& alertView = gui.setAlertMode();
+    alertView.setText("Incoming call from:\n" + common::to_string(from) + "\nAccept or Reject");
+}
+
 
 } // namespace ue

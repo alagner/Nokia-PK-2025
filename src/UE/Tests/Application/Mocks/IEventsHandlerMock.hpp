@@ -27,6 +27,10 @@ namespace ue
         // MISSING ONES (add these!)
         MOCK_METHOD(void, handleSmsSent, (common::PhoneNumber to, bool succeed), (override));
         MOCK_METHOD(void, handleSmsCompose, (common::PhoneNumber to, const std::string& textMessage), (override));
+
+        MOCK_METHOD(void, handleCallRequest, (common::PhoneNumber from), (override));
+        MOCK_METHOD(void, handleDialRequest, (common::PhoneNumber from), (override));
+
     };
 
 } // namespace ue
