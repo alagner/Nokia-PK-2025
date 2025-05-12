@@ -83,6 +83,18 @@ TEST_F(ApplicationMiscTestFixture, shallReturnOwnPhoneNumber)
     EXPECT_EQ(objectUnderTest.getOwnPhoneNumber(), PHONE_NUMBER);
 }
 
+// Test 2: Sprawdza, czy aplikacja udostępnia poprawny kontekst.
+TEST_F(ApplicationMiscTestFixture, shallProvideValidContext)
+{
+    Context& context = objectUnderTest.getContext();
 
+   
+    EXPECT_EQ(&context.logger, &loggerMock);
+    EXPECT_EQ(&context.bts, &btsPortMock);
+    EXPECT_EQ(&context.user, &userPortMock);
+    EXPECT_EQ(&context.timer, &timerPortMock);
+    EXPECT_EQ(&context.app, &objectUnderTest);
+    ASSERT_NE(context.state, nullptr); 
+}
 
 } // namespace ue
