@@ -2,25 +2,37 @@
 
 #include "ITimerPort.hpp"
 #include "Logger/PrefixedLogger.hpp"
+#include <thread>
+#include <atomic>
+
+using namespace std;
 
 namespace ue
 {
 
-class TimerPort : public ITimerPort
-{
-public:
-    TimerPort(common::ILogger& logger);
+    class TimerPort : public ITimerPort
+    {
+    public:
+        TimerPort(common::ILogger &logger);
 
-    void start(ITimerEventsHandler& handler);
-    void stop();
+        void start(ITimerEventsHandler &handler);
+        void stop();
 
-    // ITimerPort interface
-    void startTimer(Duration duration) override;
-    void stopTimer() override;
+        // ITimerPort interface
+        void startTimer(Duration duration) override;
+        void stopTimer() override;
 
-private:
-    common::PrefixedLogger logger;
-    ITimerEventsHandler* handler = nullptr;
-};
+        ~TimerPort();
+
+    private:
+        common::PrefixedLogger logger;
+        ITimerEventsHandler *handler = nullptr;
+
+        unique_ptr<std::thread> workerThread;
+        atomic<bool> isTimerActive;
+
+        void runTimer(Duration duration);
+        void joinThread();
+    };
 
 }
