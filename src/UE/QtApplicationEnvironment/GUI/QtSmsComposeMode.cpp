@@ -75,4 +75,16 @@ void QtSmsComposeMode::setSmsText(const std::string &value)
     emit setSmsTextSignal(QString::fromStdString(value));
 }
 
+std::pair<common::PhoneNumber, std::string> QtSmsComposeMode::getComposedSmsData()
+{
+    return {getPhoneNumber(), getSmsText()};
+}
+
+void QtSmsComposeMode::setPhoneNumber(const PhoneNumber &phoneNumber)
+{
+    QLineEdit *phoneEdit = findChild<QLineEdit *>();
+    if (phoneEdit)
+        phoneEdit->clear();
+}
+
 }

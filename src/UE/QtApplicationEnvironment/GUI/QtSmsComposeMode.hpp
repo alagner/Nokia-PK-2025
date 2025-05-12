@@ -23,6 +23,9 @@ public:
     void activateForViewingSms();
     void setSmsText(const std::string&);
 
+    std::pair<common::PhoneNumber, std::string> getComposedSmsData() override;
+    void setPhoneNumber(const PhoneNumber& phoneNumber) override;
+
 private:
     void constructGUI();
     void connectSignals();

@@ -14,6 +14,8 @@ public:
     virtual PhoneNumber getPhoneNumber() const = 0;
     virtual std::string getSmsText() const = 0;
     virtual void clearSmsText()= 0;
+    virtual std::pair<common::PhoneNumber, std::string> getComposedSmsData() = 0;
+    virtual void setPhoneNumber(const PhoneNumber&) =0;
 };
 
 }

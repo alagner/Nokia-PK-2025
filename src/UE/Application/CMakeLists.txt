@@ -21,6 +21,10 @@ set(APPLICATION_SOURCES
         States/ViewingSmsListState.cpp
         States/ViewingSmsState.cpp
         States/ComposingSmsState.cpp
+        States/IncomingCallState.cpp
+        States/OutgoingCallState.cpp
+        States/DialingState.cpp
+
 )
 
 #add_library(${PROJECT_NAME} ${SRC_LIST})
