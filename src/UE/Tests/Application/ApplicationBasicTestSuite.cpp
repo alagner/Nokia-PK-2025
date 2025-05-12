@@ -122,6 +122,25 @@ TEST_F(ApplicationBasicTestFixture, shallTransitionToNotConnectedOnDisconnectWhe
     EXPECT_CALL(userPortMock, showConnecting());
     objectUnderTest.handleSib(BTS_ID); // Powinno znowu zainicjować proces łączenia
 }
+// test sprawdzający odbiór SMS w stanie Connected
+TEST_F(ApplicationBasicTestFixture, shallStoreAndIndicateNewSmsWhenConnected)
+{
+    ensureConnectedState();
 
+    const common::PhoneNumber sender{123};
+    const std::string smsText = "Simple test SMS";
+
+  
+    EXPECT_CALL(userPortMock, showNewSms(true));
+
+    objectUnderTest.handleSms(sender, smsText);
+
+    // Weryfikacja, czy SMS został zapisany
+    const auto& smsDb = objectUnderTest.getSmsDb();
+    ASSERT_EQ(smsDb.size(), 1);
+    EXPECT_EQ(smsDb[0].from, sender);
+    EXPECT_EQ(smsDb[0].text, smsText);
+    EXPECT_FALSE(smsDb[0].isRead);
+}
 
 } // namespace ue
