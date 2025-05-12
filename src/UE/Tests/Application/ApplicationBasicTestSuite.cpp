@@ -107,6 +107,21 @@ TEST_F(ApplicationBasicTestFixture, shallTransitionToConnectedStateOnAttachAccep
     objectUnderTest.handleAttachAccept();
 
 }
+// test sprawdzający obsługę rozłączenia z BTS
+TEST_F(ApplicationBasicTestFixture, shallTransitionToNotConnectedOnDisconnectWhenConnected)
+{
+    ensureConnectedState(); 
+
+    EXPECT_CALL(timerPortMock, stopTimer()).Times(AtLeast(1)); 
+    EXPECT_CALL(userPortMock, showNotConnected());
+
+    objectUnderTest.handleDisconnect();
+
+    EXPECT_CALL(btsPortMock, sendAttachRequest(BTS_ID));
+    EXPECT_CALL(timerPortMock, startTimer(std::chrono::milliseconds(500)));
+    EXPECT_CALL(userPortMock, showConnecting());
+    objectUnderTest.handleSib(BTS_ID); // Powinno znowu zainicjować proces łączenia
+}
 
 
 } // namespace ue
