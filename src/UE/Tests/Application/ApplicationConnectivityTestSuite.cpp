@@ -98,6 +98,22 @@ TEST_F(ApplicationConnectivityTestFixture, shallStartInNotConnectedAndTransition
 
 }
 
+// Test 2: Sprawdza przejście ze stanu Connecting do Connected po otrzymaniu AttachAccept.
+TEST_F(ApplicationConnectivityTestFixture, shallTransitionFromConnectingToConnectedOnAttachAccept)
+{
+    
+    enterConnectingState();
+
+   
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(userPortMock, showConnected());
+    EXPECT_CALL(userPortMock, showNewSms(false));
+
+    objectUnderTest.handleAttachAccept();
+
+    
+}
+
 
 
 } // namespace ue
