@@ -133,5 +133,18 @@ TEST_F(ApplicationConnectivityTestFixture, shallTransitionFromConnectingToNotCon
     objectUnderTest.handleSib(BTS_ID);
 }
 
+// Test 4: Sprawdza obsługę timeoutu w stanie Connecting.
+TEST_F(ApplicationConnectivityTestFixture, shallTransitionToNotConnectedOnTimeoutInConnectingState)
+{
+   
+    enterConnectingState();
+
+   
+    EXPECT_CALL(timerPortMock, stopTimer()); 
+    EXPECT_CALL(userPortMock, showNotConnected());
+
+    objectUnderTest.handleTimeout(); 
+   
+}
 
 } // namespace ue
