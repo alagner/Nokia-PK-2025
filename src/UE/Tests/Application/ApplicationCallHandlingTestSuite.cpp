@@ -138,5 +138,28 @@ TEST_F(ApplicationMiscTestFixture, shallMarkSmsAsReadAndUpdateIndicator)
     EXPECT_TRUE(smsDb[0].isRead); 
     EXPECT_TRUE(smsDb[1].isRead); 
 }
+// Test 4: Sprawdza próbę oznaczenia nieistniejącego SMS jako przeczytany.
+TEST_F(ApplicationMiscTestFixture, shallNotCrashAndNotChangeIndicatorOnMarkingInvalidSmsIndex)
+{
+    ensureConnectedState();
+
+    const common::PhoneNumber sender{125};
+    const std::string smsText = "Some SMS";
+
+   
+    EXPECT_CALL(userPortMock, showNewSms(true));
+    objectUnderTest.handleSms(sender, smsText);
+    Mock::VerifyAndClearExpectations(&userPortMock);
+
+   
+    EXPECT_CALL(userPortMock, showNewSms(_)).Times(0); 
+    ASSERT_NO_THROW(objectUnderTest.markSmsAsRead(99)); 
+    Mock::VerifyAndClearExpectations(&userPortMock);
+
+    
+    const auto& smsDb = objectUnderTest.getSmsDb();
+    ASSERT_EQ(smsDb.size(), 1);
+    EXPECT_FALSE(smsDb[0].isRead);
+}
 
 } // namespace ue
