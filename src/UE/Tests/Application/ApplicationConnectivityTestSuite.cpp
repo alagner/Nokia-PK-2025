@@ -114,6 +114,24 @@ TEST_F(ApplicationConnectivityTestFixture, shallTransitionFromConnectingToConnec
     
 }
 
+// Test 3: Sprawdza przejście ze stanu Connecting do NotConnected po otrzymaniu AttachReject.
+TEST_F(ApplicationConnectivityTestFixture, shallTransitionFromConnectingToNotConnectedOnAttachReject)
+{
+    
+    enterConnectingState();
+
+    
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(userPortMock, showNotConnected());
+
+    objectUnderTest.handleAttachReject();
+
+    
+    EXPECT_CALL(btsPortMock, sendAttachRequest(BTS_ID));
+    EXPECT_CALL(timerPortMock, startTimer(std::chrono::milliseconds(500)));
+    EXPECT_CALL(userPortMock, showConnecting());
+    objectUnderTest.handleSib(BTS_ID);
+}
 
 
 } // namespace ue
