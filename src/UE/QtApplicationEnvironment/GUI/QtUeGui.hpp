@@ -43,7 +43,6 @@ public:
     void setCloseGuard(CloseGuard closeGuard) override;
     void setAcceptCallback(Callback) override;
     void setRejectCallback(Callback) override;
-    void setEnvelopeCallback(Callback) override;
 
     void setTitle(const std::string& title) override;
     void showConnected() override;
@@ -60,9 +59,6 @@ public:
     ITextMode& setAlertMode() override;
     ITextMode& setViewTextMode() override;
 
-    ISmsComposeMode& setComposeSmsMode() override;
-    ISmsComposeMode& getSmsComposeMode() override;
-
     int addModeWidget(QWidget *widget);
 
 signals:
@@ -78,7 +74,6 @@ private:
     IUeGui::Callback acceptCallback;
     IUeGui::Callback rejectCallback;
     IUeGui::Callback homeCallback;
-    IUeGui::Callback envelopeCallback;
 
     void initGUI();
     void initInternalSignals();

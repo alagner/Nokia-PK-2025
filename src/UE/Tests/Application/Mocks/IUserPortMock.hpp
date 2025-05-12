@@ -30,15 +30,11 @@ namespace ue
         MOCK_METHOD(void, showSmsList, (const std::vector<SmsMessage>& textMessages), (override)); // <--- brakowało!
         MOCK_METHOD(void, showSmsView, (const SmsMessage& textMessage), (override)); // <--- brakowało!
         MOCK_METHOD(void, showSmsCompose, (), (override));
-        MOCK_METHOD(void, showDialCompose, (), (override));
         MOCK_METHOD(common::PhoneNumber, getSmsRecipient, (), (override));
         MOCK_METHOD(std::string, getSmsTextMessage, (), (override));
 
         // Generic alert view
         MOCK_METHOD(void, showAlert, (const std::string& title, const std::string& textMessage), (override));
-
-        MOCK_METHOD(void, showIncomingCall, (common::PhoneNumber from), (override));
-
     };
 
 } // namespace ue

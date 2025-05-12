@@ -89,5 +89,4 @@ namespace ue {
         bool success = db.markLastOutgoingAsFailed();
         EXPECT_FALSE(success) << "No outgoing message to mark as failed";
     }
-
 }

@@ -14,8 +14,6 @@ public:
     void handleUiAction(std::optional<std::size_t> selectedIndex) override;
     void handleUiBack() override;
     void handleSmsSent(common::PhoneNumber to, bool succeed) override;
-    void handleCallRequest(common::PhoneNumber from) override;
-    void handleDialRequest(common::PhoneNumber to) override;
 
     void handleSib(common::BtsId) override;
 private:

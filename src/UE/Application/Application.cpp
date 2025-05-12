@@ -105,20 +105,4 @@ void Application::handleUiBack()
         logger.logError("handleUiBack called with no active state!");
 }
 
-void Application::handleCallRequest(common::PhoneNumber from)
-{
-    logger.logInfo("Call request received from: ", from);
-
-    if (context.state)
-        context.state->handleCallRequest(from);
-    else
-        logger.logError("handleCallRequest called with no active state!");
-}
-
-void Application::handleDialRequest(common::PhoneNumber to)
-{
-    logger.logDebug("Application: dial request to ", to);
-    context.state->handleDialRequest(to);
-}
-
 }

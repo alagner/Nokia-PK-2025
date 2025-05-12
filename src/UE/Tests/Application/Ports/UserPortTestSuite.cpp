@@ -25,7 +25,6 @@ protected:
 
     UserPortTestSuite()
     {
-        EXPECT_CALL(guiMock, setEnvelopeCallback(_)).Times(::testing::AnyNumber());
         EXPECT_CALL(guiMock, setTitle(HasSubstr(common::to_string(PHONE_NUMBER)))); // Already had this
         // Expect the callbacks to be set during start()
         EXPECT_CALL(guiMock, setAcceptCallback(_)); // Use '_' to match any callback function object
