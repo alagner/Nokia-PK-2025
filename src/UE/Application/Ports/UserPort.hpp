@@ -25,8 +25,11 @@ public:
     void showSmsView(const SmsMessage& textMessage) override;
     void showAlert(const std::string& title, const std::string& textMessage) override;
     void showSmsCompose() override;
+    void showDialCompose() override;
+    common::PhoneNumber getDialedPhoneNumber() const override;
     common::PhoneNumber getSmsRecipient() override;
     std::string getSmsTextMessage() override;
+    void showIncomingCall(common::PhoneNumber from) override;
 
 private:
     void onAccept(); // reff to callback
@@ -36,6 +39,7 @@ private:
     common::PrefixedLogger logger;
     IUeGui& gui;
     common::PhoneNumber phoneNumber;
+    common::PhoneNumber dialedPhoneNumber;
     IEventsHandler* handler = nullptr;
     details::GuiViewMode currentViewMode = details::GuiViewMode::Unknown;
 };

@@ -65,6 +65,11 @@
                         handler->handleSmsSent(originalRecipient, false);
                     break;
                 }
+            case common::MessageId::CallRequest:
+                {
+                    handler->handleCallRequest(from);
+                    break;
+                }
             //TODO: add more cases here
 
             default:
@@ -108,5 +113,19 @@
         msg.writeText(textMessage);
         transport.sendMessage(msg.getMessage());
     }
+
+    void BtsPort::sendCallRequest(common::PhoneNumber to)
+        {
+            logger.logInfo("Sending call request to: ", to);
+            common::OutgoingMessage msg{common::MessageId::CallRequest, phoneNumber, to};
+            transport.sendMessage(msg.getMessage());
+        }
+
+    void BtsPort::sendCallDropped(common::PhoneNumber to)
+        {
+            logger.logInfo("Sending call dropped to: ", to);
+            common::OutgoingMessage msg{common::MessageId::CallDropped, phoneNumber, to};
+            transport.sendMessage(msg.getMessage());
+        }
 
 }

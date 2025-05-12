@@ -28,6 +28,8 @@ public:
     void handleUiBack() override;
     void handleSmsSent(common::PhoneNumber to, bool succeed) override;
     void handleSmsCompose(common::PhoneNumber to, const std::string& textMessage) override;
+    void handleCallRequest(common::PhoneNumber from) override;
+    void handleDialRequest(common::PhoneNumber to) override;
 
 protected:
     Context& context;

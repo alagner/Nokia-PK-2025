@@ -2,6 +2,9 @@
 #include "NotConnectedState.hpp"
 #include "ViewingSmsListState.hpp"
 #include "ComposingSmsState.hpp"
+#include "DialingState.hpp"
+#include "IncomingCallState.hpp"
+#include "OutgoingCallState.hpp"
 
 namespace ue
 {
@@ -55,6 +58,10 @@ void ConnectedState::handleUiAction(std::optional<std::size_t> selectedIndex)
         logger.logInfo("User chose: Open SMS Inbox");
         context.setState<ViewingSmsListState>();
         break;
+     case 2:
+         logger.logInfo("User chose: Dial number");
+         context.setState<DialingState>();
+         break;
     default:
         logger.logInfo("Unexpected menu index: ", index);
         break;
@@ -75,6 +82,7 @@ void ConnectedState::handleSmsSent(common::PhoneNumber to, bool succeed)
 void ConnectedState::handleUiBack()
 {
     logger.logInfo("Back button pressed on main menu – no action defined");
+    context.setState<ConnectedState>();
 }
 
 void ConnectedState::handleSib(common::BtsId btsId)
@@ -82,6 +90,16 @@ void ConnectedState::handleSib(common::BtsId btsId)
     logger.logInfo("Ignoring SIB in ConnectedState from BTS: ", btsId);
 }
 
+void ConnectedState::handleCallRequest(common::PhoneNumber from)
+{
+    logger.logInfo("Received call request from: ", from);
+    context.setState<IncomingCallState>(from);
+}
+void ConnectedState::handleDialRequest(common::PhoneNumber to)
+{
+    logger.logInfo("Dial request to: ", to);
+    context.setState<OutgoingCallState>(to);
+}
 
 
 }

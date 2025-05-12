@@ -24,8 +24,12 @@ public:
     virtual void showSmsView(const SmsMessage& textMessage) = 0;
     virtual void showAlert(const std::string& title, const std::string& textMessage) = 0;
     virtual void showSmsCompose() = 0;
+    virtual void showDialCompose() = 0;
     virtual common::PhoneNumber getSmsRecipient() = 0;
     virtual std::string getSmsTextMessage() = 0;
+    virtual void showIncomingCall(common::PhoneNumber from) = 0;
+
+    virtual common::PhoneNumber getDialedPhoneNumber() const = 0;
 
     //TODO: here
 };

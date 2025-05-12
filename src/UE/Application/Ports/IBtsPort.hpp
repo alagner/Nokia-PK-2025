@@ -17,7 +17,7 @@ public:
     virtual void handleDisconnected() = 0;
     virtual void handleSmsReceive(common::PhoneNumber from, std::string messageText) = 0;
     virtual void handleSmsSent(common::PhoneNumber to, bool succeed) = 0;
-
+    virtual void handleCallRequest(common::PhoneNumber to) = 0;
 };
 
 class IBtsPort
@@ -27,6 +27,8 @@ public:
 
     virtual void sendAttachRequest(common::BtsId) = 0;
     virtual void sendSms(common::PhoneNumber to, const std::string& textMessage) =0;
+    virtual void sendCallRequest(common::PhoneNumber to) = 0;
+    virtual void sendCallDropped(common::PhoneNumber to) = 0;
 };
 
 }
