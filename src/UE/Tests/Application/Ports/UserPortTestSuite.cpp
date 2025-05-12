@@ -71,6 +71,7 @@ TEST_F(UserPortTestSuite, shallShowSmsList)
     EXPECT_CALL(guiMock, setListViewMode()).WillOnce(ReturnRef(listViewModeMock));
     EXPECT_CALL(listViewModeMock, clearSelectionList());
     EXPECT_CALL(listViewModeMock, addSelectionListItem(_, _)).Times(Exactly(3));
+    EXPECT_CALL(guiMock, showNewSms(false)).Times(Exactly(1));
     EXPECT_CALL(guiMock, setAcceptCallback(_)).Times(Exactly(1));
     EXPECT_CALL(guiMock, setRejectCallback(_)).Times(Exactly(1));
 
