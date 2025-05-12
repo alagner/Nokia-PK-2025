@@ -58,11 +58,6 @@ void ConnectedState::composeSms()
 void ConnectedState::handleSmsDeliveryFailure(common::PhoneNumber to)
 {
     logger.logInfo("Received UnknownRecipient for SMS to: ", to);
-    markLastSmsSentAsFailed(to);
-}
-
-void ConnectedState::markLastSmsSentAsFailed(common::PhoneNumber to)
-{
     auto smsList = context.smsDb.getAll();
     if (smsList.empty()) return;
 
@@ -74,6 +69,7 @@ void ConnectedState::markLastSmsSentAsFailed(common::PhoneNumber to)
             break;
         }
     }
+
 }
 
 }

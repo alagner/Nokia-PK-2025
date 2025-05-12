@@ -15,7 +15,6 @@ public:
     void handleDisconnect() override;
     void handleSms(common::PhoneNumber from, std::string text) override;
     void handleSmsDeliveryFailure(common::PhoneNumber to) override;
-    void markLastSmsSentAsFailed(common::PhoneNumber to);
 
     // IUserEventsHandler interface
     void viewSmsList() override;

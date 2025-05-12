@@ -61,6 +61,7 @@ void Application::handleAttachAccept()
 void Application::handleSms(common::PhoneNumber from, std::string text)
 {
     logger.logInfo("SMS received from: ", from);
+    context.smsDb.save(SmsEntity(from.value,phoneNumber.value,text));
     context.state->handleSms(from, text);
 }
 
