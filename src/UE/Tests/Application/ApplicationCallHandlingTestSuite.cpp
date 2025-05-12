@@ -162,4 +162,25 @@ TEST_F(ApplicationMiscTestFixture, shallNotCrashAndNotChangeIndicatorOnMarkingIn
     EXPECT_FALSE(smsDb[0].isRead);
 }
 
+// Test 5: Sprawdza, czy Application::handleTimeout jest przekazywane do aktualnego stanu.
+TEST_F(ApplicationMiscTestFixture, shallDelegateTimeoutToCurrentState)
+{
+    
+    EXPECT_CALL(btsPortMock, sendAttachRequest(BTS_ID));
+    EXPECT_CALL(timerPortMock, startTimer(std::chrono::milliseconds(500)));
+    EXPECT_CALL(userPortMock, showConnecting());
+    objectUnderTest.handleSib(BTS_ID);
+    Mock::VerifyAndClearExpectations(&btsPortMock);
+    Mock::VerifyAndClearExpectations(&timerPortMock);
+    Mock::VerifyAndClearExpectations(&userPortMock);
+   
+
+ 
+    EXPECT_CALL(timerPortMock, stopTimer()); 
+    EXPECT_CALL(userPortMock, showNotConnected()); 
+
+    objectUnderTest.handleTimeout();
+    
+}
+
 } // namespace ue
