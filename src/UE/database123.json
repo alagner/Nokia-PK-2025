@@ -1,0 +1,26 @@
+[
+    {
+        "from": 120,
+        "isRead": true,
+        "text": "hej",
+        "to": 123
+    },
+    {
+        "from": 120,
+        "isRead": true,
+        "text": "aaa",
+        "to": 123
+    },
+    {
+        "from": 123,
+        "isRead": false,
+        "text": "aaa",
+        "to": 124
+    },
+    {
+        "from": 123,
+        "isRead": false,
+        "text": "aaa",
+        "to": 125
+    }
+]

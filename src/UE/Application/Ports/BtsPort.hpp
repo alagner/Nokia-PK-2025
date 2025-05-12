@@ -4,6 +4,7 @@
 #include "Logger/PrefixedLogger.hpp"
 #include "ITransport.hpp"
 #include "Messages/PhoneNumber.hpp"
+#include <set>
 
 namespace ue
 {
@@ -17,6 +18,7 @@ public:
 
     void sendAttachRequest(common::BtsId) override;
     void sendSms(const SmsEntity& sms);
+    static std::set<common::PhoneNumber> activeUes;
 
 private:
     void handleMessage(BinaryMessage msg);

@@ -1,0 +1,14 @@
+[
+    {
+        "from": 120,
+        "isRead": false,
+        "text": "hej",
+        "to": 123
+    },
+    {
+        "from": 120,
+        "isRead": false,
+        "text": "aaa",
+        "to": 123
+    }
+]

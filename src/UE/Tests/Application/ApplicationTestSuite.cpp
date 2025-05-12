@@ -199,4 +199,28 @@ TEST_F(ApplicationSmsViewTestSuite, shallUserReadMultipleSmsAndExit)
     showSmsListView(testSmsVector);
 }
 
+TEST_F(ApplicationConnectedTestSuite, sendSms_success)
+{
+    SmsEntity smsToSend{PHONE_NUMBER.value, TEST_SENDER_NUMBER.value, "Hello!", false};
+
+    EXPECT_CALL(userPortMock, getPhoneNumber()).WillOnce(Return(PHONE_NUMBER));
+    EXPECT_CALL(smsRepositoryMock, save(smsToSend));
+    EXPECT_CALL(userPortMock, showConnected());
+    EXPECT_CALL(btsPortMock, sendSms(smsToSend));
+
+    objectUnderTest.sendSms(smsToSend);
+}
+
+TEST_F(ApplicationConnectedTestSuite, shallMarkSmsAsFailedWhenUnknownRecipient)
+{
+    SmsEntity failedSms{PHONE_NUMBER.value, TEST_SENDER_NUMBER.value, "Hello!", false};
+    std::vector<SmsEntity> currentSmsList{failedSms};
+    EXPECT_CALL(smsRepositoryMock, getAll()).WillOnce(Return(currentSmsList));
+    SmsEntity expectedSms = failedSms;
+    expectedSms.text = "[FAILED DELIVERY] " + failedSms.text;
+    std::vector<SmsEntity> expectedVector{expectedSms};
+    EXPECT_CALL(smsRepositoryMock, saveAll(expectedVector, true));
+    objectUnderTest.handleSmsDeliveryFailure(TEST_SENDER_NUMBER);
+}
+
 }
