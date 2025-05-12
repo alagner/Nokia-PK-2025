@@ -97,4 +97,46 @@ TEST_F(ApplicationMiscTestFixture, shallProvideValidContext)
     ASSERT_NE(context.state, nullptr); 
 }
 
+// Test 3: Sprawdza logikę oznaczania SMS jako przeczytany i aktualizację wskaźnika.
+TEST_F(ApplicationMiscTestFixture, shallMarkSmsAsReadAndUpdateIndicator)
+{
+    ensureConnectedState();
+
+    const common::PhoneNumber sender1{123}; 
+    const std::string smsText1 = "First unread SMS";
+    const common::PhoneNumber sender2{124}; 
+    const std::string smsText2 = "Second unread SMS";
+
+    
+    EXPECT_CALL(userPortMock, showNewSms(true));
+    objectUnderTest.handleSms(sender1, smsText1);
+    Mock::VerifyAndClearExpectations(&userPortMock);
+
+   
+    EXPECT_CALL(userPortMock, showNewSms(true)); 
+    objectUnderTest.handleSms(sender2, smsText2);
+    Mock::VerifyAndClearExpectations(&userPortMock);
+
+    auto& smsDb = objectUnderTest.getSmsDb();
+    ASSERT_EQ(smsDb.size(), 2);
+    EXPECT_FALSE(smsDb[0].isRead);
+    EXPECT_FALSE(smsDb[1].isRead);
+
+   
+    EXPECT_CALL(userPortMock, showNewSms(true));
+    objectUnderTest.markSmsAsRead(0); 
+    Mock::VerifyAndClearExpectations(&userPortMock);
+
+    EXPECT_TRUE(smsDb[0].isRead);
+    EXPECT_FALSE(smsDb[1].isRead); 
+
+    
+    EXPECT_CALL(userPortMock, showNewSms(false));
+    objectUnderTest.markSmsAsRead(1);
+    Mock::VerifyAndClearExpectations(&userPortMock);
+
+    EXPECT_TRUE(smsDb[0].isRead); 
+    EXPECT_TRUE(smsDb[1].isRead); 
+}
+
 } // namespace ue
