@@ -62,8 +62,8 @@ TEST_F(UserPortTestSuite, shallShowMenuOnConnected)
 {
     EXPECT_CALL(guiMock, setListViewMode()).WillOnce(ReturnRef(listViewModeMock));
     EXPECT_CALL(listViewModeMock, clearSelectionList());
-    EXPECT_CALL(listViewModeMock, addSelectionListItem("New Message", _)).Times(1);
-    EXPECT_CALL(listViewModeMock, addSelectionListItem("Check Messages", _)).Times(1);
+    EXPECT_CALL(listViewModeMock, addSelectionListItem("Compose SMS", _)).Times(1);
+    EXPECT_CALL(listViewModeMock, addSelectionListItem("View SMS", _)).Times(1);
 
     EXPECT_CALL(guiMock, showConnected());
     objectUnderTest.showConnected();
