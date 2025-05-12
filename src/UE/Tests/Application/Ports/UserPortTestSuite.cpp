@@ -25,7 +25,6 @@ protected:
 
     UserPortTestSuite()
     {
-        EXPECT_CALL(guiMock, setEnvelopeCallback(_)).Times(::testing::AnyNumber());
         EXPECT_CALL(guiMock, setTitle(HasSubstr(common::to_string(PHONE_NUMBER)))); // Already had this
         // Expect the callbacks to be set during start()
         EXPECT_CALL(guiMock, setAcceptCallback(_)); // Use '_' to match any callback function object
@@ -63,8 +62,8 @@ TEST_F(UserPortTestSuite, shallShowMenuOnConnected)
 {
     EXPECT_CALL(guiMock, setListViewMode()).WillOnce(ReturnRef(listViewModeMock));
     EXPECT_CALL(listViewModeMock, clearSelectionList());
-    EXPECT_CALL(listViewModeMock, addSelectionListItem("Compose SMS", _)).Times(1);
-    EXPECT_CALL(listViewModeMock, addSelectionListItem("View SMS", _)).Times(1);
+    EXPECT_CALL(listViewModeMock, addSelectionListItem("New Message", _)).Times(1);
+    EXPECT_CALL(listViewModeMock, addSelectionListItem("Check Messages", _)).Times(1);
 
     EXPECT_CALL(guiMock, showConnected());
     objectUnderTest.showConnected();

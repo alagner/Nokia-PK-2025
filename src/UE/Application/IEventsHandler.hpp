@@ -15,11 +15,7 @@ namespace ue
             SmsView,
             SmsCompose,
             SmsMenu
-            SmsMenu,
-            DialCompose
-
             //TODO add more here
-            //
         };
     }
 
@@ -34,8 +30,6 @@ public:
     //virtual void handleSmsReceive(common::PhoneNumber from, std::string textMessage) = 0;
     virtual void handleSmsSent(common::PhoneNumber to, bool succeed) = 0;
     virtual void handleSmsCompose(common::PhoneNumber to, const std::string& textMessage) = 0;
-    virtual void handleCallRequest(common::PhoneNumber from) = 0;
-    virtual void handleDialRequest(common::PhoneNumber to) = 0;
 };
 
 }

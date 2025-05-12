@@ -28,7 +28,6 @@ private:
     IBtsEventsHandler* handler = nullptr;
 
     void sendSms(common::PhoneNumber to, const std::string& textMessage) override;
-    void sendCallRequest(common::PhoneNumber to) override;
 };
 
 }

@@ -169,9 +169,9 @@ void QtUeGui::onRejectClicked()
 
 void QtUeGui::onHomeClicked()
 {
-    if(envelopeCallback)
+    if(homeCallback)
     {
-        envelopeCallback();
+        homeCallback();
     }
 }
 
@@ -198,11 +198,6 @@ void QtUeGui::setAcceptCallback(Callback callback)
 void QtUeGui::setRejectCallback(Callback callback)
 {
     rejectCallback = callback;
-}
-
-void QtUeGui::setEnvelopeCallback(Callback callback)
-{
-    envelopeCallback = callback;
 }
 
 void QtUeGui::setTitle(const std::string& title)
@@ -269,11 +264,6 @@ IUeGui::ISmsComposeMode& QtUeGui::setSmsComposeMode()
     return activateMode(smsComposeMode);
 }
 
-IUeGui::ISmsComposeMode& QtUeGui::getSmsComposeMode()
-{
-    return const_cast<ISmsComposeMode &>(static_cast<const ISmsComposeMode &>(smsComposeMode));
-}
-
 IUeGui::IDialMode& QtUeGui::setDialMode()
 {
     return activateMode(dialMode);
@@ -292,11 +282,6 @@ IUeGui::ITextMode& QtUeGui::setAlertMode()
 IUeGui::ITextMode& QtUeGui::setViewTextMode()
 {
     return activateMode(textViewMode);
-}
-
-IUeGui::ISmsComposeMode &QtUeGui::setComposeSmsMode()
-{
-    return activateMode(smsComposeMode);
 }
 
 }
