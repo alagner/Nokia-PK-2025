@@ -88,6 +88,25 @@ TEST_F(ApplicationBasicTestFixture, shallInitializeInNotConnectedStateAndHandleS
 
 }
 
+TEST_F(ApplicationBasicTestFixture, shallTransitionToConnectedStateOnAttachAccept)
+{
+   
+    EXPECT_CALL(btsPortMock, sendAttachRequest(BTS_ID));
+    EXPECT_CALL(timerPortMock, startTimer(std::chrono::milliseconds(500)));
+    EXPECT_CALL(userPortMock, showConnecting());
+    objectUnderTest.handleSib(BTS_ID);
+    Mock::VerifyAndClearExpectations(&btsPortMock); 
+    Mock::VerifyAndClearExpectations(&timerPortMock);
+    Mock::VerifyAndClearExpectations(&userPortMock);
+
+   
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(userPortMock, showConnected());
+    EXPECT_CALL(userPortMock, showNewSms(false)); 
+
+    objectUnderTest.handleAttachAccept();
+
+}
 
 
 } // namespace ue
