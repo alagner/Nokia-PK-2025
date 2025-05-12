@@ -147,4 +147,23 @@ TEST_F(ApplicationConnectivityTestFixture, shallTransitionToNotConnectedOnTimeou
    
 }
 
+// Test 5: Sprawdza obsługę rozłączenia (handleDisconnect), gdy aplikacja jest w stanie Connected.
+TEST_F(ApplicationConnectivityTestFixture, shallTransitionToNotConnectedOnDisconnectWhenConnected)
+{
+    
+    enterConnectedState();
+
+   
+    EXPECT_CALL(timerPortMock, stopTimer()).Times(AtLeast(1)); 
+    EXPECT_CALL(userPortMock, showNotConnected());
+
+    objectUnderTest.handleDisconnect();
+
+   
+    EXPECT_CALL(btsPortMock, sendAttachRequest(BTS_ID));
+    EXPECT_CALL(timerPortMock, startTimer(std::chrono::milliseconds(500)));
+    EXPECT_CALL(userPortMock, showConnecting());
+    objectUnderTest.handleSib(BTS_ID);
+}
+
 } // namespace ue
