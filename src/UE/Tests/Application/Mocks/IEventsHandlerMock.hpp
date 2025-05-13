@@ -17,6 +17,7 @@ namespace ue
         MOCK_METHOD(void, handleMessageReceive, (common::PhoneNumber from, std::string text), (override));
         MOCK_METHOD(void, handleMessageSentResult, (common::PhoneNumber to, bool success), (override));
         MOCK_METHOD(void, handleMessageComposeResult, (common::PhoneNumber reciver, const std::string& text), (override));
+        MOCK_METHOD(void, handleCallRequest, (common::PhoneNumber from), (override));
 
         MOCK_METHOD(void, handleTimeout, (), (override));
 
