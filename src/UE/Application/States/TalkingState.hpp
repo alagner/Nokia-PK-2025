@@ -17,9 +17,12 @@ namespace ue
         void handleDisconnected() override;
         void handleUiAction(std::optional<std::size_t>) override;
         void handleCallTalk(common::PhoneNumber from, const std::string &text) override;
+        void handleTimeout() override;
+        void handleUnknownRecipient(common::PhoneNumber peer) override;
 
     private:
         common::PhoneNumber peerPhoneNumber;
+        bool awaitingUserAfterCallEnd = false;
     };
 
 }

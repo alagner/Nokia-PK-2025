@@ -17,6 +17,7 @@ namespace ue
         // Still need to handle potential disconnections etc.
         void handleDisconnected() override;
         void handleSmsReceived(common::PhoneNumber from, std::string text) override;
+        void handleCallRequest(common::PhoneNumber from) override;
 
     private:
         std::size_t viewingSmsIndex; // Index in the SmsDb vector

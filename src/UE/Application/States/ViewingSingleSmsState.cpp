@@ -2,6 +2,7 @@
 #include "ViewingSmsListState.hpp" // To go back
 #include "NotConnectedState.hpp"
 #include <stdexcept> // Include for exceptions
+#include "IncomingCallState.hpp"
 
 namespace ue
 {
@@ -69,6 +70,12 @@ namespace ue
         logger.logDebug("SMS stored at index: ", smsIndex);
         context.user.showNewSms();
         // No need to refresh the current view, user will see it when they go back to list
+    }
+
+    void ViewingSingleSmsState::handleCallRequest(common::PhoneNumber from)
+    {
+        logger.logInfo("Incoming call while reading SMS from: ", from);
+        context.setState<IncomingCallState>(from);
     }
 
 } // namespace ue

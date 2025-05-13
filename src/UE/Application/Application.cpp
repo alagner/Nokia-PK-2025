@@ -14,6 +14,7 @@ namespace ue
           logger(iLogger, "[APP] ")
     {
         logger.logInfo("Started with phone number: ", context.myPhoneNumber);
+
         context.setState<NotConnectedState>();
     }
 
