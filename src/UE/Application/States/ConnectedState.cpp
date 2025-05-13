@@ -2,6 +2,7 @@
 #include "NotConnectedState.hpp"
 #include "ComposeSmsState.hpp"
 #include "ViewListSmsState.hpp"
+#include "CallState.hpp"
 
 namespace ue{
 
@@ -44,8 +45,9 @@ void ConnectedState::handleUiAction(std::optional<std::size_t> selectedIndex){
 
         case 2:
             logger.logInfo("Call selected");
-            // TODO: Set state to CallState or similar to handle call menu
-            // context.setState<CallState>();
+            // TODO: Set state to DiallingState or similar to handle call menu
+            // context.setState<DiallingState>();
+            this->context.user.showCallMenu();
             break;
 
         default:

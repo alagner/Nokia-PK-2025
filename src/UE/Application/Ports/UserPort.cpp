@@ -1,13 +1,14 @@
 #include "UserPort.hpp"
 #include "UeGui/IListViewMode.hpp"
 #include "UeGui/ITextMode.hpp"
+#include "Traits/EnumTraits.hpp"
+
+
 #include <string>
-#include <type_traits>
 
 namespace ue
 {
 using view_mode = view_details::GuiViewMode;
-using view_mode_type = std::underlying_type_t<view_details::GuiViewMode>;
 
 UserPort::UserPort(common::ILogger &logger, IUeGui &gui, common::PhoneNumber phoneNumber)
     : logger(logger, "[USER-PORT]"), gui(gui), phoneNumber(phoneNumber)
@@ -180,7 +181,6 @@ void UserPort::showCallMenu()
     menu.clearSelectionList();
     menu.addSelectionListItem("Dial Number", "Enter a number to call");
     menu.addSelectionListItem("Call History", "View recent calls");
-    gui.showConnected(); // zmienić metodę
 }
 
 void UserPort::acceptCallback()
@@ -250,7 +250,7 @@ void UserPort::acceptCallback()
         selectedIndexOpt = std::nullopt;
     }
 
-    logger.logDebug("Sending UI action to handler, mode: ", static_cast<view_mode_type>(currentViewMode));
+    logger.logDebug("Sending UI action to handler, mode: ", common::enumUnderlyingValue(currentViewMode));
     handler->handleUiAction(selectedIndexOpt);
 }
 
@@ -258,7 +258,7 @@ void UserPort::rejectCallback()
 {
     if (!handler)
         return;
-    logger.logDebug("UI Action (Reject/Back), Mode: ", static_cast<view_mode_type>(currentViewMode));
+    logger.logDebug("UI Action (Reject/Back), Mode: ", common::enumUnderlyingValue(currentViewMode));
 
     handler->handleUiBack();
 }

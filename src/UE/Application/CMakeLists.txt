@@ -10,6 +10,7 @@ set(APPLICATION_SOURCES
         Ports/TimerPort.cpp
 
         States/BaseState.cpp
+        States/CallState.cpp
         States/ConnectingState.cpp
         States/ConnectedState.cpp
         States/NotConnectedState.cpp
