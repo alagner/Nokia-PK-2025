@@ -6,7 +6,7 @@ namespace ue
 {
 
     TimerPort::TimerPort(common::ILogger &logger)
-        : logger(logger, "[TIMER PORT]"), isTimerActive(false), workerThread(nullptr)
+        : logger(logger, "[TIMER PORT]"), isTimerActive(false)
     {
     }
 
@@ -29,36 +29,23 @@ namespace ue
         stopTimer();
 
         isTimerActive = true;
-        workerThread = std::make_unique<std::thread>(&TimerPort::runTimer, this, duration);
+        std::thread(&TimerPort::runTimer, this, duration).detach();
     }
 
     void TimerPort::stopTimer()
     {
         logger.logDebug("Stop timer");
         isTimerActive = false;
-        joinThread();
     }
 
     void TimerPort::runTimer(Duration duration)
     {
         std::this_thread::sleep_for(duration);
+
         if (isTimerActive && handler != nullptr)
         {
-            std::thread([handler = this->handler]()
-                        { handler->handleTimeout(); })
-                .detach();
-        }
-    }
-
-    void TimerPort::joinThread()
-    {
-        if (workerThread && workerThread->joinable())
-        {
-            if (std::this_thread::get_id() != workerThread->get_id())
-            {
-                workerThread->join();
-                workerThread.reset();
-            }
+            logger.logDebug("Timer expired. Calling handleTimeout.");
+            handler->handleTimeout();
         }
     }
 

@@ -7,21 +7,22 @@
 namespace ue
 {
 
-class IncomingCallState : public BaseState
-{
-public:
-    IncomingCallState(Context& context, common::PhoneNumber callingNumber);
-    ~IncomingCallState() override;
+    class IncomingCallState : public BaseState
+    {
+    public:
+        IncomingCallState(Context &context, common::PhoneNumber callingNumber);
+        ~IncomingCallState() override;
 
-    void handleUiAction(std::optional<std::size_t> selectedIndex) override;
-    void handleUiBack() override;
-    void handleTimeout() override;
-    void handleDisconnected() override;
-    void handleCallDropped(common::PhoneNumber peer) override;
+        void handleUiAction(std::optional<std::size_t> selectedIndex) override;
+        void handleUiBack() override;
+        void handleTimeout() override;
+        void handleDisconnected() override;
+        void handleCallDropped(common::PhoneNumber peer) override;
+        void handleCallReject(common::PhoneNumber peer) override;
 
-private:
-    common::PhoneNumber callingPhoneNumber;
-    static constexpr std::chrono::milliseconds CALL_TIMEOUT{30000};
-};
+    private:
+        common::PhoneNumber callingPhoneNumber;
+        static constexpr std::chrono::milliseconds CALL_TIMEOUT{30000};
+    };
 
 }

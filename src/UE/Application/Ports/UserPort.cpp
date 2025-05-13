@@ -201,6 +201,11 @@ namespace ue
             logger.logDebug("Accept in SMS compose - sending message");
             selectedIndexOpt = std::nullopt;
         }
+        else if (currentViewMode == details::VIEW_MODE_UNKNOWN)
+        {
+            logger.logDebug("Accept in UNKNOWN view (likely alert) — forwarding to handler");
+            selectedIndexOpt = std::nullopt;
+        }
 
         logger.logDebug("Sending UI action to handler, mode: ", currentViewMode);
         handler->handleUiAction(selectedIndexOpt);

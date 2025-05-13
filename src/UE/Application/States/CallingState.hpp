@@ -20,6 +20,7 @@ namespace ue
 
     private:
         common::PhoneNumber dialedNumber;
+        bool awaitingUserAfterFailure = false;
     };
 
 }

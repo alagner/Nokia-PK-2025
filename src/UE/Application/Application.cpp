@@ -126,17 +126,14 @@ namespace ue
 
     void Application::handleUnknownRecipient(common::PhoneNumber peer)
     {
-        if (context.smsDb.markLastOutgoingSmsAsFailed())
+        if (context.state)
         {
-            logger.logInfo("SMS failed to deliver (Unknown recipient): ", peer);
-            context.user.showAlert("SMS failed", "User not available");
-            context.user.showConnected();
+            logger.logInfo("Forwarding UnknownRecipient to current state");
+            context.state->handleUnknownRecipient(peer);
         }
         else
         {
-            logger.logInfo("Call failed (Unknown recipient): ", peer);
-            context.user.showAlert("Call failed", "User not connected");
-            context.setState<ConnectedState>();
+            logger.logError("UnknownRecipient received, but no active state");
         }
     }
 

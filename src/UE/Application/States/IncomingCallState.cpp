@@ -66,4 +66,19 @@ namespace ue
         }
     }
 
+    void IncomingCallState::handleCallReject(common::PhoneNumber peer)
+    {
+        if (peer == callingPhoneNumber)
+        {
+            logger.logInfo("Caller cancelled the call before it was answered: ", peer);
+            context.timer.stopTimer();
+            context.user.showAlert("Call Cancelled", "Caller hung up before you answered.");
+            context.setState<ConnectedState>();
+        }
+        else
+        {
+            logger.logError("Received CallReject from unexpected peer ", peer, " while expecting call from ", callingPhoneNumber);
+        }
+    }
+
 }

@@ -63,11 +63,10 @@ namespace ue
             }
             case common::MessageId::UnknownRecipient:
             {
-                auto originalRecipient = reader.readPhoneNumber();
-                logger.logInfo("Received UnknownRecipient: ", originalRecipient);
+                logger.logInfo("Received UnknownRecipient");
 
                 if (handler)
-                    handler->handleUnknownRecipient(originalRecipient);
+                    handler->handleUnknownRecipient(to);
                 break;
             }
 

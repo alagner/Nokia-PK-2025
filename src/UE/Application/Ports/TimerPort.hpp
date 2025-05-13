@@ -28,11 +28,9 @@ namespace ue
         common::PrefixedLogger logger;
         ITimerEventsHandler *handler = nullptr;
 
-        unique_ptr<std::thread> workerThread;
-        atomic<bool> isTimerActive;
+        std::atomic_bool isTimerActive;
 
         void runTimer(Duration duration);
-        void joinThread();
-    };
+       };
 
 }
