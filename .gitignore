@@ -15,4 +15,7 @@ build
 *.o
 *_autogen
 
+src/**/bts*_syslog_*.txt
+src/**/ue*_syslog_*.txt
+
 .vscode
