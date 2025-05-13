@@ -81,4 +81,24 @@ namespace ue
         }
     }
 
+    void IncomingCallState::handleSmsReceived(common::PhoneNumber from, std::string text)
+    {
+        logger.logInfo("SMS received during incoming call from: ", from);
+        context.smsDb.addReceivedSms(from, text);
+        context.user.showNewSms();
+    }
+
+    void IncomingCallState::handleCallRequest(common::PhoneNumber from)
+    {
+        if (from != callingPhoneNumber)
+        {
+            logger.logInfo("Received another CallRequest from ", from);
+            context.bts.sendCallDropped(from);
+        }
+        else
+        {
+            logger.logDebug("Duplicate CallRequest from the same peer: ", from);
+        }
+    }
+
 }

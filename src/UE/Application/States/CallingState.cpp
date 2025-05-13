@@ -2,6 +2,7 @@
 #include "TalkingState.hpp"
 #include "ConnectedState.hpp"
 #include "NotConnectedState.hpp"
+#include "IncomingCallState.hpp"
 #include <chrono>
 
 using namespace std::chrono;
@@ -80,6 +81,26 @@ namespace ue
     {
         logger.logError("Disconnected while calling");
         context.setState<NotConnectedState>();
+    }
+
+    void CallingState::handleSmsReceived(common::PhoneNumber from, std::string text)
+    {
+        logger.logInfo("SMS received from: ", from, " while calling");
+        std::size_t smsIndex = context.smsDb.addReceivedSms(from, text);
+        logger.logDebug("SMS stored at index: ", smsIndex);
+        context.user.showNewSms();
+    }
+
+    void CallingState::handleCallRequest(common::PhoneNumber from)
+    {
+        logger.logInfo("Incoming call received from: ", from, " – cancelling outgoing call");
+
+        if (dialedNumber.isValid())
+        {
+            context.bts.sendCallDropped(dialedNumber);
+        }
+
+        context.setState<IncomingCallState>(from);
     }
 
 } // namespace ue
