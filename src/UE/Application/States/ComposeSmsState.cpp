@@ -1,54 +1,75 @@
 #include "ComposeSmsState.hpp"
 #include "ConnectedState.hpp"
 #include "NotConnectedState.hpp"
-#include "Messages/PhoneNumber.hpp"
 
-namespace ue{
+namespace ue {
 
-    ComposeSmsState::ComposeSmsState(Context &context)
-        : BaseState(context, "ComposingSmsState"){
-        logger.logInfo("Entering SMS Composition");
-        context.user.showMessageComp();
+ComposeSmsState::ComposeSmsState(Context& ctx)
+    : BaseState(ctx, "ComposeSmsState")
+{
+    logger.logInfo("ComposeSmsState: entering SMS composition");
+    context.user.showMessageComp();
+}
+
+void ComposeSmsState::handleUiAction(std::optional<std::size_t>)
+{
+    logger.logInfo("ComposeSmsState: user tapped Send");
+    validateAndSendSms();
+}
+
+void ComposeSmsState::validateAndSendSms()
+{
+    const auto recipient = context.user.getMessageRecipient();
+    const auto body      = context.user.getMessageText();
+
+    if (!inputsAreValid(recipient, body)) {
+        logger.logInfo("ComposeSmsState: invalid recipient or empty text");
+        context.user.showNotify("Error", "Invalid recipient or empty message");
+        return;
     }
 
-    void ComposeSmsState::handleUiAction(std::optional<std::size_t> selectedIndex){
-        logger.logInfo("Sending SMS initiated");
+    context.smsStorage.addSentMessage(recipient, body, SmsMessage::Status::sent);
+    context.bts.sendMessage(recipient, body);
+    logger.logInfo("ComposeSmsState: SMS queued to ", recipient);
 
-        auto reciver = context.user.getMessageRecipient();
-        auto text = context.user.getMessageText();
+    context.setState<ConnectedState>();
+}
 
-        if (!reciver.isValid() || text.empty()) {
-            logger.logInfo("Cannot send SMS: Invalid reciver or empty text");
-            context.user.showNotify("Error", "Invalid reciver or empty text");
-            return;
-        }
+bool ComposeSmsState::inputsAreValid(const common::PhoneNumber& recipient,
+                                     const std::string& body) const
+{
+    return recipient.isValid() && !body.empty();
+}
 
-        context.smsStorage.addSentMessage(reciver, text, SmsMessage::Status::sent);
-        context.bts.sendMessage(reciver, text);
-        logger.logInfo("SMS sending to: ", reciver);
+void ComposeSmsState::handleUiBack()
+{
+    logger.logInfo("ComposeSmsState: composition canceled");
+    context.setState<ConnectedState>();
+}
 
-        context.setState<ConnectedState>();
-    }
+void ComposeSmsState::handleDisconnected()
+{
+    logger.logInfo("ComposeSmsState: lost connection mid-compose");
+    context.user.showNotify("Disconnected",
+        "Connection lost during SMS composition.");
+    context.setState<NotConnectedState>();
+}
 
-    void ComposeSmsState::handleUiBack(){
-        logger.logInfo("SMS composition cancelled by user");
-        context.setState<ConnectedState>();
-    }
+void ComposeSmsState::handleMessageReceive(common::PhoneNumber from, std::string text)
+{
+    logger.logInfo("ComposeSmsState: incoming SMS from ", from);
+    onIncomingSms(from, text);
+}
 
-    void ComposeSmsState::handleDisconnected(){
-        logger.logInfo("Disconnected while composing SMS");
-        context.user.showNotify("Disconnected", "Connection lost during SMS composition.");
-        context.setState<NotConnectedState>();
-    }
+void ComposeSmsState::onIncomingSms(common::PhoneNumber from, const std::string& body)
+{
+    context.smsStorage.addMessage(from, body);
+    context.user.showNewMessage();
+}
 
-    void ComposeSmsState::handleMessageReceive(common::PhoneNumber from, std::string text){
-        logger.logInfo("SMS received from ", from, " while composing - adding to inbox");
-        context.smsStorage.addMessage(from, text);
-        context.user.showNewMessage();
-    }
-
-    void ComposeSmsState::handleMessageSentResult(common::PhoneNumber to, bool success){
-        logger.logInfo("SMS send result for ", to, " received while composing - ignoring");
-    }
+void ComposeSmsState::handleMessageSentResult(common::PhoneNumber to, bool)
+{
+    logger.logInfo("Sms sent result for: ", to, " received while composing - ignoring");
+}
 
 }
