@@ -8,40 +8,38 @@
 namespace ue
 {
 
-class QtSmsComposeMode : public QtUeModeWidget, public IUeGui::ISmsComposeMode
-{
-    Q_OBJECT
-public:
-    QtSmsComposeMode(QtPhoneNumberEdit& phoneNumberEdit,
-                     QtStackedWidget& stackedWidget);
+    class QtSmsComposeMode : public QtUeModeWidget, public IUeGui::ISmsComposeMode
+    {
+        Q_OBJECT
+    public:
+        QtSmsComposeMode(QtPhoneNumberEdit& phoneNumberEdit,
+                         QtStackedWidget& stackedWidget);
 
 
-    PhoneNumber getPhoneNumber() const override;
-    std::string getSmsText() const override;
-    void clearSmsText() override;
-    std::pair<common::PhoneNumber, std::string> getComposedSmsData() override;
-    void setPhoneNumber(const PhoneNumber& phoneNumber) override;
-    void activateForViewingSms();
-    void setSmsText(const std::string&);
+        PhoneNumber getPhoneNumber() const override;
+        std::string getSmsText() const override;
+        void clearSmsText() override;
 
-private:
-    void constructGUI();
-    void connectSignals();
-    QString getText() const;
+        void activateForViewingSms();
+        void setSmsText(const std::string&);
 
-    QPlainTextEdit smsTextEdit;
+    private:
+        void constructGUI();
+        void connectSignals();
+        QString getText() const;
 
-signals:
-    void activateForViewingSmsSignal();
-    void setSmsTextSignal(QString);
-    void clearSmsTextSignal();
+        QPlainTextEdit smsTextEdit;
 
-private slots:
-    void activateSlot() override;
-    void activateForViewingSmsSlot();
-    void setSmsTextSlot(QString);
-    void clearSmsTextSlot();
-};
+        signals:
+        void activateForViewingSmsSignal();
+        void setSmsTextSignal(QString);
+        void clearSmsTextSignal();
+
+        private slots:
+        void activateSlot() override;
+        void activateForViewingSmsSlot();
+        void setSmsTextSlot(QString);
+        void clearSmsTextSlot();
+    };
 
 }
-

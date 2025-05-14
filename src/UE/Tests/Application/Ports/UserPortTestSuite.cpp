@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include "Ports/UserPort.hpp"
+#include "Mocks/IUserPortMock.hpp"
 #include "Mocks/ILoggerMock.hpp"
 #include "Mocks/IUeGuiMock.hpp"
 #include "Mocks/IEventsHandlerMock.hpp"
@@ -21,19 +22,16 @@ protected:
 
     UserPort objectUnderTest{loggerMock, guiMock, PHONE_NUMBER};
 
-    UserPortTestSuite(){
-        EXPECT_CALL(guiMock, setTitle(HasSubstr(common::to_string(PHONE_NUMBER))));
-        EXPECT_CALL(guiMock, setAcceptCallback(_));
-        EXPECT_CALL(guiMock, setRejectCallback(_));
-        EXPECT_CALL(guiMock, setMessageCallback(_));
-        objectUnderTest.start(handlerMock);
+	UserPortTestSuite(){
+	    EXPECT_CALL(guiMock, setTitle(HasSubstr(common::to_string(PHONE_NUMBER))));
+	    EXPECT_CALL(guiMock, setAcceptCallback(_));
+	    EXPECT_CALL(guiMock, setRejectCallback(_));
+	    objectUnderTest.start(handlerMock);
     }
 
     ~UserPortTestSuite() override {
-        EXPECT_CALL(guiMock, setAcceptCallback(IsNull()));
-        EXPECT_CALL(guiMock, setRejectCallback(IsNull()));
-        EXPECT_CALL(guiMock, setMessageCallback(IsNull()));
-
+		EXPECT_CALL(guiMock, setAcceptCallback(IsNull()));
+		EXPECT_CALL(guiMock, setRejectCallback(IsNull()));
         objectUnderTest.stop();
     }
 };

@@ -32,10 +32,6 @@ struct IUeGuiMock : public IUeGui
     MOCK_METHOD(ICallMode&, setCallMode, (), (final));
     MOCK_METHOD(ITextMode&, setAlertMode, (), (final));
     MOCK_METHOD(ITextMode&, setViewTextMode, (), (final));
-
-    MOCK_METHOD(void, setMessageCallback, (Callback callback), (final));
-    MOCK_METHOD(ISmsComposeMode&, setComposeSmsMode, (), (final));
-    MOCK_METHOD(ISmsComposeMode&, getSmsComposeMode, (), (const, final));
 };
 
 class IListViewModeMock : public IUeGui::IListViewMode

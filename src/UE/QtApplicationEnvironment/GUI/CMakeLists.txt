@@ -6,7 +6,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories(${UE_GUI_DIR})
 
 set_qt_options()
-silence_deprecation_warning()
 
 aux_source_directory(. SRC_LIST)
 
@@ -16,4 +15,3 @@ qt5_use_modules(${PROJECT_NAME}  Network)
 
 
 target_link_qt()
-
