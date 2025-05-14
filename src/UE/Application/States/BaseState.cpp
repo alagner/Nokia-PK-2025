@@ -13,19 +13,19 @@ BaseState::~BaseState(){
 }
 
 void BaseState::handleTimeout(){
-    logger.logError("Uexpected: handleTimeout");
+    logger.logError("Unexpected: handleTimeout");
 }
 
 void BaseState::handleSib(common::BtsId btsId){
-    logger.logError("Uexpected: handleSib: ", btsId);
+    logger.logError("Unexpected: handleSib: ", btsId);
 }
 
 void BaseState::handleAttachAccept(){
-    logger.logError("Uexpected: handleAttachAccept");
+    logger.logError("Unexpected: handleAttachAccept");
 }
 
 void BaseState::handleAttachReject(){
-    logger.logError("Uexpected: handleAttachReject");
+    logger.logError("Unexpected: handleAttachReject");
 }
 void BaseState::handleDisconnected(){
     logger.logError("Unexpected: handleDisconnected");
@@ -51,5 +51,9 @@ void BaseState::handleUiAction(std::optional<std::size_t> selectedIndex){
 void BaseState::handleUiBack(){
     logger.logError("Unexpected: handleUiBack");
 }
+
+// void BaseState::handleCallRequest(common::PhoneNumber from) {
+//     logger.logError("Unexpected: handleCallRequest");
+// }
 
 }

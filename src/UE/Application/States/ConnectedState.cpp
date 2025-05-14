@@ -34,17 +34,23 @@ void ConnectedState::handleUiAction(std::optional<std::size_t> selectedIndex){
     switch (selectedIndex.value()){
         case 0:
             logger.logInfo("Compose SMS selected");
-        context.setState<ComposeSmsState>();
-        break;
+            context.setState<ComposeSmsState>();
+            break;
 
         case 1:
             logger.logInfo("View SMS selected");
-        context.setState<ViewListSmsState>();
-        break;
+            context.setState<ViewListSmsState>();
+            break;
+
+        case 2:
+            logger.logInfo("Call selected");
+            // TODO: Set state to CallState or similar to handle call menu
+            // context.setState<CallState>();
+            break;
 
         default:
             logger.logError("Invalid menu option selected: ", selectedIndex.value());
-        break;
+            break;
     }
 }
 

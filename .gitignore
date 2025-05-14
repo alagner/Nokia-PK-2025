@@ -14,3 +14,5 @@ build
 *.a
 *.o
 *_autogen
+
+.vscode

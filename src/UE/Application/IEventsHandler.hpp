@@ -8,13 +8,16 @@
 
 namespace ue{
     namespace view_details {
-        using GuiViewMode = int;
-        constexpr GuiViewMode VM_DEFAULT = 0;
-        constexpr GuiViewMode VM_MENU = 1;
-        constexpr GuiViewMode VM_MESSAGE_LIST = 2;
-        constexpr GuiViewMode VM_MESSAGE_VIEW = 3;
-        constexpr GuiViewMode VM_MESSAGE_COMPOSE = 4;
-        constexpr GuiViewMode VM_MESSAGE_MENU = 5;
+
+        enum class GuiViewMode {
+            Default,            //0
+            Menu,               //1
+            Message_list,       //2
+            Message_view,       //3
+            Message_compose,    //4
+            Message_menu,       //5
+            Call_menu           //6
+        };
     }
 
 

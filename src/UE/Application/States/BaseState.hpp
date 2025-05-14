@@ -24,6 +24,9 @@ public:
     void handleUiAction(std::optional<std::size_t> selectedIndex) override;
     void handleUiBack() override;
 
+//    void handleCallRequest(common::PhoneNumber from) override;
+
+
 protected:
     Context& context;
     common::PrefixedLogger logger;
