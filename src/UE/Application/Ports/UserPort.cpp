@@ -91,6 +91,12 @@ void UserPort::showNewMessage()
     gui.showNewSms(true);
 }
 
+void UserPort::showNewMessageReceived()
+{
+    logger.logInfo("New Message has been received");
+    gui.showNewSms(false);
+}
+
 void UserPort::showListMessage(const std::vector<SmsMessage> &messages)
 {
     currentViewMode = view_mode::Message_list;
@@ -137,6 +143,7 @@ void UserPort::showMessageView(const SmsMessage &message)
     }
     logger.logDebug("Wyświetlam wiadomość: ", displayText);
     viewer.setText(displayText);
+    showNewMessageReceived();
 }
 
 void UserPort::showNotify(const std::string &title, const std::string &message)
