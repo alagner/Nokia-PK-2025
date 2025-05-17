@@ -23,7 +23,11 @@ public:
     void showSms(const SmsEntity &) override;
     void showSmsList(const std::vector<SmsEntity> &) override;
     void composeSms() override;
+    void startDial() override;
+    void showDialing() override;
+    void showTalking() override;
     common::PhoneNumber getPhoneNumber() const;
+    void showPartnerNotAvailable() override;
 
 private:
     common::PrefixedLogger logger;

@@ -17,10 +17,13 @@ public:
     // ITimerPort interface
     void startTimer(Duration duration) override;
     void stopTimer() override;
+    void startRedirectTimer(Duration duration) override;
 
 private:
     common::PrefixedLogger logger;
     ITimerEventsHandler* handler = nullptr;
+    std::atomic<bool> timerActive{false};
+    std::thread timerThread;
 };
 
 }

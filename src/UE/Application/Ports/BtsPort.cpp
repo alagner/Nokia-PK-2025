@@ -31,7 +31,6 @@ void BtsPort::handleMessage(BinaryMessage msg)
     {
         common::IncomingMessage reader{msg};
         auto msgId = reader.readMessageId();
-        logger.logInfo("Received msgId: ", static_cast<int>(msgId));
         auto from = reader.readPhoneNumber();
         auto to = reader.readPhoneNumber();
 
@@ -60,8 +59,24 @@ void BtsPort::handleMessage(BinaryMessage msg)
         }
         case common::MessageId::UnknownRecipient:
         {
-            handler->handleSmsDeliveryFailure(to);
-            logger.logError("to ", to, ", from: ", from);
+            if (lastSentMessageType == common::MessageId::CallRequest)
+            {
+                handler->handleCallRecipientNotAvailable(to);
+            }
+            else
+            {
+                handler->handleSmsDeliveryFailure(to);
+            }
+            break;
+        }
+        case common::MessageId::CallAccepted:
+        {
+            handler->handleCallAccepted();
+            break;
+        }
+        case common::MessageId::CallDropped:
+        {
+            handler->handleCallDropped();
             break;
         }
         default:
@@ -88,9 +103,25 @@ void BtsPort::sendAttachRequest(common::BtsId btsId)
 
 void BtsPort::sendSms(const SmsEntity& sms)
 {
+    lastSentMessageType = common::MessageId::Sms;
     common::PhoneNumber phoneTo = static_cast<common::PhoneNumber>(sms.to);
     common::OutgoingMessage msg(common::MessageId::Sms, phoneNumber, phoneTo);
     msg.writeText(sms.text);
+    transport.sendMessage(msg.getMessage());
+}
+
+void BtsPort::sendCallRequest(common::PhoneNumber from, common::PhoneNumber to)
+{
+    lastSentMessageType = common::MessageId::CallRequest;
+    logger.logInfo("Sending CallRequest from ", from, " to ", to);
+    common::OutgoingMessage msg(common::MessageId::CallRequest, from, to);
+    transport.sendMessage(msg.getMessage());
+}
+
+void BtsPort::sendCallDropped(common::PhoneNumber from, common::PhoneNumber to)
+{
+    logger.logInfo("Sending CallDrop from ", from, " to ", to);
+    common::OutgoingMessage msg(common::MessageId::CallDropped, from, to);
     transport.sendMessage(msg.getMessage());
 }
 

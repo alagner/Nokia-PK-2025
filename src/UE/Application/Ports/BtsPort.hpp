@@ -4,7 +4,6 @@
 #include "Logger/PrefixedLogger.hpp"
 #include "ITransport.hpp"
 #include "Messages/PhoneNumber.hpp"
-#include <set>
 
 namespace ue
 {
@@ -18,7 +17,8 @@ public:
 
     void sendAttachRequest(common::BtsId) override;
     void sendSms(const SmsEntity& sms);
-    static std::set<common::PhoneNumber> activeUes;
+    void sendCallRequest(common::PhoneNumber from, common::PhoneNumber to) override;
+    void sendCallDropped(common::PhoneNumber from, common::PhoneNumber to) override;
 
 private:
     void handleMessage(BinaryMessage msg);
@@ -26,6 +26,7 @@ private:
     common::PrefixedLogger logger;
     common::ITransport& transport;
     common::PhoneNumber phoneNumber;
+    common::MessageId lastSentMessageType = common::MessageId::Sib;
 
     IBtsEventsHandler* handler = nullptr;
 };

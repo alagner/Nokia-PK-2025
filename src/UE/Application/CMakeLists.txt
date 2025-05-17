@@ -7,5 +7,8 @@ aux_source_directory(States SRC_LIST)
 aux_source_directory(SmsRepository SRC_LIST)
 
 add_library(${PROJECT_NAME} ${SRC_LIST}
-    SmsRepository/SmsEntity.cpp)
+    SmsRepository/SmsEntity.cpp
+    States/TalkingState.h States/TalkingState.cpp
+
+)
 target_link_libraries(${PROJECT_NAME} Common)

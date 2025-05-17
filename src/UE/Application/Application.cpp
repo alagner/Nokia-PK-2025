@@ -75,9 +75,45 @@ void Application::handleDisconnect()
     context.state->handleDisconnect();
 }
 
-void Application::handleSmsDeliveryFailure(common::PhoneNumber to)
+void Application::handleSmsDeliveryFailure(common::PhoneNumber from)
 {
-    context.state->handleSmsDeliveryFailure(to);
+    logger.logInfo("from:", from);
+    context.state->handleSmsDeliveryFailure(from);
+}
+
+void Application::startDial()
+{
+    context.state->startDial();
+}
+
+void Application::sendCallRequest(common::PhoneNumber number)
+{
+    context.state->sendCallRequest(number);
+}
+
+void Application::handleCallAccepted()
+{
+    context.state->handleCallAccepted();
+}
+
+void Application::handleCallDropped()
+{
+    context.state->handleCallDropped();
+}
+
+void Application::cancelCallRequest()
+{
+    context.state->cancelCallRequest();
+}
+
+void Application::handleCallRecipientNotAvailable(common::PhoneNumber from)
+{
+    context.state->handleCallRecipientNotAvailable(from);
+}
+
+void Application::handleRedirect()
+{
+    context.state->handleRedirect();
 }
 
 }

@@ -4,7 +4,7 @@
 #include "SmsRepository/SmsRepository.h"
 #include "IUeGui.hpp"
 #include "UeGui/ISmsComposeMode.hpp"
-
+#include "UeGui/IDialMode.hpp"
 
 namespace ue
 {
@@ -38,10 +38,12 @@ void UserPort::showConnecting()
 
 void UserPort::showConnected()
 {
+    logger.logInfo("Transition to Connected View");
     IUeGui::IListViewMode& menu = gui.setListViewMode();
     menu.clearSelectionList();
     menu.addSelectionListItem("Compose SMS", "");
     menu.addSelectionListItem("View SMS", "");
+    menu.addSelectionListItem("Make Call","");
 
     gui.setAcceptCallback([this, &menu](){
         auto listIndex = menu.getCurrentItemIndex();
@@ -54,6 +56,10 @@ void UserPort::showConnected()
                 }
                 case 1: {
                     handler->viewSmsList();
+                    break;
+                }
+                case 2: {
+                    handler->startDial();
                     break;
                 }
             }
@@ -138,6 +144,49 @@ void UserPort::composeSms()
 common::PhoneNumber UserPort::getPhoneNumber() const
 {
     return phoneNumber;
+}
+
+void UserPort::startDial()
+{
+    IUeGui::IDialMode& dialScreen = gui.setDialMode();
+    gui.setAcceptCallback([this, &dialScreen]() {
+        common::PhoneNumber number = dialScreen.getPhoneNumber();
+        handler->sendCallRequest(number);
+    });
+    gui.setRejectCallback([this]() {
+        showConnected();
+    });
+}
+
+void UserPort::showDialing()
+{
+    IUeGui::ITextMode& mode = gui.setAlertMode();
+    mode.setText("Dialing...");
+    gui.setRejectCallback([this]() {
+        logger.logInfo("User canceled the call");
+        handler->cancelCallRequest();
+    });
+}
+
+void UserPort::showTalking()
+{
+    IUeGui::ITextMode& mode = gui.setViewTextMode();
+    mode.setText("Talking...");
+    gui.setRejectCallback([this]() {
+        logger.logInfo("User ended the call");
+    });
+}
+
+void UserPort::showPartnerNotAvailable()
+{
+    IUeGui::ITextMode& mode = gui.setAlertMode();
+    mode.setText("Partner is not available.");
+    gui.setRejectCallback([this]() {
+
+    });
+    gui.setAcceptCallback([this]() {
+
+    });
 }
 
 }
