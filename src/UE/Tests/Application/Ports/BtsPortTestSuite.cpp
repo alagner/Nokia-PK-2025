@@ -96,6 +96,7 @@ TEST_F(BtsPortTestSuite, shallSendAttachRequest)
     ASSERT_NO_THROW(EXPECT_EQ(BTS_ID, reader.readBtsId()));
     ASSERT_NO_THROW(reader.checkEndOfMessage());
 }
+
 TEST_F(BtsPortTestSuite, shallHandleSmsMessage)
 {
     const std::string TEXT = "Hello from BTS";
@@ -115,4 +116,53 @@ TEST_F(BtsPortTestSuite, shallHandleDisConnect)
     EXPECT_CALL(handlerMock, handleDisconnect());
     disconnectedCallback();
 }
+
+TEST_F(BtsPortTestSuite, shallHandleCallAccepted)
+{
+    EXPECT_CALL(handlerMock, handleCallAccepted());
+
+    common::OutgoingMessage msg{common::MessageId::CallAccepted,
+                                common::PhoneNumber{123},
+                                PHONE_NUMBER};
+    messageCallback(msg.getMessage());
+}
+
+TEST_F(BtsPortTestSuite, shallHandleCallDropped)
+{
+    EXPECT_CALL(handlerMock, handleCallDropped());
+
+    common::OutgoingMessage msg{common::MessageId::CallDropped,
+                                common::PhoneNumber{123},
+                                PHONE_NUMBER};
+    messageCallback(msg.getMessage());
+}
+
+TEST_F(BtsPortTestSuite, shallHandleUnknownRecipientForCall)
+{
+    EXPECT_CALL(transportMock, sendMessage(_)).WillOnce(Return(true));
+
+    objectUnderTest.sendCallRequest(PHONE_NUMBER, common::PhoneNumber{123});
+
+    EXPECT_CALL(handlerMock, handleCallRecipientNotAvailable(common::PhoneNumber{123}));
+
+    common::OutgoingMessage msg{common::MessageId::UnknownRecipient,
+                                PHONE_NUMBER,
+                                common::PhoneNumber{123}};
+    messageCallback(msg.getMessage());
+}
+
+TEST_F(BtsPortTestSuite, shallHandleUnknownRecipientForSms)
+{
+    EXPECT_CALL(transportMock, sendMessage(_)).WillOnce(Return(true));
+
+    objectUnderTest.sendSms(SmsEntity{PHONE_NUMBER.value, 123, "test message"});
+
+    EXPECT_CALL(handlerMock, handleSmsDeliveryFailure(common::PhoneNumber{123}));
+
+    common::OutgoingMessage msg{common::MessageId::UnknownRecipient,
+                                PHONE_NUMBER,
+                                common::PhoneNumber{123}};
+    messageCallback(msg.getMessage());
+}
+
 }

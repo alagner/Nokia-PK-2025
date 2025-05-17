@@ -20,6 +20,7 @@ protected:
     StrictMock<IUeGuiMock> guiMock;
     StrictMock<IListViewModeMock> listViewModeMock;
     StrictMock<ITextModeMock> textModeMock;
+    StrictMock<ISmsComposeModeMock> composeModeMock;
 
     UserPort objectUnderTest{loggerMock, guiMock, PHONE_NUMBER};
 
@@ -88,6 +89,24 @@ TEST_F(UserPortTestSuite, shallShowSms)
     EXPECT_CALL(guiMock, setRejectCallback(_)).Times(Exactly(1));
 
     objectUnderTest.showSms(testSms);
+}
+
+TEST_F(UserPortTestSuite, shallComposeSmsAndSend)
+{
+    SmsEntity sms{PHONE_NUMBER.value, 123, "Hello!", false};
+
+    EXPECT_CALL(guiMock, setSmsComposeMode()).WillOnce(ReturnRef(composeModeMock));
+    EXPECT_CALL(composeModeMock, clearSmsText());
+    EXPECT_CALL(composeModeMock, getPhoneNumber()).WillOnce(Return(common::PhoneNumber{123}));
+    EXPECT_CALL(composeModeMock, getSmsText()).WillOnce(Return("Hello!"));
+    EXPECT_CALL(handlerMock, sendSms(sms));
+
+    IUeGui::Callback acceptCallback;
+    EXPECT_CALL(guiMock, setAcceptCallback(_)).WillOnce(SaveArg<0>(&acceptCallback));
+    EXPECT_CALL(guiMock, setRejectCallback(_));
+
+    objectUnderTest.composeSms();
+    acceptCallback();
 }
 
 }
