@@ -1,8 +1,8 @@
 #include "UserPort.hpp"
+#include "Traits/EnumTraits.hpp"
 #include "UeGui/IListViewMode.hpp"
 #include "UeGui/ITextMode.hpp"
-#include "Traits/EnumTraits.hpp"
-
+#include "Utils/todo.h"
 
 #include <string>
 
@@ -216,6 +216,9 @@ void UserPort::acceptCallback()
     }
     else if (currentViewMode == view_mode::Call_menu)
     {
+        constexpr std::size_t dial_number_code{ 0 };
+        constexpr std::size_t call_history_code{ 1 };
+
         logger.logDebug("Accept in Call menu - getting selected index");
         auto &listView = gui.setListViewMode();
         auto indexPair = listView.getCurrentItemIndex();
@@ -227,13 +230,15 @@ void UserPort::acceptCallback()
             {
                 logger.logInfo("Dial Number selected from Call menu");
                 // TODO: Implement dial number UI or action
-                selectedIndexOpt = std::nullopt;
+                gui.setDialMode();
+                TODO(Make selectedIndexOpt actually send someting to handleUiAction())
+                selectedIndexOpt = std::optional<std::size_t>(dial_number_code);
             }
             else if (selectedIndexOpt.value() == 1)
             {
                 logger.logInfo("Call History selected from Call menu");
                 // TODO: Implement call history UI or action
-                selectedIndexOpt = std::nullopt;
+                selectedIndexOpt = std::optional<std::size_t>(call_history_code);
             }
         }
     }

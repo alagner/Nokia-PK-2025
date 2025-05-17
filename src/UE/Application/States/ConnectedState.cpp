@@ -45,9 +45,7 @@ void ConnectedState::handleUiAction(std::optional<std::size_t> selectedIndex){
 
         case 2:
             logger.logInfo("Call selected");
-            // TODO: Set state to DiallingState or similar to handle call menu
-            // context.setState<DiallingState>();
-            this->context.user.showCallMenu();
+            context.setState<DiallingState>();
             break;
 
         default:
