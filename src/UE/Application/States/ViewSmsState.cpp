@@ -1,61 +1,69 @@
 #include "ViewSmsState.hpp"
 #include "ViewListSmsState.hpp"
 #include "NotConnectedState.hpp"
-#include <stdexcept>
 
-namespace ue{
+namespace ue {
 
-    ViewSmsState::ViewSmsState(Context &context, std::size_t smsIndex)
-        : BaseState(context, "ViewSmsState"),
-          viewSmsIndex(smsIndex){
-        const auto &allSms = context.smsStorage.getAllMessages();
-        if (viewSmsIndex >= allSms.size()){
-            logger.logError("Invalid SMS index provided: ", viewSmsIndex);
-            context.setState<ViewListSmsState>();
-            return;
-        }
-
-        const SmsMessage &message = allSms[viewSmsIndex];
-        logger.logInfo("Viewing SMS at index: ", viewSmsIndex, ", From: ", message.sender);
-
-        if (message.direction == SmsMessage::Dir::in &&
-            message.status == SmsMessage::Status::receiveUR){
-            logger.logDebug("Marking SMS as read: index ", viewSmsIndex);
-            context.smsStorage.markAsRead(viewSmsIndex);
-        }
-
-        context.user.showMessageView(message);
+ViewSmsState::ViewSmsState(Context& ctx, std::size_t smsIndex)
+    : BaseState(ctx, "ViewSmsState")
+    , smsIndex_(smsIndex)
+{
+    const auto& inbox = context.smsStorage.getAllMessages();
+    if (smsIndex_ >= inbox.size()) {
+        logger.logError("Invalid SMS index: ", smsIndex_);
+        returnToSmsList();
+        return;
     }
 
-    void ViewSmsState::handleUiBack(){
-        const auto &allSms = context.smsStorage.getAllMessages();
-        context.user.showListMessage(allSms);
-
-        context.setState<ViewListSmsState>();
+    const auto& msg = inbox[smsIndex_];
+    logger.logInfo("Opening SMS #", smsIndex_, " from ", msg.sender);
+    if (msg.direction == SmsMessage::Dir::in
+        && msg.status == SmsMessage::Status::receiveUR)
+    {
+        logger.logDebug("Marking as read SMS #", smsIndex_);
+        context.smsStorage.markAsRead(smsIndex_);
     }
 
-    void ViewSmsState::handleUiAction(std::optional<std::size_t> selectedIndex){
-        if (!selectedIndex.has_value()){
-            logger.logInfo("Action without index in single SMS view - switching to compose");
-            return;
-        }
+    displayCurrentSms();
+}
 
-        logger.logInfo("UI action in single SMS view - returning to list");
-        const auto &allSms = context.smsStorage.getAllMessages();
-        context.user.showListMessage(allSms);
-        context.setState<ViewListSmsState>();
-    }
+void ViewSmsState::displayCurrentSms()
+{
+    const auto& inbox = context.smsStorage.getAllMessages();
+    context.user.showMessageView(inbox[smsIndex_]);
+}
 
-    void ViewSmsState::handleDisconnected(){
-        logger.logInfo("Connection lost while viewing single SMS.");
-        context.setState<NotConnectedState>();
-    }
+void ViewSmsState::handleUiBack()
+{
+    logger.logInfo("Back from single SMS view");
+    returnToSmsList();
+}
 
-    void ViewSmsState::handleMessageReceive(common::PhoneNumber from, std::string text){
-        logger.logInfo("SMS received while viewing another SMS (from: ", from, ")");
-        std::size_t smsIndex = context.smsStorage.addMessage(from, text);
-        logger.logDebug("SMS stored at index: ", smsIndex);
-        context.user.showNewMessage();
-    }
+void ViewSmsState::handleUiAction(std::optional<std::size_t> selectedIndex)
+{
+    logger.logInfo("UI action in SMS view, returning to list");
+    returnToSmsList();
+}
+
+void ViewSmsState::returnToSmsList()
+{
+    const auto& inbox = context.smsStorage.getAllMessages();
+    context.user.showListMessage(inbox);
+    context.setState<ViewListSmsState>();
+}
+
+void ViewSmsState::handleDisconnected()
+{
+    logger.logInfo("Lost connection while viewing SMS");
+    context.setState<NotConnectedState>();
+}
+
+void ViewSmsState::handleMessageReceive(common::PhoneNumber from, std::string text)
+{
+    logger.logInfo("New SMS arrived (from=", from, ") while viewing another");
+    auto newIdx = context.smsStorage.addMessage(from, text);
+    logger.logDebug("Stored new SMS at index=", newIdx);
+    context.user.showNewMessage();
+}
 
 }

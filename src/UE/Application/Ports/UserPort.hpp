@@ -25,6 +25,8 @@ public:
     void showConnected() override;
     void showNewMessage() override;
 
+    void showNewMessageReceived();
+
     void showListMessage(const std::vector<SmsMessage>& messages);
     void showMessageView(const SmsMessage& message);
     void showNotify(const std::string& name, const std::string& message);

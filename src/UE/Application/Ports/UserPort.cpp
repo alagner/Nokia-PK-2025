@@ -19,7 +19,6 @@ void UserPort::start(IEventsHandler &handler)
     gui.setTitle("Nokia " + to_string(phoneNumber));
     gui.setAcceptCallback(std::bind(&UserPort::acceptCallback, this));
     gui.setRejectCallback(std::bind(&UserPort::rejectCallback, this));
-    gui.setMessageCallback(std::bind(&UserPort::messageCallback, this));
 }
 
 void UserPort::stop()
@@ -28,7 +27,6 @@ void UserPort::stop()
 
     gui.setAcceptCallback(nullptr);
     gui.setRejectCallback(nullptr);
-    gui.setMessageCallback(nullptr);
 }
 
 void UserPort::showNotConnected()
@@ -75,7 +73,7 @@ void UserPort::messageCallback()
         }
         handler->handleMessageComposeResult(reciver, text);
 
-        gui.getSmsComposeMode().clearSmsText();
+        gui.setSmsComposeMode().clearSmsText();
     }
     else
     {
@@ -91,6 +89,12 @@ void UserPort::showNewMessage()
 {
     logger.logInfo("New Message has arrived");
     gui.showNewSms(true);
+}
+
+void UserPort::showNewMessageReceived()
+{
+    logger.logInfo("New Message has been received");
+    gui.showNewSms(false);
 }
 
 void UserPort::showListMessage(const std::vector<SmsMessage> &messages)
@@ -139,6 +143,7 @@ void UserPort::showMessageView(const SmsMessage &message)
     }
     logger.logDebug("Wyświetlam wiadomość: ", displayText);
     viewer.setText(displayText);
+    showNewMessageReceived();
 }
 
 void UserPort::showNotify(const std::string &title, const std::string &message)
@@ -157,7 +162,6 @@ void UserPort::showMessageComp()
     auto &composeMode = gui.setSmsComposeMode();
 
     composeMode.clearSmsText();
-    composeMode.setPhoneNumber(common::PhoneNumber{});
 }
 
 void UserPort::showIncomingCall(const common::PhoneNumber &caller)
@@ -261,17 +265,17 @@ void UserPort::rejectCallback()
 
 common::PhoneNumber UserPort::getMessageRecipient() const
 {
-    return gui.getSmsComposeMode().getPhoneNumber();
+    return gui.setSmsComposeMode().getPhoneNumber();
 }
 
 std::string UserPort::getMessageText() const
 {
-    return gui.getSmsComposeMode().getSmsText();
+    return gui.setSmsComposeMode().getSmsText();
 }
 
 common::PhoneNumber UserPort::getCallRecipient() const
 {
-    return gui.getSmsComposeMode().getPhoneNumber();
+    return gui.setSmsComposeMode().getPhoneNumber();
 }
 
 }
