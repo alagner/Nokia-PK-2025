@@ -1,6 +1,7 @@
 #include "BtsPort.hpp"
 #include "Messages/IncomingMessage.hpp"
 #include "Messages/OutgoingMessage.hpp"
+#include "Utils/todo.h"
 
 namespace ue
 {
@@ -56,6 +57,7 @@ void BtsPort::handleMessage(BinaryMessage msg)
             handler->handleCallRequest(from);
             break;
         }
+        TODO(case CallDropped, CallTalk, CallAccepted, UnknownRecipient)
         default:
             logger.logError("unknow message: ", msgId, ", from: ", from);
         }
@@ -85,6 +87,42 @@ void BtsPort::sendMessage(common::PhoneNumber to, const std::string &text)
     logger.logInfo("Sending SMS to: ", to);
     common::OutgoingMessage msg{ common::MessageId::Sms, phoneNumber, to };
     msg.writeText(text);
+    transport.sendMessage(msg.getMessage());
+}
+
+void BtsPort::sendCallRequest(common::PhoneNumber to){
+    logger.logInfo("sending Call Request to: ", to);
+
+    common::OutgoingMessage msg{common::MessageId::CallRequest, phoneNumber, to};
+    transport.sendMessage(msg.getMessage());
+}
+
+void BtsPort::sendCallDropped(common::PhoneNumber to)
+{
+    logger.logInfo("Sending CallDropped to: ", to);
+    common::OutgoingMessage msg{ common::MessageId::CallDropped, phoneNumber, to };
+    transport.sendMessage(msg.getMessage());
+}
+
+void BtsPort::sendCallTalk(common::PhoneNumber to, const std::string& text)
+{
+    logger.logInfo("Sending CallTalk to: ", to);
+    common::OutgoingMessage msg{ common::MessageId::CallTalk, phoneNumber, to };
+    msg.writeText(text);
+    transport.sendMessage(msg.getMessage());
+}
+
+void BtsPort::sendCallAccepted(common::PhoneNumber to)
+{
+    logger.logInfo("Sending CallAccept to: ", to);
+    common::OutgoingMessage msg{ common::MessageId::CallAccepted, phoneNumber, to };
+    transport.sendMessage(msg.getMessage());
+}
+
+void BtsPort::sendUnknownRecipient(common::PhoneNumber to)
+{
+    logger.logInfo("Sending UnknownRecipient to: ", to);
+    common::OutgoingMessage msg{ common::MessageId::UnknownRecipient, phoneNumber, to };
     transport.sendMessage(msg.getMessage());
 }
 
