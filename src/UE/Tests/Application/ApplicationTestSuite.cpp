@@ -105,7 +105,7 @@ struct ApplicationConnectedTestSuite : ApplicationConnectingTestSuite
 
     void showSmsListView(std::vector<SmsEntity>);
     void recieveSms(std::string);
-    void sendSmsTo(common::PhoneNumber to);
+    void sendSmsTo(common::PhoneNumber from);
 };
 
 void ApplicationConnectedTestSuite::showSmsListView(std::vector<SmsEntity> testSmsVector)
@@ -124,7 +124,7 @@ void ApplicationConnectedTestSuite::recieveSms(std::string text)
     objectUnderTest.handleSms(TEST_SENDER_NUMBER, text);
 }
 
-void ApplicationConnectedTestSuite::sendSmsTo(common::PhoneNumber to){
+void ApplicationConnectedTestSuite::sendSmsTo(common::PhoneNumber from){
     SmsEntity smsToSend{PHONE_NUMBER.value, TEST_SENDER_NUMBER.value, "Hello!", false};
 
     EXPECT_CALL(userPortMock, getPhoneNumber()).WillOnce(Return(PHONE_NUMBER));

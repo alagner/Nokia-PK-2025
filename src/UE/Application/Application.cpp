@@ -75,9 +75,9 @@ void Application::handleDisconnect()
     context.state->handleDisconnect();
 }
 
-void Application::handleSmsDeliveryFailure(common::PhoneNumber to)
+void Application::handleSmsDeliveryFailure(common::PhoneNumber from)
 {
-    context.state->handleSmsDeliveryFailure(to);
+    context.state->handleSmsDeliveryFailure(from);
 }
 
 }

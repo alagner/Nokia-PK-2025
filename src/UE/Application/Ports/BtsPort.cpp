@@ -31,7 +31,6 @@ void BtsPort::handleMessage(BinaryMessage msg)
     {
         common::IncomingMessage reader{msg};
         auto msgId = reader.readMessageId();
-        logger.logInfo("Received msgId: ", static_cast<int>(msgId));
         auto from = reader.readPhoneNumber();
         auto to = reader.readPhoneNumber();
 
@@ -61,7 +60,6 @@ void BtsPort::handleMessage(BinaryMessage msg)
         case common::MessageId::UnknownRecipient:
         {
             handler->handleSmsDeliveryFailure(to);
-            logger.logError("to ", to, ", from: ", from);
             break;
         }
         default:
