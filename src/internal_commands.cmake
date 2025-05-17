@@ -2,7 +2,7 @@ macro(set_compiler_options)
 # set(CMAKE_CXX_FLAGS "-std=c++17 -DGTEST_HAS_PTHREAD=1 -g -Og ${CMAKE_CXX_FLAGS}")
 # add_definitions(-std=c++14)
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "-g -Og ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "-g -Og -DDEBUG ${CMAKE_CXX_FLAGS}")
 endmacro()
 
 macro(set_qt_options)
