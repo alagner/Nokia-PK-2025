@@ -37,6 +37,7 @@ public:
     MOCK_METHOD(void, showNewSms, (bool), (override));  // Fixed to include boolean parameter
     MOCK_METHOD(void, showSmsList, (), (override));  // Added showSmsList method
     MOCK_METHOD(void, showSmsContent, (const std::string&, const std::string&), (override));  // Added showSmsContent method
+    MOCK_METHOD(void, showSentSmsContent, (const std::string&, const std::string&), (override));  // Added showSentSmsContent method
     MOCK_METHOD(void, showCallRequest, (common::PhoneNumber), (override));
     MOCK_METHOD(void, showCallView, (common::PhoneNumber), (override));
     MOCK_METHOD(void, showCallMessage, (std::string), (override));

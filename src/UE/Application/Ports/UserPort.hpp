@@ -22,6 +22,7 @@ public:
     void showNewSms(bool present) override;
     void showSmsList() override;
     void showSmsContent(const std::string& from, const std::string& text) override;
+    void showSentSmsContent(const std::string& to, const std::string& text) override;
     void showSmsComposeView() override;
     
 

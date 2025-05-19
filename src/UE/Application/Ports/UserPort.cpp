@@ -136,7 +136,13 @@ void UserPort::showSmsList()
         {
             const auto& sms = currentSmsList[i];
             std::string status = sms.isRead ? "Read" : "Unread";
-            listMode.addSelectionListItem("From: " + to_string(sms.from), status);
+            
+            // Distinguish between sent and received messages
+            if (sms.isSent) {
+                listMode.addSelectionListItem("To: " + to_string(sms.to), "Sent");
+            } else {
+                listMode.addSelectionListItem("From: " + to_string(sms.from), status);
+            }
         }
     }
     
@@ -172,6 +178,17 @@ void UserPort::showSmsContent(const std::string& from, const std::string& text)
     IUeGui::ITextMode& textMode = gui.setViewTextMode();
     
     std::string fullContent = "From: " + from + "\n\n" + text;
+    textMode.setText(fullContent);
+    
+    gui.setRejectCallback([this]() { handleCloseSmsViewClicked(); });
+}
+
+void UserPort::showSentSmsContent(const std::string& to, const std::string& text)
+{
+    logger.logInfo("Showing sent SMS content to: ", to);
+    IUeGui::ITextMode& textMode = gui.setViewTextMode();
+    
+    std::string fullContent = "To: " + to + "\n\n" + text;
     textMode.setText(fullContent);
     
     gui.setRejectCallback([this]() { handleCloseSmsViewClicked(); });

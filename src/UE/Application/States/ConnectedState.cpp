@@ -121,10 +121,15 @@ void ConnectedState::selectSms(size_t index)
 
         const auto& sms = smsList[index];
         
-
-        context.user.showSmsContent(to_string(sms.from), sms.text);
+        // Display different content based on whether this is a sent or received SMS
+        if (sms.isSent) {
+            // This is a message we sent to someone else
+            context.user.showSentSmsContent(to_string(sms.to), sms.text);
+        } else {
+            // This is a message we received from someone else
+            context.user.showSmsContent(to_string(sms.from), sms.text);
+        }
         
-
         if (!sms.isRead)
         {
             context.smsDb.markAsRead(index);

@@ -38,6 +38,7 @@ public:
     virtual void showNewSms(bool present) = 0;
     virtual void showSmsList() = 0;
     virtual void showSmsContent(const std::string& from, const std::string& text) = 0;
+    virtual void showSentSmsContent(const std::string& to, const std::string& text) = 0;
     
     // Call-related UI methods
     virtual void showCallRequest(common::PhoneNumber phoneNumber) = 0;
