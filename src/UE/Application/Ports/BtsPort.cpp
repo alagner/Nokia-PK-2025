@@ -151,6 +151,16 @@ void BtsPort::sendCallRequest(common::PhoneNumber to)
     transport.sendMessage(msg.getMessage());
 }
 
+void BtsPort::sendSms(common::PhoneNumber to, const std::string& text)
+{
+    logger.logDebug("sendSms to: ", to, ", text: ", text);
+    common::OutgoingMessage msg{common::MessageId::Sms,
+                                phoneNumber,
+                                to};
+    msg.writeText(text);
+    transport.sendMessage(msg.getMessage());
+}
+
 void BtsPort::handleDisconnect() {
     if(handler) {
         handler->handleDisconnect();

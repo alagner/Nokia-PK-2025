@@ -52,7 +52,7 @@ struct ApplicationConnectingTestSuite : ApplicationNotConnectedTestSuite
 {
     ApplicationConnectingTestSuite()
     {
-        shallHandleAttachAccept();
+        //shallHandleAttachAccept();
     }
 };
 

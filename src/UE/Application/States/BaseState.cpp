@@ -89,4 +89,34 @@ void BaseState::rejectDialing()
     logger.logError("Unexpected: rejectDialing");
 }
 
+void BaseState::viewSms()
+{
+    logger.logError("Unexpected: viewSms");
+}
+
+void BaseState::selectSms(size_t index)
+{
+    logger.logError("Unexpected: selectSms with index: ", index);
+}
+
+void BaseState::closeSmsView()
+{
+    logger.logError("Unexpected: closeSmsView");
+}
+
+void BaseState::composeSms()
+{
+    logger.logError("Unexpected: composeSms");
+}
+
+void BaseState::acceptSmsCompose(common::PhoneNumber number, const std::string& text)
+{
+    logger.logError("Unexpected: acceptSmsCompose with number: ", number);
+}
+
+void BaseState::rejectSmsCompose()
+{
+    logger.logError("Unexpected: rejectSmsCompose");
+}
+
 }

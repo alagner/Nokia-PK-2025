@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseState.hpp"
+#include "../Ports/ISmsListViewPort.hpp"
 
 namespace ue
 {
@@ -16,8 +17,14 @@ public:
     
     void acceptCallRequest() override;
     void rejectCallRequest() override;
+    void viewSms() override;
+    void selectSms(size_t index) override;
+    void closeSmsView() override;
+    void composeSms() override;
+    void acceptSmsCompose(common::PhoneNumber number, const std::string& text) override;
+    void rejectSmsCompose() override;
     
-    // Override the dial method from BaseState (fixing the method name)
+
     void dial() override;
     
 private:
