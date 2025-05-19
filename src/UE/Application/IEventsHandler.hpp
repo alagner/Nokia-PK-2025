@@ -34,6 +34,11 @@ public:
 
     virtual void handleCallRequest(common::PhoneNumber from) = 0;
     virtual void handleDialRequest(common::PhoneNumber to) = 0;
+    virtual void handleCallDropped(common::PhoneNumber to) = 0;
+    virtual void handleAcceptCall(common::PhoneNumber to) = 0;
+    virtual void handleCallReject(common::PhoneNumber to) = 0;
+    virtual void handleTalkCall(common::PhoneNumber to, const std::string &message) = 0;
+    virtual void handleNumberUnknown(common::PhoneNumber to) = 0;
 };
 
 }

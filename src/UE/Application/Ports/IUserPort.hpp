@@ -20,18 +20,24 @@ public:
     virtual void showConnecting() = 0;
     virtual void showConnected() = 0;
     virtual void showSms() = 0;
+
     virtual void showSmsList(const std::vector<SmsMessage>& textMessages) = 0;
     virtual void showSmsView(const SmsMessage& textMessage) = 0;
     virtual void showAlert(const std::string& title, const std::string& textMessage) = 0;
     virtual void showSmsCompose() = 0;
     virtual void showDialCompose() = 0;
+
+    virtual void showIncomingCall(common::PhoneNumber from) = 0;
+    virtual void showTalkingMobileScreen(common::PhoneNumber to) = 0;
+
     virtual common::PhoneNumber getSmsRecipient() = 0;
     virtual std::string getSmsTextMessage() = 0;
-    virtual void showIncomingCall(common::PhoneNumber from) = 0;
 
     virtual common::PhoneNumber getDialedPhoneNumber() const = 0;
 
-    //TODO: here
+    virtual void addIncomingText(const std::string &messageText) = 0;
+    virtual void deleteOutgoingText() = 0;
+    virtual std::string getTextFromCall() const = 0;
 };
 
 }

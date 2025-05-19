@@ -44,6 +44,12 @@ public:
 
     void handleCallRequest(common::PhoneNumber from) override;
     void handleDialRequest(common::PhoneNumber to) override;
+    void handleCallDropped(common::PhoneNumber to) override;
+    void handleAcceptCall(common::PhoneNumber to) override;
+    void handleCallReject(common::PhoneNumber to) override;
+    void handleTalkCall(common::PhoneNumber to, const std::string &message) override;
+    void handleNumberUnknown(common::PhoneNumber to) override;
+
 
 private:
     Context context;

@@ -2,6 +2,7 @@
 #include "ConnectedState.hpp"
 #include "NotConnectedState.hpp"
 #include "Messages/PhoneNumber.hpp"
+#include "IncomingCallState.hpp"
 
 namespace ue
 {
@@ -56,6 +57,12 @@ namespace ue
  void ComposingSmsState::handleSmsSent(common::PhoneNumber to, bool succeed)
  {
   logger.logInfo("Received SMS send status for ", to, " during compose - ignoring");
+ }
+
+ void ComposingSmsState::handleCallRequest(common::PhoneNumber from)
+ {
+  logger.logInfo("Received call request from ", from, " while composing SMS - ignoring");
+  context.setState<IncomingCallState>(from);
  }
 
 } // namespace ue

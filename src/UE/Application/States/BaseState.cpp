@@ -76,4 +76,29 @@ namespace ue
         logger.logError("Unexpected: handleDialRequest for: ", to);
     }
 
+    void BaseState::handleAcceptCall(common::PhoneNumber to)
+    {
+        logger.logError("Unexpected: handleAcceptCall for: ", to);
+    }
+
+    void BaseState::handleCallDropped(common::PhoneNumber to)
+    {
+        logger.logError("Unexpected: handleCallDropped for: ", to);
+    }
+
+    void BaseState::handleCallReject(common::PhoneNumber to)
+    {
+        logger.logError("Unexpected: handleCallReject for: ", to);
+    }
+
+    void BaseState::handleNumberUnknown(common::PhoneNumber to)
+    {
+        logger.logError("Unexpected: handleNumberUnknown for: ", to);
+    }
+
+    void BaseState::handleTalkCall(common::PhoneNumber to, const std::string &message)
+    {
+        logger.logError("Unexpected: handleTalkCall for: ", to, ", message: ", message);
+    }
+
 }

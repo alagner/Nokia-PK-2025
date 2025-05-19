@@ -8,7 +8,7 @@ namespace ue {
                              IBtsPort &bts,
                              IUserPort &user,
                              ITimerPort &timer)
-        : context{iLogger, bts, user, timer},
+        : context{iLogger, bts, user, timer, nullptr, SmsDatabase(), phoneNumber },
         logger(iLogger, "[APP] ")
     {
         logger.logInfo("Started");
@@ -117,5 +117,55 @@ namespace ue {
     {
         logger.logDebug("Application: dial request to ", to);
         context.state->handleDialRequest(to);
+    }
+
+    void Application::handleCallDropped(common::PhoneNumber to)
+    {
+        logger.logInfo("Call dropped to: ", to);
+
+        if (context.state)
+            context.state->handleCallDropped(to);
+        else
+            logger.logError("handleCallDropped called with no active state!");
+    }
+
+    void Application::handleAcceptCall(common::PhoneNumber to)
+    {
+        logger.logInfo("Call accepted from: ", to);
+
+        if (context.state)
+            context.state->handleAcceptCall(to);
+        else
+            logger.logError("handleAcceptCall called with no active state!");
+    }
+
+    void Application::handleCallReject(common::PhoneNumber to)
+    {
+        logger.logInfo("Call rejected from: ", to);
+
+        if (context.state)
+            context.state->handleCallReject(to);
+        else
+            logger.logError("handleCallReject called with no active state!");
+    }
+
+    void Application::handleTalkCall(common::PhoneNumber to, const std::string &message)
+    {
+        logger.logInfo("Talk call from: ", to, " with message: ", message);
+
+        if (context.state)
+            context.state->handleTalkCall(to, message);
+        else
+            logger.logError("handleTalkCall called with no active state!");
+    }
+
+    void Application::handleNumberUnknown(common::PhoneNumber to)
+    {
+        logger.logInfo("Number unknown: ", to);
+
+        if (context.state)
+            context.state->handleNumberUnknown(to);
+        else
+            logger.logError("handleNumberUnknown called with no active state!");
     }
 }
