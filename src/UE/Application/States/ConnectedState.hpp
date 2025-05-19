@@ -28,6 +28,9 @@ public:
     void dial() override;
     
 private:
+
+    void updateNotificationIcon(const std::string& context);
+    
     common::PhoneNumber callingPhoneNumber;
     static const std::chrono::seconds CALL_TIMEOUT;
 };

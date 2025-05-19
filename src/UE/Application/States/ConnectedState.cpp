@@ -4,6 +4,8 @@
 #include "DialState.hpp"
 #include "../Ports/ISmsListViewPort.hpp"
 #include <sstream>
+#include <chrono>
+#include <thread>
 namespace ue
 {
 
@@ -13,6 +15,8 @@ ConnectedState::ConnectedState(Context &context)
     : BaseState(context, "ConnectedState")
 {
     context.user.showConnected();
+    
+    updateNotificationIcon("Entering ConnectedState");
 }
 
 void ConnectedState::handleDisconnect() {
@@ -85,6 +89,7 @@ void ConnectedState::viewSms()
 {
     logger.logInfo("User requested to view SMS list");
     
+    updateNotificationIcon("viewSms");
 
     auto* smsListViewPort = dynamic_cast<ISmsListViewPort*>(&context.user);
     if (smsListViewPort) {
@@ -123,6 +128,8 @@ void ConnectedState::selectSms(size_t index)
         if (!sms.isRead)
         {
             context.smsDb.markAsRead(index);
+            
+            updateNotificationIcon("selectSms");
         }
     }
     else
@@ -136,8 +143,9 @@ void ConnectedState::closeSmsView()
 {
     logger.logInfo("User closed SMS view");
     
-
-    viewSms();
+    context.user.showConnected();
+    
+    updateNotificationIcon("closeSmsView");
 }
 
 void ConnectedState::composeSms()
@@ -158,8 +166,9 @@ void ConnectedState::acceptSmsCompose(common::PhoneNumber number, const std::str
 
     context.smsDb.addSentSms(context.phoneNumber, number, text);
     
-
     context.user.showConnected();
+    
+    updateNotificationIcon("acceptSmsCompose");
 }
 
 void ConnectedState::rejectSmsCompose()
@@ -167,6 +176,18 @@ void ConnectedState::rejectSmsCompose()
     logger.logInfo("User rejected SMS composition");
     
     context.user.showConnected();
+
+    updateNotificationIcon("rejectSmsCompose");
+}
+
+void ConnectedState::updateNotificationIcon(const std::string& source)
+{
+    bool hasUnread = context.smsDb.hasUnreadSms();
+    logger.logInfo("Updating SMS notification icon (", source, "): ", (hasUnread ? "visible" : "hidden"));
+    
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    
+    context.user.showNewSms(hasUnread);
 }
 
 }

@@ -4,6 +4,8 @@
 #include "UeGui/IDialMode.hpp"
 #include "UeGui/ITextMode.hpp"
 #include "UeGui/ISmsComposeMode.hpp"
+#include <chrono>
+#include <thread>
 
 namespace ue
 {
@@ -62,8 +64,15 @@ void UserPort::showConnected()
 
 void UserPort::showNewSms(bool present)
 {
-    logger.log(common::ILogger::INFO_LEVEL, "New SMS received!");
+    if (present) {
+        logger.log(common::ILogger::INFO_LEVEL, "Showing unread SMS indicator");
+    } else {
+        logger.log(common::ILogger::INFO_LEVEL, "Hiding unread SMS indicator");
+    }
+    
     gui.showNewSms(present);
+    
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
 void UserPort::showCallRequest(common::PhoneNumber phoneNumber)
@@ -173,7 +182,8 @@ void UserPort::showSmsComposeView()
     logger.logInfo("Showing SMS compose view");
     IUeGui::ISmsComposeMode& smsComposeMode = gui.setSmsComposeMode();
     
-
+    smsComposeMode.clearSmsText();
+    
     gui.setAcceptCallback([this]() { handleAcceptSmsComposeClicked(); });
     gui.setRejectCallback([this]() { handleRejectSmsComposeClicked(); });
 }
