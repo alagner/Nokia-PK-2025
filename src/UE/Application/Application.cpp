@@ -9,7 +9,7 @@ Application::Application(common::PhoneNumber phoneNumber,
                          IBtsPort &bts,
                          IUserPort &user,
                          ITimerPort &timer)
-    : context{iLogger, bts, user, timer},
+    : context{iLogger, bts, user, timer, phoneNumber},
     logger(iLogger, "[APP] ")
 {
     logger.logInfo("Started");
@@ -104,6 +104,42 @@ void Application::rejectDialing()
 {
     logger.logInfo("User rejected dialing");
     context.state->rejectDialing();
+}
+
+void Application::viewSms()
+{
+    logger.logInfo("User requested to view SMS");
+    context.state->viewSms();
+}
+
+void Application::selectSms(size_t index)
+{
+    logger.logInfo("User selected SMS at index: ", index);
+    context.state->selectSms(index);
+}
+
+void Application::closeSmsView()
+{
+    logger.logInfo("User closed SMS view");
+    context.state->closeSmsView();
+}
+
+void Application::composeSms()
+{
+    logger.logInfo("User requested to compose SMS");
+    context.state->composeSms();
+}
+
+void Application::acceptSmsCompose(common::PhoneNumber number, const std::string& text)
+{
+    logger.logInfo("User accepted SMS composition to: ", number);
+    context.state->acceptSmsCompose(number, text);
+}
+
+void Application::rejectSmsCompose()
+{
+    logger.logInfo("User rejected SMS composition");
+    context.state->rejectSmsCompose();
 }
 
 }
