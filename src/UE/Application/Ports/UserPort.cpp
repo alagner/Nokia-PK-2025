@@ -115,14 +115,16 @@ void UserPort::showSmsList()
     IUeGui::IListViewMode& listMode = gui.setListViewMode();
     listMode.clearSelectionList();
     
-    if (currentSmsList.empty())
+    bool hasMessages = !currentSmsList.empty();
+    
+    if (!hasMessages)
     {
-
+        // Display a message when there are no SMS messages
         listMode.addSelectionListItem("No messages", "");
     }
     else
     {
-
+        // Add each SMS to the list with its read status
         for (size_t i = 0; i < currentSmsList.size(); ++i)
         {
             const auto& sms = currentSmsList[i];
@@ -131,20 +133,30 @@ void UserPort::showSmsList()
         }
     }
     
-
+    // Add the Back button at the end of the list
     listMode.addSelectionListItem("Back", "Return to main menu");
 
-    gui.setAcceptCallback([this]() {
+    gui.setAcceptCallback([this, hasMessages]() {
         auto selection = gui.setListViewMode().getCurrentItemIndex();
         if (selection.first) {
-            if (selection.second < currentSmsList.size()) {
-
-                if (selectSmsCallback) {
-                    selectSmsCallback(selection.second);
+            if (!hasMessages) {
+                // When there are no messages, only respond to "Back" selection
+                if (selection.second == 1) {
+                    // Back button
+                    showConnected();
                 }
-            } else if (selection.second == currentSmsList.size()) {
-
-                showConnected();
+                // Clicking "No messages" does nothing
+            } else {
+                // When there are messages
+                if (selection.second < currentSmsList.size()) {
+                    // Clicked on an SMS message
+                    if (selectSmsCallback) {
+                        selectSmsCallback(selection.second);
+                    }
+                } else if (selection.second == currentSmsList.size()) {
+                    // Clicked on Back button
+                    showConnected();
+                }
             }
         }
     });
