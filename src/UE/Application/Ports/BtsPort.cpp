@@ -71,7 +71,7 @@ void BtsPort::handleMessage(BinaryMessage msg)
         }
         case common::MessageId::CallAccepted:
         {
-            handler->handleCallAccepted();
+            handler->handleCallAccepted(to);
             break;
         }
         case common::MessageId::CallDropped:
@@ -82,7 +82,7 @@ void BtsPort::handleMessage(BinaryMessage msg)
         case common::MessageId::CallTalk:
         {
             auto text = reader.readRemainingText();
-            handler->handleTalkMessage(to, text);
+            handler->handleTalkMessage(from, text);
             break;
         }
         default:

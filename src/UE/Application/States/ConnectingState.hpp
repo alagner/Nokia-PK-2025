@@ -17,6 +17,8 @@ public:
 
     // ITimerEventsHandler interface
     void handleTimeout() override;
+
+    void handleTalkMessage(common::PhoneNumber from, const std::string& text) override;
 };
 
 }

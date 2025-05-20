@@ -18,7 +18,14 @@ void TalkingState::handleDisconnect()
 
 void TalkingState::sendTalkMessage(const std::string& text)
 {
-    context.bts.sendTalkMessage(common::PhoneNumber to, std::string text);
+    context.bts.sendTalkMessage(to, text);
+    context.timer.stopTimer();
+    context.timer.startTimer(std::chrono::minutes(2));
+}
+
+void TalkingState::handleTalkMessage(common::PhoneNumber from, const std::string& text)
+{
+    context.user.displayMessage(from, text);
     context.timer.stopTimer();
     context.timer.startTimer(std::chrono::minutes(2));
 }

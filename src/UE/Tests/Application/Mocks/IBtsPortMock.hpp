@@ -18,9 +18,11 @@ public:
     MOCK_METHOD(void, handleDisconnect, (), (final));
     MOCK_METHOD(void, handleSms, (common::PhoneNumber, std::string), (override));
     MOCK_METHOD(void, handleSmsDeliveryFailure, (common::PhoneNumber from), (override));
-    MOCK_METHOD(void, handleCallAccepted, (), (override));
+    MOCK_METHOD(void, handleCallAccepted, (common::PhoneNumber), (override));
     MOCK_METHOD(void, handleCallDropped, (), (override));
     MOCK_METHOD(void, handleCallRecipientNotAvailable, (common::PhoneNumber from), (override));
+    MOCK_METHOD(void, handleTalkMessage, (common::PhoneNumber, const std::string&), (override));
+
 };
 
 class IBtsPortMock : public IBtsPort
@@ -33,6 +35,7 @@ public:
     MOCK_METHOD(void, sendSms, (const SmsEntity&), (final));
     MOCK_METHOD(void, sendCallRequest, (common::PhoneNumber, common::PhoneNumber), (override));
     MOCK_METHOD(void, sendCallDropped, (common::PhoneNumber from, common::PhoneNumber to), (override));
+    MOCK_METHOD(void, sendTalkMessage, (common::PhoneNumber to, const std::string& text), (override));
 };
 
 }

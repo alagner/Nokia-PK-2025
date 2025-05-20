@@ -88,10 +88,10 @@ void ConnectedState::sendCallRequest(common::PhoneNumber number)
     context.user.showDialing();
 }
 
-void ConnectedState::handleCallAccepted()
+void ConnectedState::handleCallAccepted(common::PhoneNumber to)
 {
     context.timer.stopTimer();
-    context.setState<TalkingState>();
+    context.setState<TalkingState>(to);
 }
 
 void ConnectedState::handleCallDropped()
@@ -100,7 +100,6 @@ void ConnectedState::handleCallDropped()
     context.user.showConnected();
     context.timer.stopTimer();
 }
-
 
 void ConnectedState::cancelCallRequest()
 {
@@ -127,6 +126,11 @@ void ConnectedState::handleTimeout()
 void ConnectedState::handleRedirect()
 {
     context.user.showConnected();
+}
+
+void ConnectedState::handleTalkMessage(common::PhoneNumber from, const std::string& text)
+{
+    logger.logInfo("Error: Should be talking stage.");
 }
 
 }

@@ -18,6 +18,7 @@ class IUserEventsHandler
     virtual void startDial() = 0;
     virtual void sendCallRequest(common::PhoneNumber number) = 0;
     virtual void cancelCallRequest() = 0;
+    virtual void sendTalkMessage(const std::string& text) = 0;
 };
 
 class IUserPort
@@ -37,6 +38,7 @@ class IUserPort
     virtual void showDialing() = 0;
     virtual void showTalking() = 0;
     virtual void showPartnerNotAvailable() = 0;
+    virtual void displayMessage(common::PhoneNumber from, const std::string& text) = 0;
 };
 
 }

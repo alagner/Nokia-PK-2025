@@ -5,6 +5,7 @@
 #include "IUeGui.hpp"
 #include "UeGui/ISmsComposeMode.hpp"
 #include "UeGui/IDialMode.hpp"
+#include "UeGui/ICallMode.hpp"
 
 namespace ue
 {
@@ -170,10 +171,21 @@ void UserPort::showDialing()
 
 void UserPort::showTalking()
 {
-    IUeGui::ITextMode& mode = gui.setViewTextMode();
-    mode.setText("Talking...");
+    IUeGui::ICallMode& chat = gui.setCallMode();
+    chat.clearIncomingText();
+
+    gui.setAcceptCallback([this, &chat]() {
+        std::string message = chat.getOutgoingText();
+        if (!message.empty()) {
+            chat.appendIncomingText("You: " + message);
+            handler->sendTalkMessage(message);
+            chat.clearOutgoingText();
+        }
+    });
+
     gui.setRejectCallback([this]() {
         logger.logInfo("User ended the call");
+        handler->cancelCallRequest();
     });
 }
 
@@ -187,6 +199,12 @@ void UserPort::showPartnerNotAvailable()
     gui.setAcceptCallback([this]() {
 
     });
+}
+
+void UserPort::displayMessage(common::PhoneNumber from, const std::string& text)
+{
+    IUeGui::ICallMode& chat = gui.setCallMode();
+    chat.appendIncomingText("Peer: " + text);
 }
 
 }

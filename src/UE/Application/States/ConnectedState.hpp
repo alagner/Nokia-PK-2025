@@ -25,10 +25,11 @@ public:
     void composeSms() override;
     void startDial() override;
     void sendCallRequest(common::PhoneNumber number) override;
-    void handleCallAccepted() override;
+    void handleCallAccepted(common::PhoneNumber to) override;
     void cancelCallRequest() override;
     void handleTimeout() override;
     void handleRedirect() override;
+    void handleTalkMessage(common::PhoneNumber from, const std::string& text) override;
 
     common::PhoneNumber callTarget{};
 };

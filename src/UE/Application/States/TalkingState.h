@@ -12,7 +12,9 @@ class TalkingState : public BaseState
     common::PhoneNumber to;
     explicit TalkingState(Context& context, common::PhoneNumber to);
     void handleDisconnect() override;
-    void sendTalkMessage(common::PhoneNumber to, const std::string& text) override;
+    void sendTalkMessage(const std::string& text);
+    void handleTalkMessage(common::PhoneNumber from, const std::string& text);
+
 };
 
 }

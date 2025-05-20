@@ -30,4 +30,10 @@ void NotConnectedState::composeSms()
     context.user.showNotConnected();
 }
 
+void NotConnectedState::handleTalkMessage(common::PhoneNumber, const std::string&)
+{
+    logger.logInfo("Cannot handle talk message - not connected to the network");
+    context.user.showNotConnected();
+}
+
 }

@@ -19,6 +19,7 @@ public:
     MOCK_METHOD(void, startDial, (), (override));
     MOCK_METHOD(void, sendCallRequest, (common::PhoneNumber), (override));
     MOCK_METHOD(void, cancelCallRequest, (), (override));
+    MOCK_METHOD(void, sendTalkMessage,(const std::string& text), (override));
 };
 
 class IUserPortMock : public IUserPort
@@ -39,6 +40,7 @@ public:
     MOCK_METHOD(void, showTalking, (), (override));
     MOCK_METHOD(common::PhoneNumber, getPhoneNumber, (), (const));
     MOCK_METHOD(void, showPartnerNotAvailable,(), (override));
+    MOCK_METHOD(void, displayMessage, (common::PhoneNumber from, const std::string& text), (override));
 };
 
 }

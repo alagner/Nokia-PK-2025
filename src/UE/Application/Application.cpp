@@ -91,9 +91,9 @@ void Application::sendCallRequest(common::PhoneNumber number)
     context.state->sendCallRequest(number);
 }
 
-void Application::handleCallAccepted()
+void Application::handleCallAccepted(common::PhoneNumber to)
 {
-    context.state->handleCallAccepted();
+    context.state->handleCallAccepted(to);
 }
 
 void Application::handleCallDropped()
@@ -114,6 +114,16 @@ void Application::handleCallRecipientNotAvailable(common::PhoneNumber from)
 void Application::handleRedirect()
 {
     context.state->handleRedirect();
+}
+
+void Application::handleTalkMessage(common::PhoneNumber from, const std::string& text)
+{
+    context.state->handleTalkMessage(from, text);
+}
+
+void Application::sendTalkMessage(const std::string& text)
+{
+    context.state->sendTalkMessage(text);
 }
 
 }
