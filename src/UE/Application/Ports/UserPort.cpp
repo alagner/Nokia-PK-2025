@@ -137,7 +137,6 @@ void UserPort::showSmsList()
             const auto& sms = currentSmsList[i];
             std::string status = sms.isRead ? "Read" : "Unread";
             
-            // Distinguish between sent and received messages
             if (sms.isSent) {
                 listMode.addSelectionListItem("To: " + to_string(sms.to), "Sent");
             } else {

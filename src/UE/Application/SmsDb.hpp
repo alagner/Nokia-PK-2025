@@ -22,8 +22,7 @@ struct Sms
 
     Sms(common::PhoneNumber from, common::PhoneNumber to, std::string text)
         : from(from), to(to), text(text), isRead(true), isSent(true) {}
-        
-    // Constructor for loading from file
+
     Sms() = default;
 };
 
@@ -47,7 +46,6 @@ public:
     
     bool hasUnreadSms() const;
     
-    // File operations
     void saveToFile() const;
     void loadFromFile();
 
