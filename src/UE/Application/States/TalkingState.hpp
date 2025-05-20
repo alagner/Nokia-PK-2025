@@ -12,6 +12,7 @@ public:
     void handleDisconnect() override;
     void handleCallTalk(common::PhoneNumber from, std::string text);
     void handleCallDropped(common::PhoneNumber from);
+    void rejectDialing() override; 
     
 private:
     common::PhoneNumber peerPhoneNumber;

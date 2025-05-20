@@ -36,4 +36,5 @@ public:
     MOCK_METHOD(void, showDialView, (), (override));
 };
 
+};
 }
