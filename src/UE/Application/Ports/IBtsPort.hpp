@@ -32,6 +32,7 @@ public:
     virtual void sendSms(const SmsEntity& sms) = 0;
     virtual void sendCallRequest(common::PhoneNumber from, common::PhoneNumber to) = 0;
     virtual void sendCallDropped(common::PhoneNumber from, common::PhoneNumber to) = 0;
+    virtual void sendTalkMessage(common::PhoneNumber to, const std::string& text) = 0;
 };
 
 }

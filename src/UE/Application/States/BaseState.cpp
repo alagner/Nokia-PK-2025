@@ -105,4 +105,8 @@ void BaseState::handleRedirect()
     logger.logError("Unexpected: handleRedirect");
 }
 
+void BaseState::sendTalkMessage(const std::string& text){
+    logger.logError("Unexpected: sendTalkMessage");
+}
+
 }

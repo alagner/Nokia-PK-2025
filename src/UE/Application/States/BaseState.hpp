@@ -37,6 +37,8 @@ public:
     void handleCallRecipientNotAvailable(common::PhoneNumber) override;
     void handleCallDropped() override;
 
+    void sendTalkMessage(common::PhoneNumber to, const std::string& text) override;
+
 protected:
     Context& context;
     common::PrefixedLogger logger;

@@ -46,7 +46,7 @@ public:
     void handleCallAccepted() override;
     void handleCallDropped() override;
     void handleCallRecipientNotAvailable(common::PhoneNumber from) override;
-    void Application::handleTalkMessage(const std::string& text) override;
+    void handleTalkMessage(const std::string& text) override;
 
 private:
     Context context;
