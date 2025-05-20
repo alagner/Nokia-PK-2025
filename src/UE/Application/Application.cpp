@@ -9,7 +9,7 @@ Application::Application(common::PhoneNumber phoneNumber,
                          IBtsPort &bts,
                          IUserPort &user,
                          ITimerPort &timer)
-    : context{iLogger, bts, user, timer, phoneNumber},
+    : context{iLogger, bts, user, timer, phoneNumber, SmsDb(phoneNumber)},
     logger(iLogger, "[APP] ")
 {
     logger.logInfo("Started");

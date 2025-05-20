@@ -18,6 +18,12 @@ struct Context
     SmsDb smsDb;
     std::unique_ptr<IEventsHandler> state{};
 
+    // Use this constructor to explicitly initialize SmsDb with the phone number
+    Context(common::ILogger& logger, IBtsPort& bts, IUserPort& user, 
+            ITimerPort& timer, common::PhoneNumber number, SmsDb initialSmsDb = {})
+        : logger(logger), bts(bts), user(user), timer(timer), 
+          phoneNumber(number), smsDb(initialSmsDb) {}
+
     template <typename State, typename ...Arg>
     void setState(Arg&& ...arg)
     {
