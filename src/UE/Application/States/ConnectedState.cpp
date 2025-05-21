@@ -2,6 +2,12 @@
 #include "NotConnectedState.hpp"
 #include "TalkingState.hpp"
 #include "DialState.hpp"
+<<<<<<< Updated upstream
+=======
+#include "../Ports/ISmsListViewPort.hpp"
+#include "../Ports/UserPort.hpp"
+#include "UeGui/ICallMode.hpp"
+>>>>>>> Stashed changes
 #include <sstream>
 namespace ue
 {
@@ -11,6 +17,13 @@ const std::chrono::seconds ConnectedState::CALL_TIMEOUT{30}; // 30 seconds timeo
 ConnectedState::ConnectedState(Context &context)
     : BaseState(context, "ConnectedState")
 {
+    try {
+        context.user.clearIncomingCallText();
+        context.user.clearOutgoingCallText();
+    } catch (const std::bad_cast&) {
+        logger.logError("Failed to cast IUserPort to UserPort to clear call history");
+    }
+    
     context.user.showConnected();
 }
 

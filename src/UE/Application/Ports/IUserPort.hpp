@@ -36,6 +36,14 @@ public:
     virtual void showPeerUserNotAvailable(common::PhoneNumber phoneNumber) = 0;
     
     virtual void showDialView() = 0;
+<<<<<<< Updated upstream
+=======
+    virtual void showSmsComposeView() = 0;
+
+    virtual std::string getOutgoingCallText() = 0;
+    virtual void clearOutgoingCallText() = 0;
+    virtual void clearIncomingCallText() = 0;
+>>>>>>> Stashed changes
 };
 
 }

@@ -74,6 +74,9 @@ void UserPort::showCallView(common::PhoneNumber phoneNumber)
     
     callMode.clearIncomingText();
     callMode.appendIncomingText("Call with " + to_string(phoneNumber));
+
+    gui.setAcceptCallback([this]() { handleAcceptCallClicked(); });
+    gui.setRejectCallback([this]() { handleRejectCallClicked(); });
 }
 
 void UserPort::showCallMessage(std::string message)
@@ -145,4 +148,91 @@ void UserPort::handleRejectDialingClicked()
     }
 }
 
+<<<<<<< Updated upstream
+=======
+void UserPort::handleViewSmsClicked()
+{
+    logger.logInfo("User clicked view SMS");
+    if (handler)
+    {
+        handler->viewSms();
+    }
+}
+
+void UserPort::handleSelectSmsClicked(size_t index)
+{
+    logger.logInfo("User selected SMS at index: ", index);
+    if (handler)
+    {
+        handler->selectSms(index);
+    }
+}
+
+void UserPort::handleCloseSmsViewClicked()
+{
+    logger.logInfo("User closed SMS view");
+    if (handler)
+    {
+        handler->closeSmsView();
+    }
+}
+
+void UserPort::handleComposeSmsClicked()
+{
+    logger.logInfo("User clicked compose SMS");
+    if (handler)
+    {
+        handler->composeSms();
+    }
+}
+
+void UserPort::handleAcceptSmsComposeClicked()
+{
+    logger.logInfo("User accepted SMS composition");
+    if (handler)
+    {
+        IUeGui::ISmsComposeMode& smsComposeMode = gui.setSmsComposeMode();
+        common::PhoneNumber recipientNumber = smsComposeMode.getPhoneNumber();
+        std::string smsText = smsComposeMode.getSmsText();
+        
+        smsComposeMode.clearSmsText();
+        
+        handler->acceptSmsCompose(recipientNumber, smsText);
+    }
+}
+
+void UserPort::handleRejectSmsComposeClicked()
+{
+    logger.logInfo("User rejected SMS composition");
+    if (handler)
+    {
+        handler->rejectSmsCompose();
+    }
+}
+
+IUeGui::ICallMode& UserPort::getCallMode()
+{
+    logger.logDebug("Getting call mode UI");
+    return gui.setCallMode();
+}
+
+std::string UserPort::getOutgoingCallText()
+{
+    logger.logDebug("Getting outgoing call text");
+    return gui.setCallMode().getOutgoingText();
+}
+
+void UserPort::clearOutgoingCallText()
+{
+    logger.logDebug("Clearing outgoing call text");
+    gui.setCallMode().clearOutgoingText();
+}
+
+void UserPort::clearIncomingCallText()
+{
+    logger.logDebug("Clearing incoming call text");
+    gui.setCallMode().clearIncomingText();
+}
+
+>>>>>>> Stashed changes
 }
