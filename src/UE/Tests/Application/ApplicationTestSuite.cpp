@@ -105,6 +105,7 @@ struct ApplicationConnectedTestSuite : ApplicationConnectingTestSuite
 
     void showSmsListView(std::vector<SmsEntity>);
     void recieveSms(std::string);
+    void sendSmsTo(common::PhoneNumber from);
 };
 
 void ApplicationConnectedTestSuite::showSmsListView(std::vector<SmsEntity> testSmsVector)
@@ -123,6 +124,17 @@ void ApplicationConnectedTestSuite::recieveSms(std::string text)
     objectUnderTest.handleSms(TEST_SENDER_NUMBER, text);
 }
 
+void ApplicationConnectedTestSuite::sendSmsTo(common::PhoneNumber from){
+    SmsEntity smsToSend{PHONE_NUMBER.value, TEST_SENDER_NUMBER.value, "Hello!", false};
+
+    EXPECT_CALL(userPortMock, getPhoneNumber()).WillOnce(Return(PHONE_NUMBER));
+    EXPECT_CALL(smsRepositoryMock, save(smsToSend));
+    EXPECT_CALL(userPortMock, showConnected());
+    EXPECT_CALL(btsPortMock, sendSms(smsToSend));
+
+    objectUnderTest.sendSms(smsToSend);
+}
+
 TEST_F(ApplicationConnectedTestSuite, shallDisConnectOnDisConnect)
 {
     EXPECT_CALL(userPortMock, showNotConnected());
@@ -132,6 +144,11 @@ TEST_F(ApplicationConnectedTestSuite, shallDisConnectOnDisConnect)
 TEST_F(ApplicationConnectedTestSuite, shallUserReceiveNotification)
 {
     recieveSms("Hello World!");
+}
+
+TEST_F(ApplicationConnectedTestSuite, sendSms_success)
+{
+    sendSmsTo(TEST_SENDER_NUMBER);
 }
 
 struct ApplicationSmsListViewTestSuite : ApplicationConnectedTestSuite
@@ -197,6 +214,24 @@ TEST_F(ApplicationSmsViewTestSuite, shallUserReadMultipleSmsAndExit)
     testSmsVector[2].isRead = true;
 
     showSmsListView(testSmsVector);
+}
+
+struct ApplicationUnknownRecipientTestSuite : ApplicationConnectedTestSuite {
+    ApplicationUnknownRecipientTestSuite(){
+        sendSmsTo(TEST_SENDER_NUMBER);
+        testVector = smsRepositoryMock.database;
+    }
+    std::vector<SmsEntity> testVector;
+};
+
+TEST_F(ApplicationUnknownRecipientTestSuite, shallMarkSmsAsFailedWhenUnknownRecipient)
+{
+    std::vector<SmsEntity> vectorWithFailedMessage = testVector;
+    vectorWithFailedMessage[0].text="[FAILED DELIVERY] \n" + vectorWithFailedMessage[0].text;
+
+    EXPECT_CALL(smsRepositoryMock, getAll()).WillOnce(Return(testVector));
+    EXPECT_CALL(smsRepositoryMock, saveAll(vectorWithFailedMessage,true));
+    objectUnderTest.handleSmsDeliveryFailure(PHONE_NUMBER);
 }
 
 }

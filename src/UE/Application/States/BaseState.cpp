@@ -65,4 +65,9 @@ void BaseState::handleSms(common::PhoneNumber from, std::string text)
     logger.logError("Uexpected: handleSms");
 }
 
+void BaseState::handleSmsDeliveryFailure(common::PhoneNumber)
+{
+    logger.logError("Unexpected: handleSmsDeliveryFailure");
+}
+
 }

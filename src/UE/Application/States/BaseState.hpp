@@ -28,6 +28,7 @@ public:
     void handleAttachReject() override;
     void handleDisconnect() override;
     void handleSms(common::PhoneNumber from, std::string text);
+    void handleSmsDeliveryFailure(common::PhoneNumber);
 
 protected:
     Context& context;

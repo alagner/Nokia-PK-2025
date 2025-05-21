@@ -57,6 +57,11 @@ void BtsPort::handleMessage(BinaryMessage msg)
             handler->handleSms(from, text);
             break;
         }
+        case common::MessageId::UnknownRecipient:
+        {
+            handler->handleSmsDeliveryFailure(to);
+            break;
+        }
         default:
             logger.logError("unknow message: ", msgId, ", from: ", from);
 

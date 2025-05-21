@@ -55,4 +55,21 @@ void ConnectedState::composeSms()
     context.user.composeSms();
 }
 
+void ConnectedState::handleSmsDeliveryFailure(common::PhoneNumber from)
+{
+    logger.logInfo("Received UnknownRecipient for SMS from: ", from);
+    auto smsList = context.smsDb.getAll();
+    if (smsList.empty()) return;
+
+    for (auto sms = smsList.rbegin(); sms != smsList.rend(); ++sms){
+        if(sms->from==from.value){
+            sms->text = "[FAILED DELIVERY] \n" + sms->text;
+            context.smsDb.saveAll(smsList, true);
+            logger.logInfo("Marked SMS from ", from, " as failed.");
+            break;
+        }
+    }
+
+}
+
 }
