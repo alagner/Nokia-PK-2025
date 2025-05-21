@@ -52,7 +52,10 @@ struct ApplicationConnectingTestSuite : ApplicationNotConnectedTestSuite
 {
     ApplicationConnectingTestSuite()
     {
-        //shallHandleAttachAccept();
+        shallHandleSibMessage();
+        ::testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+        ::testing::Mock::VerifyAndClearExpectations(&userPortMock);
+        ::testing::Mock::VerifyAndClearExpectations(&timerPortMock);
     }
 };
 
@@ -61,6 +64,8 @@ TEST_F(ApplicationConnectingTestSuite, shallHandleAttachAccept)
     EXPECT_CALL(timerPortMock, stopTimer());
     EXPECT_CALL(userPortMock, showConnected());
     objectUnderTest.handleAttachAccept();
+    ::testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    ::testing::Mock::VerifyAndClearExpectations(&timerPortMock);
 }
 
 TEST_F(ApplicationConnectingTestSuite, shallDisconnectOnAttachReject)
@@ -68,11 +73,14 @@ TEST_F(ApplicationConnectingTestSuite, shallDisconnectOnAttachReject)
     EXPECT_CALL(timerPortMock, stopTimer());
     EXPECT_CALL(userPortMock, showNotConnected());
     objectUnderTest.handleAttachReject();
+    ::testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    ::testing::Mock::VerifyAndClearExpectations(&timerPortMock);
 }
 
 TEST_F(ApplicationConnectingTestSuite, shallDisconnectOnTimeout)
 {
     EXPECT_CALL(userPortMock, showNotConnected());
     objectUnderTest.handleTimeout();
+    ::testing::Mock::VerifyAndClearExpectations(&userPortMock);
 }
 }

@@ -35,18 +35,22 @@ protected:
 
 TEST_F(UserPortTestSuite, shallStartStop)
 {
+    ::testing::Mock::VerifyAndClearExpectations(&guiMock);
+    ::testing::Mock::VerifyAndClearExpectations(&handlerMock);
 }
 
 TEST_F(UserPortTestSuite, shallShowNotConnected)
 {
     EXPECT_CALL(guiMock, showNotConnected());
     objectUnderTest.showNotConnected();
+    ::testing::Mock::VerifyAndClearExpectations(&guiMock);
 }
 
 TEST_F(UserPortTestSuite, shallShowConnecting)
 {
     EXPECT_CALL(guiMock, showConnecting());
     objectUnderTest.showConnecting();
+    ::testing::Mock::VerifyAndClearExpectations(&guiMock);
 }
 
 TEST_F(UserPortTestSuite, shallShowMenuOnConnected)
@@ -55,6 +59,8 @@ TEST_F(UserPortTestSuite, shallShowMenuOnConnected)
     EXPECT_CALL(listViewModeMock, clearSelectionList());
     EXPECT_CALL(listViewModeMock, addSelectionListItem(_, _)).Times(AtLeast(1));
     objectUnderTest.showConnected();
+    ::testing::Mock::VerifyAndClearExpectations(&guiMock);
+    ::testing::Mock::VerifyAndClearExpectations(&listViewModeMock);
 }
 
 }

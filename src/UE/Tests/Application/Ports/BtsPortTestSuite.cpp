@@ -41,6 +41,8 @@ protected:
 
 TEST_F(BtsPortTestSuite, shallRegisterHandlersBetweenStartStop)
 {
+    ::testing::Mock::VerifyAndClearExpectations(&transportMock);
+    ::testing::Mock::VerifyAndClearExpectations(&handlerMock);
 }
 
 TEST_F(BtsPortTestSuite, shallIgnoreWrongMessage)
@@ -48,6 +50,8 @@ TEST_F(BtsPortTestSuite, shallIgnoreWrongMessage)
     common::OutgoingMessage wrongMsg{};
     wrongMsg.writeBtsId(BTS_ID);
     messageCallback(wrongMsg.getMessage());
+    ::testing::Mock::VerifyAndClearExpectations(&transportMock);
+    ::testing::Mock::VerifyAndClearExpectations(&handlerMock);
 }
 
 TEST_F(BtsPortTestSuite, shallHandleSib)
@@ -58,6 +62,7 @@ TEST_F(BtsPortTestSuite, shallHandleSib)
                                 PHONE_NUMBER};
     msg.writeBtsId(BTS_ID);
     messageCallback(msg.getMessage());
+    ::testing::Mock::VerifyAndClearExpectations(&handlerMock);
 }
 
 TEST_F(BtsPortTestSuite, shallHandleAttachAccept)
@@ -68,6 +73,7 @@ TEST_F(BtsPortTestSuite, shallHandleAttachAccept)
                                 PHONE_NUMBER};
     msg.writeNumber(true);
     messageCallback(msg.getMessage());
+    ::testing::Mock::VerifyAndClearExpectations(&handlerMock);
 }
 
 TEST_F(BtsPortTestSuite, shallHandleAttachReject)
@@ -78,6 +84,7 @@ TEST_F(BtsPortTestSuite, shallHandleAttachReject)
                                 PHONE_NUMBER};
     msg.writeNumber(false);
     messageCallback(msg.getMessage());
+    ::testing::Mock::VerifyAndClearExpectations(&handlerMock);
 }
 
 TEST_F(BtsPortTestSuite, shallSendAttachRequest)
@@ -91,6 +98,7 @@ TEST_F(BtsPortTestSuite, shallSendAttachRequest)
     ASSERT_NO_THROW(EXPECT_EQ(common::PhoneNumber{}, reader.readPhoneNumber()));
     ASSERT_NO_THROW(EXPECT_EQ(BTS_ID, reader.readBtsId()));
     ASSERT_NO_THROW(reader.checkEndOfMessage());
+    ::testing::Mock::VerifyAndClearExpectations(&transportMock);
 }
 
 }
