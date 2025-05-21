@@ -1,5 +1,6 @@
 #include "TalkingState.h"
 #include "NotConnectedState.hpp"
+#include "ConnectedState.hpp"
 
 namespace ue {
 
@@ -28,6 +29,29 @@ void TalkingState::handleTalkMessage(common::PhoneNumber from, const std::string
     context.user.displayMessage(from, text);
     context.timer.stopTimer();
     context.timer.startTimer(std::chrono::minutes(2));
+}
+
+void TalkingState::handleTimeout()
+{
+    logger.logInfo("Timeout: no activity, dropping call");
+    context.bts.sendCallDropped(context.user.getPhoneNumber(), to);
+    context.user.showConnected();
+    context.setState<ConnectedState>();
+}
+
+void TalkingState::handleCallRecipientNotAvailable(common::PhoneNumber)
+{
+    logger.logInfo("Peer is unavailable during call");
+    context.user.showPartnerNotAvailable();
+    context.timer.stopTimer();
+    context.timer.startRedirectTimer(std::chrono::seconds(3));
+}
+
+void TalkingState::handleRedirect()
+{
+    context.timer.stopTimer();
+    context.user.showConnected();
+    context.setState<ConnectedState>();
 }
 
 }

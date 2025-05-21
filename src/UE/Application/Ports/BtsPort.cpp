@@ -63,6 +63,10 @@ void BtsPort::handleMessage(BinaryMessage msg)
             {
                 handler->handleCallRecipientNotAvailable(to);
             }
+            else if (lastSentMessageType == common::MessageId::CallTalk)
+            {
+                handler->handleCallRecipientNotAvailable(to);
+            }
             else
             {
                 handler->handleSmsDeliveryFailure(to);
@@ -133,6 +137,7 @@ void BtsPort::sendCallDropped(common::PhoneNumber from, common::PhoneNumber to)
 
 void BtsPort::sendTalkMessage(common::PhoneNumber to, const std::string& text)
 {
+    lastSentMessageType = common::MessageId::CallTalk;
     common::OutgoingMessage msg(common::MessageId::CallTalk, phoneNumber, to);
     msg.writeText(text);
     transport.sendMessage(msg.getMessage());

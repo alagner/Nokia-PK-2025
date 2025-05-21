@@ -14,7 +14,9 @@ class TalkingState : public BaseState
     void handleDisconnect() override;
     void sendTalkMessage(const std::string& text);
     void handleTalkMessage(common::PhoneNumber from, const std::string& text);
-
+    void handleTimeout();
+    void handleCallRecipientNotAvailable(common::PhoneNumber from);
+    void handleRedirect();
 };
 
 }
