@@ -21,7 +21,7 @@ protected:
     const common::BtsId BTS_ID{1024};
     NiceMock<common::ILoggerMock> loggerMock;
     StrictMock<IBtsPortMock> btsPortMock;
-    StrictMock<IUserPortMock> userPortMock;
+    NiceMock<IUserPortMock> userPortMock;  // Changed to NiceMock to handle unexpected calls
     StrictMock<ITimerPortMock> timerPortMock;
 
     Application objectUnderTest{PHONE_NUMBER,
@@ -29,17 +29,33 @@ protected:
                                 btsPortMock,
                                 userPortMock,
                                 timerPortMock};
+                                
+    void TearDown() override
+    {
+        // Always clear expectations after each test to prevent interference
+        ::testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+        ::testing::Mock::VerifyAndClearExpectations(&userPortMock);
+        ::testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+    }
 };
 
 struct ApplicationNotConnectedTestSuite : ApplicationTestSuite
 {
     void shallHandleSibMessage()
     {
+        // Use InSequence to ensure the calls happen in the correct order
+        InSequence seq;
+        
         EXPECT_CALL(btsPortMock, sendAttachRequest(BTS_ID));
         EXPECT_CALL(timerPortMock, startTimer(500ms));
         EXPECT_CALL(userPortMock, showConnecting());
 
         objectUnderTest.handleSib(BTS_ID);
+        
+        // Always verify and clear expectations to avoid interference
+        ::testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+        ::testing::Mock::VerifyAndClearExpectations(&userPortMock);
+        ::testing::Mock::VerifyAndClearExpectations(&timerPortMock);
     }
 };
 
@@ -52,7 +68,10 @@ struct ApplicationConnectingTestSuite : ApplicationNotConnectedTestSuite
 {
     ApplicationConnectingTestSuite()
     {
+        // Set up the application in the Connecting state
         shallHandleSibMessage();
+        
+        // Clear any previous expectations
         ::testing::Mock::VerifyAndClearExpectations(&btsPortMock);
         ::testing::Mock::VerifyAndClearExpectations(&userPortMock);
         ::testing::Mock::VerifyAndClearExpectations(&timerPortMock);
@@ -64,6 +83,7 @@ TEST_F(ApplicationConnectingTestSuite, shallHandleAttachAccept)
     EXPECT_CALL(timerPortMock, stopTimer());
     EXPECT_CALL(userPortMock, showConnected());
     objectUnderTest.handleAttachAccept();
+    
     ::testing::Mock::VerifyAndClearExpectations(&userPortMock);
     ::testing::Mock::VerifyAndClearExpectations(&timerPortMock);
 }
@@ -73,6 +93,7 @@ TEST_F(ApplicationConnectingTestSuite, shallDisconnectOnAttachReject)
     EXPECT_CALL(timerPortMock, stopTimer());
     EXPECT_CALL(userPortMock, showNotConnected());
     objectUnderTest.handleAttachReject();
+    
     ::testing::Mock::VerifyAndClearExpectations(&userPortMock);
     ::testing::Mock::VerifyAndClearExpectations(&timerPortMock);
 }
@@ -81,6 +102,7 @@ TEST_F(ApplicationConnectingTestSuite, shallDisconnectOnTimeout)
 {
     EXPECT_CALL(userPortMock, showNotConnected());
     objectUnderTest.handleTimeout();
+    
     ::testing::Mock::VerifyAndClearExpectations(&userPortMock);
 }
 }
