@@ -38,4 +38,13 @@ void TalkingState::handleCallDropped(common::PhoneNumber from)
     }
 }
 
+void TalkingState::rejectDialing()
+{
+    logger.logInfo("User ended the call with: ", peerPhoneNumber);
+    
+    context.bts.sendCallDropped(peerPhoneNumber);
+    
+    context.setState<ConnectedState>();
+}
+
 }

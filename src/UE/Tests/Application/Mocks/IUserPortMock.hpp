@@ -45,4 +45,5 @@ public:
     MOCK_METHOD(void, showDialView, (), (override));
     MOCK_METHOD(void, showSmsComposeView, (), (override));
 
+};
 }
