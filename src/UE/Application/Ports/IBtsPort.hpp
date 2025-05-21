@@ -21,6 +21,7 @@ public:
     virtual void handleCallAccepted() = 0;
     virtual void handleCallDropped() = 0;
     virtual void handleCallRecipientNotAvailable(common::PhoneNumber from) = 0;
+
 };
 
 class IBtsPort
