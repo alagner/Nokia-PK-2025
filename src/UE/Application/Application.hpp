@@ -21,10 +21,10 @@ public:
                 ITimerPort& timer);
     ~Application();
 
-    // ITimerEventsHandler interface
+
     void handleTimeout() override;
 
-    // IBtsEventsHandler interface
+
     void handleSib(common::BtsId btsId) override;
     void handleAttachAccept() override;
     void handleAttachReject() override;
@@ -35,12 +35,18 @@ public:
     void handleCallDropped(common::PhoneNumber from) override;
     void handleCallTalk(common::PhoneNumber from, std::string message) override;
     
-    // IUserEventsHandler interface
+
     void acceptCallRequest() override;
     void rejectCallRequest() override;
     void dial() override;
     void acceptDialing(common::PhoneNumber number) override;
     void rejectDialing() override;
+    void viewSms() override;
+    void selectSms(size_t index) override;
+    void closeSmsView() override;
+    void composeSms() override;
+    void acceptSmsCompose(common::PhoneNumber number, const std::string& text) override;
+    void rejectSmsCompose() override;
     
 private:
     Context context;

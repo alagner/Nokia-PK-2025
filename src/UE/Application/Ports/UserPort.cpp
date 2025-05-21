@@ -2,6 +2,10 @@
 #include "UeGui/IListViewMode.hpp"
 #include "UeGui/ICallMode.hpp"
 #include "UeGui/IDialMode.hpp"
+#include "UeGui/ITextMode.hpp"
+#include "UeGui/ISmsComposeMode.hpp"
+#include <chrono>
+#include <thread>
 
 namespace ue
 {
@@ -9,7 +13,8 @@ namespace ue
 UserPort::UserPort(common::ILogger &logger, IUeGui &gui, common::PhoneNumber phoneNumber)
     : logger(logger, "[USER-PORT]"),
       gui(gui),
-      phoneNumber(phoneNumber)
+      phoneNumber(phoneNumber),
+      selectSmsCallback(nullptr)
 {}
 
 void UserPort::start(IUserEventsHandler &handler)
@@ -43,16 +48,31 @@ void UserPort::showConnected()
     
     gui.setAcceptCallback([this]() {
         auto selection = gui.setListViewMode().getCurrentItemIndex();
-        if (selection.first && selection.second == 2) {  // Check if "Dial" (index 2) was selected
-            handleDialClicked();
+        if (selection.first) {
+            if (selection.second == 0) {
+                handleComposeSmsClicked();
+            }
+            else if (selection.second == 1) {
+                handleViewSmsClicked();
+            }
+            else if (selection.second == 2) {
+                handleDialClicked();
+            }
         }
     });
 }
 
 void UserPort::showNewSms(bool present)
 {
-    logger.log(common::ILogger::INFO_LEVEL, "New SMS received!");
+    if (present) {
+        logger.log(common::ILogger::INFO_LEVEL, "Showing unread SMS indicator");
+    } else {
+        logger.log(common::ILogger::INFO_LEVEL, "Hiding unread SMS indicator");
+    }
+    
     gui.showNewSms(present);
+    
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
 void UserPort::showCallRequest(common::PhoneNumber phoneNumber)
@@ -99,6 +119,102 @@ void UserPort::showDialView()
     
     gui.setAcceptCallback([this]() { handleAcceptDialingClicked(); });
     gui.setRejectCallback([this]() { handleRejectDialingClicked(); });
+}
+
+void UserPort::showSmsList()
+{
+    logger.logInfo("Showing SMS list");
+    IUeGui::IListViewMode& listMode = gui.setListViewMode();
+    listMode.clearSelectionList();
+    
+    bool hasMessages = !currentSmsList.empty();
+    
+    if (!hasMessages)
+    {
+        listMode.addSelectionListItem("No messages", "");
+    }
+    else
+    {
+        for (size_t i = 0; i < currentSmsList.size(); ++i)
+        {
+            const auto& sms = currentSmsList[i];
+            std::string status = sms.isRead ? "Read" : "Unread";
+            
+            if (sms.isSent) {
+                listMode.addSelectionListItem("To: " + to_string(sms.to), "Sent");
+            } else {
+                listMode.addSelectionListItem("From: " + to_string(sms.from), status);
+            }
+        }
+    }
+    
+    listMode.addSelectionListItem("Back", "Return to main menu");
+
+    gui.setAcceptCallback([this, hasMessages]() {
+        auto selection = gui.setListViewMode().getCurrentItemIndex();
+        if (selection.first) {
+            if (!hasMessages) {
+                if (selection.second == 1) {
+                    showConnected();
+                }
+            } else {
+                if (selection.second < currentSmsList.size()) {
+                    if (selectSmsCallback) {
+                        selectSmsCallback(selection.second);
+                    }
+                } else if (selection.second == currentSmsList.size()) {
+                    showConnected();
+                }
+            }
+        }
+    });
+    
+    gui.setRejectCallback([this]() {
+        showConnected();
+    });
+}
+
+void UserPort::showSmsContent(const std::string& from, const std::string& text)
+{
+    logger.logInfo("Showing SMS content from: ", from);
+    IUeGui::ITextMode& textMode = gui.setViewTextMode();
+    
+    std::string fullContent = "From: " + from + "\n\n" + text;
+    textMode.setText(fullContent);
+    
+    gui.setRejectCallback([this]() { handleCloseSmsViewClicked(); });
+}
+
+void UserPort::showSentSmsContent(const std::string& to, const std::string& text)
+{
+    logger.logInfo("Showing sent SMS content to: ", to);
+    IUeGui::ITextMode& textMode = gui.setViewTextMode();
+    
+    std::string fullContent = "To: " + to + "\n\n" + text;
+    textMode.setText(fullContent);
+    
+    gui.setRejectCallback([this]() { handleCloseSmsViewClicked(); });
+}
+
+void UserPort::showSmsComposeView()
+{
+    logger.logInfo("Showing SMS compose view");
+    IUeGui::ISmsComposeMode& smsComposeMode = gui.setSmsComposeMode();
+    
+    smsComposeMode.clearSmsText();
+    
+    gui.setAcceptCallback([this]() { handleAcceptSmsComposeClicked(); });
+    gui.setRejectCallback([this]() { handleRejectSmsComposeClicked(); });
+}
+
+void UserPort::setSmsList(const std::vector<Sms>& smsList)
+{
+    currentSmsList = smsList;
+}
+
+void UserPort::setSelectSmsCallback(std::function<void(size_t)> callback)
+{
+    selectSmsCallback = callback;
 }
 
 void UserPort::handleAcceptCallClicked()
@@ -148,8 +264,7 @@ void UserPort::handleRejectDialingClicked()
     }
 }
 
-<<<<<<< Updated upstream
-=======
+
 void UserPort::handleViewSmsClicked()
 {
     logger.logInfo("User clicked view SMS");
@@ -210,6 +325,7 @@ void UserPort::handleRejectSmsComposeClicked()
     }
 }
 
+
 IUeGui::ICallMode& UserPort::getCallMode()
 {
     logger.logDebug("Getting call mode UI");
@@ -234,5 +350,4 @@ void UserPort::clearIncomingCallText()
     gui.setCallMode().clearIncomingText();
 }
 
->>>>>>> Stashed changes
 }
