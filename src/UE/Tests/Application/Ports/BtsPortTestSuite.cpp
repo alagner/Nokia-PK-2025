@@ -20,32 +20,27 @@ protected:
     const common::BtsId BTS_ID{13121981ll};
     NiceMock<common::ILoggerMock> loggerMock;
     StrictMock<IBtsEventsHandlerMock> handlerMock;
-    NiceMock<common::ITransportMock> transportMock;  // Changed to NiceMock to ignore uninteresting calls
+    StrictMock<common::ITransportMock> transportMock;
     common::ITransport::MessageCallback messageCallback;
 
     BtsPort objectUnderTest{loggerMock, transportMock, PHONE_NUMBER};
 
     BtsPortTestSuite()
     {
-        // Save the callback, but don't care about registerDisconnectedCallback
         EXPECT_CALL(transportMock, registerMessageCallback(_))
                 .WillOnce(SaveArg<0>(&messageCallback));
-                
         objectUnderTest.start(handlerMock);
-        
-        // Clear expectations after setup
-        ::testing::Mock::VerifyAndClearExpectations(&handlerMock);
     }
-    
     ~BtsPortTestSuite()
     {
+
+        EXPECT_CALL(transportMock, registerMessageCallback(IsNull()));
         objectUnderTest.stop();
     }
 };
 
 TEST_F(BtsPortTestSuite, shallRegisterHandlersBetweenStartStop)
 {
-    // Nothing to do here - just testing constructor/destructor
 }
 
 TEST_F(BtsPortTestSuite, shallIgnoreWrongMessage)
@@ -53,7 +48,6 @@ TEST_F(BtsPortTestSuite, shallIgnoreWrongMessage)
     common::OutgoingMessage wrongMsg{};
     wrongMsg.writeBtsId(BTS_ID);
     messageCallback(wrongMsg.getMessage());
-    ::testing::Mock::VerifyAndClearExpectations(&handlerMock);
 }
 
 TEST_F(BtsPortTestSuite, shallHandleSib)
@@ -64,7 +58,6 @@ TEST_F(BtsPortTestSuite, shallHandleSib)
                                 PHONE_NUMBER};
     msg.writeBtsId(BTS_ID);
     messageCallback(msg.getMessage());
-    ::testing::Mock::VerifyAndClearExpectations(&handlerMock);
 }
 
 TEST_F(BtsPortTestSuite, shallHandleAttachAccept)
@@ -75,7 +68,6 @@ TEST_F(BtsPortTestSuite, shallHandleAttachAccept)
                                 PHONE_NUMBER};
     msg.writeNumber(true);
     messageCallback(msg.getMessage());
-    ::testing::Mock::VerifyAndClearExpectations(&handlerMock);
 }
 
 TEST_F(BtsPortTestSuite, shallHandleAttachReject)
@@ -86,7 +78,6 @@ TEST_F(BtsPortTestSuite, shallHandleAttachReject)
                                 PHONE_NUMBER};
     msg.writeNumber(false);
     messageCallback(msg.getMessage());
-    ::testing::Mock::VerifyAndClearExpectations(&handlerMock);
 }
 
 TEST_F(BtsPortTestSuite, shallSendAttachRequest)
@@ -100,7 +91,6 @@ TEST_F(BtsPortTestSuite, shallSendAttachRequest)
     ASSERT_NO_THROW(EXPECT_EQ(common::PhoneNumber{}, reader.readPhoneNumber()));
     ASSERT_NO_THROW(EXPECT_EQ(BTS_ID, reader.readBtsId()));
     ASSERT_NO_THROW(reader.checkEndOfMessage());
-    ::testing::Mock::VerifyAndClearExpectations(&transportMock);
 }
 
 }
