@@ -57,6 +57,8 @@ public:
     void saveToFile() const;
     void loadFromFile();
 
+    void clearMessages() { smsMessages.clear(); }
+
 private:
     std::vector<Sms> smsMessages;
     std::string getStorageFilePath() const;

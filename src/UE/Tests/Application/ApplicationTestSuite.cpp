@@ -17,7 +17,7 @@ using namespace ::testing;
 class ApplicationTestSuite : public Test
 {
 protected:
-    const common::PhoneNumber PHONE_NUMBER{112};
+    const common::PhoneNumber PHONE_NUMBER{42}; // test specific number, don't use in production
     NiceMock<common::ILoggerMock> loggerMock;
     NiceMock<IBtsPortMock> btsPortMock;
     NiceMock<IUserPortMock> userPortMock;
@@ -42,6 +42,10 @@ struct ViewSmsTestSuite : ApplicationTestSuite
 protected:
     void SetUp() override
     {
+        // Clear SMS database - without this tests will fail
+        auto& smsDb = const_cast<SmsDb&>(objectUnderTest.getSmsDb());
+        smsDb.clearMessages();
+
         // Start in Connected state
         EXPECT_CALL(userPortMock, showConnecting());
         EXPECT_CALL(btsPortMock, sendAttachRequest(common::BtsId{1}));
