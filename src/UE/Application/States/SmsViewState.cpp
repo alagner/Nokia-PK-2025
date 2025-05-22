@@ -1,6 +1,7 @@
 #include "SmsViewState.hpp"
 #include "ConnectedState.hpp"
 #include "TalkingState.hpp"
+#include "SmsComposeState.hpp"
 #include "../Ports/ISmsListViewPort.hpp"
 #include <sstream>
 #include <chrono>
@@ -107,6 +108,13 @@ void SmsViewState::closeSmsView()
     context.setState<ConnectedState>();
 }
 
+void SmsViewState::composeSms()
+{
+    logger.logInfo("User requested to compose an SMS from SMS view state");
+    
+    
+    context.setState<SmsComposeState>();
+}
 
 
 void SmsViewState::handleCallRequest(common::PhoneNumber from)

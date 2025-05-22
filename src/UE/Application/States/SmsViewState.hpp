@@ -23,6 +23,7 @@ public:
     void viewSms() override;
     void selectSms(size_t index) override;
     void closeSmsView() override;
+    void composeSms() override;
     
     
     void handleCallRequest(common::PhoneNumber from) override;
