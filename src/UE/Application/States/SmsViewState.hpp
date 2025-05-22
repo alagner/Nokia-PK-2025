@@ -30,11 +30,15 @@ public:
     void acceptCallRequest() override;
     void rejectCallRequest() override;
     void handleTimeout() override;
+    void handleClose() override;
 
 private:
     void updateNotificationIcon(const std::string& source);
     common::PhoneNumber callingPhoneNumber;
     static const std::chrono::seconds CALL_TIMEOUT;
+    
+    bool viewingSpecificSms = false;  
+    size_t currentSmsIndex = 0;       
 };
 
 }

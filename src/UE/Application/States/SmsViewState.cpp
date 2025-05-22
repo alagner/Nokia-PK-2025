@@ -2,6 +2,7 @@
 #include "ConnectedState.hpp"
 #include "TalkingState.hpp"
 #include "SmsComposeState.hpp"
+#include "NotConnectedState.hpp"
 #include "../Ports/ISmsListViewPort.hpp"
 #include <sstream>
 #include <chrono>
@@ -37,8 +38,8 @@ SmsViewState::SmsViewState(Context &context)
 
 void SmsViewState::handleDisconnect() 
 {
-    context.setState<ConnectedState>();
-    
+    logger.logInfo("Connection to BTS dropped while viewing SMS/SMS list");
+    context.setState<NotConnectedState>();
 }
 
 void SmsViewState::handleSms(common::PhoneNumber from, std::string text)
@@ -46,17 +47,22 @@ void SmsViewState::handleSms(common::PhoneNumber from, std::string text)
     logger.logInfo("Received SMS from: ", from, ", text: ", text);
     
     context.smsDb.addSms(from, text);
-    
-    
     context.user.showNewSms(true);
     
     
-    viewSms();
+    if (!viewingSpecificSms) {
+        viewSms();
+    } else {
+        logger.logInfo("Received SMS while viewing specific SMS content - not refreshing view");
+    }
 }
 
 void SmsViewState::viewSms()
 {
     logger.logInfo("Refreshing SMS list view");
+    
+    
+    viewingSpecificSms = false;
     
     updateNotificationIcon("viewSms");
 
@@ -81,6 +87,10 @@ void SmsViewState::selectSms(size_t index)
     const auto& smsList = context.smsDb.getAllSms();
     
     if (index < smsList.size()) {
+        
+        viewingSpecificSms = true;
+        currentSmsIndex = index;
+        
         const auto& sms = smsList[index];
         
         if (sms.isSent) {
@@ -96,6 +106,7 @@ void SmsViewState::selectSms(size_t index)
         }
     } else {
         logger.logError("Invalid SMS index: ", index);
+        viewingSpecificSms = false;
         viewSms();
     }
 }
@@ -104,6 +115,8 @@ void SmsViewState::closeSmsView()
 {
     logger.logInfo("User closed SMS view");
     
+    
+    viewingSpecificSms = false;
   
     context.setState<ConnectedState>();
 }
@@ -119,8 +132,11 @@ void SmsViewState::composeSms()
 
 void SmsViewState::handleCallRequest(common::PhoneNumber from)
 {
-    logger.logInfo("Received call request from: ", from);
+    logger.logInfo("Received call request from: ", from, " - interrupting SMS viewing");
     callingPhoneNumber = from;
+    
+   
+    viewingSpecificSms = false;
     
     context.timer.startTimer(CALL_TIMEOUT);
     
@@ -150,7 +166,8 @@ void SmsViewState::rejectCallRequest()
     context.bts.sendCallDropped(callingPhoneNumber);
     
    
-    viewSms();
+    logger.logInfo("Not returning to SMS view after call rejection");
+    context.setState<ConnectedState>();
 }
 
 void SmsViewState::handleTimeout()
@@ -159,8 +176,9 @@ void SmsViewState::handleTimeout()
     
     context.bts.sendCallDropped(callingPhoneNumber);
     
-   
-    viewSms();
+    
+    logger.logInfo("Not returning to SMS view after call timeout");
+    context.setState<ConnectedState>();
 }
 
 void SmsViewState::updateNotificationIcon(const std::string& source)
@@ -171,6 +189,12 @@ void SmsViewState::updateNotificationIcon(const std::string& source)
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
     
     context.user.showNewSms(hasUnread);
+}
+
+void SmsViewState::handleClose()
+{
+    logger.logInfo("User closes UE while viewing SMS/SMS list - closing immediately");
+   
 }
 
 }
