@@ -2,6 +2,7 @@
 
 #include <gmock/gmock.h>
 #include "Ports/IUserPort.hpp"
+#include "Ports/ISmsListViewPort.hpp"
 
 namespace ue
 {
@@ -25,7 +26,7 @@ public:
     MOCK_METHOD(void, rejectSmsCompose, (), (override));
 };
 
-class IUserPortMock : public IUserPort
+class IUserPortMock : public IUserPort, public ISmsListViewPort
 {
 public:
     IUserPortMock();
@@ -48,5 +49,8 @@ public:
     MOCK_METHOD(void, clearOutgoingCallText, (), (override));
     MOCK_METHOD(void, clearIncomingCallText, (), (override));
 
+    // ISmsListViewPort methods
+    MOCK_METHOD(void, setSmsList, (const std::vector<Sms>&), (override));
+    MOCK_METHOD(void, setSelectSmsCallback, (std::function<void(size_t)>), (override));
 };
 }

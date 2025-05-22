@@ -24,6 +24,14 @@ struct Sms
         : from(from), to(to), text(text), isRead(true), isSent(true) {}
 
     Sms() = default;
+
+    bool operator==(const Sms& other) const {
+        return from == other.from &&
+               to == other.to &&
+               text == other.text &&
+               isRead == other.isRead &&
+               isSent == other.isSent;
+    }
 };
 
 class SmsDb
