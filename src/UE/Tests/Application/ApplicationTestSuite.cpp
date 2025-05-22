@@ -115,4 +115,22 @@ TEST_F(ViewSmsTestSuite, ShouldMarkSmsAsReadWhenViewing)
     const auto& smsDb = objectUnderTest.getSmsDb();
     EXPECT_FALSE(smsDb.hasUnreadSms());
 }
+
+TEST_F(ViewSmsTestSuite, ShouldHandleEmptySmsListCorrectly)
+{
+    // The SMS list should be empty - it's been cleared in SetUp method
+
+    std::vector<Sms> emptySmsDb;
+    EXPECT_CALL(userPortMock, setSmsList(emptySmsDb)).Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, setSelectSmsCallback(_)).Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, showSmsList()).Times(AtLeast(1));
+    objectUnderTest.viewSms();
+
+    // Verify that selecting a message from empty list is handled properly
+    objectUnderTest.selectSms(0);
+
+    // When closing view - should return to main menu
+    EXPECT_CALL(userPortMock, showConnected());
+    objectUnderTest.closeSmsView();
+}
 }
