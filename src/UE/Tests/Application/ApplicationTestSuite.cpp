@@ -92,4 +92,27 @@ TEST_F(ViewSmsTestSuite, ShouldDisplaySmsContentWhenSelectingSms)
     EXPECT_CALL(userPortMock, showSmsContent(std::to_string(senderNumber.value), smsText));
     objectUnderTest.selectSms(0);
 }
+
+TEST_F(ViewSmsTestSuite, ShouldMarkSmsAsReadWhenViewing)
+{
+    const common::PhoneNumber senderNumber{123};
+    const std::string smsText = "Test message";
+    objectUnderTest.handleSms(senderNumber, smsText);
+
+    std::vector<Sms> smsDbWithOneUnreadMessage = {
+        Sms{senderNumber, smsText, false}
+    };
+    EXPECT_CALL(userPortMock, setSmsList(smsDbWithOneUnreadMessage));
+    EXPECT_CALL(userPortMock, setSelectSmsCallback(_));
+    EXPECT_CALL(userPortMock, showSmsList());
+    objectUnderTest.viewSms();
+
+    // When selecting the SMS, its content should be shown
+    EXPECT_CALL(userPortMock, showSmsContent(std::to_string(senderNumber.value), smsText));
+    objectUnderTest.selectSms(0);
+
+    // Verify that SMS has been marked as read by checking if any unread messages remain
+    const auto& smsDb = objectUnderTest.getSmsDb();
+    EXPECT_FALSE(smsDb.hasUnreadSms());
+}
 }
