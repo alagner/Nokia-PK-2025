@@ -94,6 +94,9 @@ void UserPort::showCallView(common::PhoneNumber phoneNumber)
     
     callMode.clearIncomingText();
     callMode.appendIncomingText("Call with " + to_string(phoneNumber));
+
+    gui.setAcceptCallback([this]() { handleAcceptCallClicked(); });
+    gui.setRejectCallback([this]() { handleRejectCallClicked(); });
 }
 
 void UserPort::showCallMessage(std::string message)
@@ -261,6 +264,7 @@ void UserPort::handleRejectDialingClicked()
     }
 }
 
+
 void UserPort::handleViewSmsClicked()
 {
     logger.logInfo("User clicked view SMS");
@@ -319,6 +323,31 @@ void UserPort::handleRejectSmsComposeClicked()
     {
         handler->rejectSmsCompose();
     }
+}
+
+
+IUeGui::ICallMode& UserPort::getCallMode()
+{
+    logger.logDebug("Getting call mode UI");
+    return gui.setCallMode();
+}
+
+std::string UserPort::getOutgoingCallText()
+{
+    logger.logDebug("Getting outgoing call text");
+    return gui.setCallMode().getOutgoingText();
+}
+
+void UserPort::clearOutgoingCallText()
+{
+    logger.logDebug("Clearing outgoing call text");
+    gui.setCallMode().clearOutgoingText();
+}
+
+void UserPort::clearIncomingCallText()
+{
+    logger.logDebug("Clearing incoming call text");
+    gui.setCallMode().clearIncomingText();
 }
 
 }
