@@ -69,4 +69,23 @@ TEST_F(ViewSmsTestSuite, ShouldDisplaySmsListWhenViewingSms)
 
     objectUnderTest.viewSms();
 }
+
+TEST_F(ViewSmsTestSuite, ShouldDisplaySmsContentWhenSelectingSms)
+{
+    const common::PhoneNumber senderNumber{123};
+    const std::string smsText = "Test message";
+    objectUnderTest.handleSms(senderNumber, smsText);
+
+    // when accessing SMS list, expect the list to be shown with our test message
+    std::vector<Sms> smsDbWithOneMessage = {
+        Sms{senderNumber, smsText}
+    };
+    EXPECT_CALL(userPortMock, setSmsList(smsDbWithOneMessage));
+    EXPECT_CALL(userPortMock, setSelectSmsCallback(_));
+    EXPECT_CALL(userPortMock, showSmsList());
+    objectUnderTest.viewSms();
+
+    EXPECT_CALL(userPortMock, showSmsContent(std::to_string(senderNumber.value), smsText));
+    objectUnderTest.selectSms(0);
+}
 }
