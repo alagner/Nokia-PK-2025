@@ -28,6 +28,7 @@ public:
     void acceptCallRequest() override;
     void rejectCallRequest() override;
     void handleTimeout() override;
+    void handleClose() override;
 
 private:
     void updateNotificationIcon(const std::string& source);

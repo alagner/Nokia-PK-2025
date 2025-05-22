@@ -1,6 +1,7 @@
 #include "SmsComposeState.hpp"
 #include "ConnectedState.hpp"
 #include "TalkingState.hpp"
+#include "NotConnectedState.hpp"
 #include <chrono>
 #include <thread>
 
@@ -20,8 +21,8 @@ SmsComposeState::SmsComposeState(Context &context)
 
 void SmsComposeState::handleDisconnect() 
 {
-    context.setState<ConnectedState>();
-    
+    logger.logInfo("Connection to BTS dropped while sending SMS");
+    context.setState<NotConnectedState>();
 }
 
 void SmsComposeState::handleSms(common::PhoneNumber from, std::string text)
@@ -68,8 +69,9 @@ void SmsComposeState::rejectSmsCompose()
 
 void SmsComposeState::handleCallRequest(common::PhoneNumber from)
 {
-    logger.logInfo("Received call request from: ", from);
+    logger.logInfo("Received call request from: ", from, " - interrupting SMS composition");
     callingPhoneNumber = from;
+    
     
     context.timer.startTimer(CALL_TIMEOUT);
     
@@ -98,7 +100,9 @@ void SmsComposeState::rejectCallRequest()
     
     context.bts.sendCallDropped(callingPhoneNumber);
     
-    context.user.showSmsComposeView();
+    
+    logger.logInfo("Not returning to SMS compose after call rejection");
+    context.setState<ConnectedState>();
 }
 
 void SmsComposeState::handleTimeout()
@@ -107,8 +111,9 @@ void SmsComposeState::handleTimeout()
     
     context.bts.sendCallDropped(callingPhoneNumber);
     
-   
-    context.user.showSmsComposeView();
+    
+    logger.logInfo("Not returning to SMS compose after call timeout");
+    context.setState<ConnectedState>();
 }
 
 void SmsComposeState::updateNotificationIcon(const std::string& source)
@@ -119,6 +124,11 @@ void SmsComposeState::updateNotificationIcon(const std::string& source)
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
     
     context.user.showNewSms(hasUnread);
+}
+
+void SmsComposeState::handleClose()
+{
+    logger.logInfo("User closes UE while composing SMS - closing immediately");
 }
 
 }

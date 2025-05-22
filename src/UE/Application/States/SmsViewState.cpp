@@ -125,7 +125,6 @@ void SmsViewState::composeSms()
 {
     logger.logInfo("User requested to compose an SMS from SMS view state");
     
-    
     context.setState<SmsComposeState>();
 }
 
