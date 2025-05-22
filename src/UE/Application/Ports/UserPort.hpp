@@ -33,12 +33,13 @@ public:
     
 
     void showDialView() override;
-    
 
+    IUeGui::ICallMode& getCallMode();
     
 
     void setSmsList(const std::vector<Sms>& smsList) override;
     void setSelectSmsCallback(std::function<void(size_t)> callback) override;
+
     
 private:
     common::PrefixedLogger logger;
@@ -56,12 +57,18 @@ private:
     void handleDialClicked();
     void handleAcceptDialingClicked();
     void handleRejectDialingClicked();
+
     void handleViewSmsClicked();
     void handleComposeSmsClicked();
     void handleAcceptSmsComposeClicked();
     void handleRejectSmsComposeClicked();
     void handleSelectSmsClicked(size_t index);
     void handleCloseSmsViewClicked();
+
+    std::string getOutgoingCallText() override;
+    void clearOutgoingCallText() override;
+    void clearIncomingCallText() override;
+
 };
 
 }

@@ -44,6 +44,9 @@ public:
     MOCK_METHOD(void, showPeerUserNotAvailable, (common::PhoneNumber), (override));
     MOCK_METHOD(void, showDialView, (), (override));
     MOCK_METHOD(void, showSmsComposeView, (), (override));
+    MOCK_METHOD(std::string, getOutgoingCallText, (), (override));
+    MOCK_METHOD(void, clearOutgoingCallText, (), (override));
+    MOCK_METHOD(void, clearIncomingCallText, (), (override));
 
 };
 }
