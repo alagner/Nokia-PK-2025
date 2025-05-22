@@ -1,6 +1,8 @@
 #include "ConnectedState.hpp"
 #include <sstream>
 #include "NotConnectedState.hpp"
+#include "TalkingState.h"
+
 namespace ue
 {
 
@@ -70,6 +72,61 @@ void ConnectedState::handleSmsDeliveryFailure(common::PhoneNumber from)
         }
     }
 
+}
+
+void ConnectedState::startDial()
+{
+    context.user.startDial();
+}
+
+void ConnectedState::sendCallRequest(common::PhoneNumber number)
+{
+    callTarget = number;
+    auto myNumber = context.user.getPhoneNumber();
+    context.bts.sendCallRequest(myNumber, number);
+    context.timer.startTimer(std::chrono::seconds(60));
+    context.user.showDialing();
+}
+
+void ConnectedState::handleCallAccepted()
+{
+    context.timer.stopTimer();
+    context.setState<TalkingState>();
+}
+
+void ConnectedState::handleCallDropped()
+{
+    logger.logInfo("Call dropped by peer.");
+    context.user.showConnected();
+    context.timer.stopTimer();
+}
+
+
+void ConnectedState::cancelCallRequest()
+{
+    context.timer.stopTimer();
+    context.bts.sendCallDropped(context.user.getPhoneNumber(), callTarget);
+    context.user.showConnected();
+}
+
+void ConnectedState::handleCallRecipientNotAvailable(common::PhoneNumber from)
+{
+    logger.logInfo("Recipient not available for call from ", from);
+    context.timer.stopTimer();
+    context.user.showPartnerNotAvailable();
+    context.timer.startRedirectTimer(std::chrono::seconds(3));
+}
+
+void ConnectedState::handleTimeout()
+{
+    logger.logInfo("Call timeout – recipient did not answer.");
+    context.bts.sendCallDropped(context.user.getPhoneNumber(), callTarget);
+    context.user.showConnected();
+}
+
+void ConnectedState::handleRedirect()
+{
+    context.user.showConnected();
 }
 
 }

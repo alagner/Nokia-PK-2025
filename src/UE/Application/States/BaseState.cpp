@@ -70,4 +70,39 @@ void BaseState::handleSmsDeliveryFailure(common::PhoneNumber)
     logger.logError("Unexpected: handleSmsDeliveryFailure");
 }
 
+void BaseState::startDial()
+{
+    logger.logError("Unexpected: startDial");
+}
+
+void BaseState::sendCallRequest(common::PhoneNumber number)
+{
+    logger.logError("Unexpected: sendCallRequest");
+}
+
+void BaseState::handleCallAccepted()
+{
+    logger.logError("Unexpected: handleCallAccepted");
+}
+
+void BaseState::cancelCallRequest()
+{
+    logger.logError("Unexpected: cancelCallRequest");
+}
+
+void BaseState::handleCallRecipientNotAvailable(common::PhoneNumber from)
+{
+    logger.logError("Unexpected: handleCallRecipientNotAvailable");
+}
+
+void BaseState::handleCallDropped()
+{
+    logger.logError("Unexpected: handleCallDropped");
+}
+
+void BaseState::handleRedirect()
+{
+    logger.logError("Unexpected: handleRedirect");
+}
+
 }

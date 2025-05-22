@@ -15,6 +15,9 @@ class IUserEventsHandler
     virtual void sendSms(const SmsEntity& sms) = 0;
     virtual void composeSms() = 0;
     virtual ~IUserEventsHandler() = default;
+    virtual void startDial() = 0;
+    virtual void sendCallRequest(common::PhoneNumber number) = 0;
+    virtual void cancelCallRequest() = 0;
 };
 
 class IUserPort
@@ -30,6 +33,10 @@ class IUserPort
     virtual void composeSms() = 0;
     virtual void showNewSms() = 0;
     virtual common::PhoneNumber getPhoneNumber() const = 0;
+    virtual void startDial() = 0;
+    virtual void showDialing() = 0;
+    virtual void showTalking() = 0;
+    virtual void showPartnerNotAvailable() = 0;
 };
 
 }

@@ -17,6 +17,8 @@ public:
 
     void sendAttachRequest(common::BtsId) override;
     void sendSms(const SmsEntity& sms);
+    void sendCallRequest(common::PhoneNumber from, common::PhoneNumber to) override;
+    void sendCallDropped(common::PhoneNumber from, common::PhoneNumber to) override;
 
 private:
     void handleMessage(BinaryMessage msg);
@@ -24,6 +26,7 @@ private:
     common::PrefixedLogger logger;
     common::ITransport& transport;
     common::PhoneNumber phoneNumber;
+    common::MessageId lastSentMessageType = common::MessageId::Sib;
 
     IBtsEventsHandler* handler = nullptr;
 };
