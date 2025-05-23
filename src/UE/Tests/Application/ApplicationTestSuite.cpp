@@ -182,4 +182,25 @@ TEST_F(ViewSmsTestSuite, ShouldAllowViewingMultipleSmsInSequence)
     EXPECT_CALL(userPortMock, showConnected());
     objectUnderTest.closeSmsView();
 }
+
+TEST_F(ViewSmsTestSuite, ShouldCloseCurrentSmsAndReturnToList)
+{
+    const common::PhoneNumber senderNumber{43};
+    const std::string smsText = "Test message";
+    objectUnderTest.handleSms(senderNumber, smsText);
+
+    std::vector<Sms> smsDbWithOneMessage = {
+        Sms{senderNumber, smsText}
+    };
+    EXPECT_CALL(userPortMock, setSmsList(smsDbWithOneMessage));
+    EXPECT_CALL(userPortMock, setSelectSmsCallback(_));
+    EXPECT_CALL(userPortMock, showSmsList());
+    objectUnderTest.viewSms();
+
+    EXPECT_CALL(userPortMock, showSmsContent(std::to_string(senderNumber.value), smsText));
+    objectUnderTest.selectSms(0);
+
+    EXPECT_CALL(userPortMock, showConnected());
+    objectUnderTest.closeSmsView();
+}
 }
