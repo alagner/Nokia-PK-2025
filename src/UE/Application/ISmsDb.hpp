@@ -7,7 +7,7 @@
 namespace ue
 {
 
-struct Sms;
+class Sms;
 
 class ISmsDb
 {

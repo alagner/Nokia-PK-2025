@@ -10,8 +10,9 @@
 namespace ue
 {
 
-struct Sms
+class Sms
 {
+public:
     common::PhoneNumber from;
     common::PhoneNumber to;
     std::string text;
