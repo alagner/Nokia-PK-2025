@@ -203,4 +203,18 @@ TEST_F(ViewSmsTestSuite, ShouldCloseCurrentSmsAndReturnToList)
     EXPECT_CALL(userPortMock, showConnected());
     objectUnderTest.closeSmsView();
 }
+
+TEST_F(ViewSmsTestSuite, ShouldCloseListAndReturnToMainMenu)
+{
+    // SMS List is empty (we clear it in SetUp method)
+
+    std::vector<Sms> emptySmsDb;
+    EXPECT_CALL(userPortMock, setSmsList(emptySmsDb));
+    EXPECT_CALL(userPortMock, setSelectSmsCallback(_));
+    EXPECT_CALL(userPortMock, showSmsList());
+    objectUnderTest.viewSms();
+    
+    EXPECT_CALL(userPortMock, showConnected());
+    objectUnderTest.closeSmsView();
+}
 }
