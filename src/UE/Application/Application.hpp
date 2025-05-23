@@ -48,11 +48,7 @@ public:
     void acceptSmsCompose(common::PhoneNumber number, const std::string& text) override;
     void rejectSmsCompose() override;
     
-
     const SmsDb& getSmsDb() const { return context.smsDb; }
-    
-    void handleClose();
-
     
 private:
     Context context;

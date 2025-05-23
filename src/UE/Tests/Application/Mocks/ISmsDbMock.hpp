@@ -2,7 +2,6 @@
 
 #include <gmock/gmock.h>
 #include "ISmsDb.hpp"
-#include "SmsDb.hpp"  // Include for complete Sms class definition
 
 namespace ue
 {
