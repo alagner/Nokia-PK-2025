@@ -1,0 +1,324 @@
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+
+#include "Application.hpp"
+#include "Mocks/ILoggerMock.hpp"
+#include "Mocks/IBtsPortMock.hpp"
+#include "Mocks/IUserPortMock.hpp"
+#include "Mocks/ITimerPortMock.hpp"
+#include "Mocks/ISmsDbMock.hpp"
+#include "Messages/PhoneNumber.hpp"
+#include "Messages/BtsId.hpp"
+#include <memory>
+
+namespace ue
+{
+using namespace ::testing;
+
+class ApplicationTestSuite : public Test
+{
+protected:
+    const common::PhoneNumber PHONE_NUMBER{42}; // test specific number, don't use in production
+    NiceMock<common::ILoggerMock> loggerMock;
+    NiceMock<IBtsPortMock> btsPortMock;
+    NiceMock<IUserPortMock> userPortMock;
+    NiceMock<ITimerPortMock> timerPortMock;
+    NiceMock<ISmsDbMock> smsDbMock;
+
+    Application objectUnderTest;
+
+    ApplicationTestSuite()
+        : objectUnderTest(PHONE_NUMBER, 
+                         loggerMock,
+                         btsPortMock,
+                         userPortMock,
+                         timerPortMock,
+                         smsDbMock)
+    {}
+};
+
+struct ViewSmsTestSuite : ApplicationTestSuite 
+{
+protected:
+    void SetUp() override
+    {
+        // Start in Connected state
+        EXPECT_CALL(userPortMock, showConnecting());
+        EXPECT_CALL(btsPortMock, sendAttachRequest(common::BtsId{1}));
+        objectUnderTest.handleSib(common::BtsId{1});
+        
+        EXPECT_CALL(userPortMock, showConnected());
+        objectUnderTest.handleAttachAccept();
+    }
+
+    std::vector<Sms> emptySmsVector;  // Empty vector for tests
+};
+
+TEST_F(ViewSmsTestSuite, ShouldDisplaySmsListWhenViewingSms)
+{
+    // Allow for any showNewSms calls that might happen
+    EXPECT_CALL(userPortMock, showNewSms(_))
+        .Times(AnyNumber());
+
+    // Mock database returns empty list
+    EXPECT_CALL(smsDbMock, getAllSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(ReturnRef(emptySmsVector));
+    EXPECT_CALL(smsDbMock, hasUnreadSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(false));
+    
+    // Allow these methods to be called multiple times
+    EXPECT_CALL(userPortMock, setSmsList(Ref(emptySmsVector)))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, setSelectSmsCallback(_))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, showSmsList())
+        .Times(AtLeast(1));
+
+    objectUnderTest.viewSms();
+}
+
+TEST_F(ViewSmsTestSuite, ShouldDisplaySmsContentWhenSelectingSms)
+{
+    const common::PhoneNumber senderNumber{123};
+    const std::string smsText = "Test message";
+    
+    // Set up mock to expect SMS addition
+    EXPECT_CALL(smsDbMock, addSms(senderNumber, smsText));
+    EXPECT_CALL(userPortMock, showNewSms(_))
+        .Times(AnyNumber());
+    
+    objectUnderTest.handleSms(senderNumber, smsText);
+
+    // Prepare mock data for viewing SMS
+    std::vector<Sms> smsDbWithOneMessage = {
+        Sms{senderNumber, smsText}
+    };
+    
+    EXPECT_CALL(smsDbMock, getAllSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(ReturnRef(smsDbWithOneMessage));
+    EXPECT_CALL(smsDbMock, hasUnreadSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(false));
+    
+    // Allow these methods to be called multiple times
+    EXPECT_CALL(userPortMock, setSmsList(Ref(smsDbWithOneMessage)))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, setSelectSmsCallback(_))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, showSmsList())
+        .Times(AtLeast(1));
+        
+    objectUnderTest.viewSms();
+
+    // Mock the getAllSms call when selecting SMS
+    EXPECT_CALL(userPortMock, showSmsContent(std::to_string(senderNumber.value), smsText));
+    objectUnderTest.selectSms(0);
+}
+
+TEST_F(ViewSmsTestSuite, ShouldMarkSmsAsReadWhenViewing)
+{
+    const common::PhoneNumber senderNumber{123};
+    const std::string smsText = "Test message";
+    
+    // Set up mock to expect SMS addition
+    EXPECT_CALL(smsDbMock, addSms(senderNumber, smsText));
+    EXPECT_CALL(userPortMock, showNewSms(_))
+        .Times(AnyNumber());
+    objectUnderTest.handleSms(senderNumber, smsText);
+
+    std::vector<Sms> smsDbWithOneUnreadMessage = {
+        Sms{senderNumber, smsText, false}  // unread message
+    };
+    
+    EXPECT_CALL(smsDbMock, getAllSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(ReturnRef(smsDbWithOneUnreadMessage));
+    EXPECT_CALL(smsDbMock, hasUnreadSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(false));
+    
+    // Allow these methods to be called multiple times
+    EXPECT_CALL(userPortMock, setSmsList(Ref(smsDbWithOneUnreadMessage)))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, setSelectSmsCallback(_))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, showSmsList())
+        .Times(AtLeast(1));
+        
+    objectUnderTest.viewSms();
+
+    // When selecting SMS, expect it to be marked as read
+    EXPECT_CALL(smsDbMock, markAsRead(0));
+    EXPECT_CALL(userPortMock, showSmsContent(std::to_string(senderNumber.value), smsText));
+    objectUnderTest.selectSms(0);
+}
+
+TEST_F(ViewSmsTestSuite, ShouldHandleEmptySmsListCorrectly)
+{
+    EXPECT_CALL(userPortMock, showNewSms(_))
+        .Times(AnyNumber());
+    
+    // Mock database returns empty list
+    EXPECT_CALL(smsDbMock, getAllSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(ReturnRef(emptySmsVector));
+    EXPECT_CALL(smsDbMock, hasUnreadSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(false));
+    
+    EXPECT_CALL(userPortMock, setSmsList(Ref(emptySmsVector)))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, setSelectSmsCallback(_))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, showSmsList())
+        .Times(AtLeast(1));
+    
+    objectUnderTest.viewSms();
+
+    objectUnderTest.selectSms(0);
+
+    // Return to main menu
+    EXPECT_CALL(userPortMock, showConnected());
+    objectUnderTest.closeSmsView();
+}
+
+TEST_F(ViewSmsTestSuite, ShouldAllowViewingMultipleSmsInSequence)
+{
+    const common::PhoneNumber sender1{43};
+    const common::PhoneNumber sender2{44};
+    const std::string text1 = "Hello1";
+    const std::string text2 = "Hello2";
+    
+    // Add two SMS messages
+    EXPECT_CALL(smsDbMock, addSms(sender1, text1));
+    EXPECT_CALL(userPortMock, showNewSms(_))
+        .Times(AnyNumber());
+    objectUnderTest.handleSms(sender1, text1);
+    
+    EXPECT_CALL(smsDbMock, addSms(sender2, text2));
+    objectUnderTest.handleSms(sender2, text2);
+
+    std::vector<Sms> smsDbWithTwoMessages = {
+        Sms{sender1, text1},
+        Sms{sender2, text2}
+    };
+
+    // First viewing
+    EXPECT_CALL(smsDbMock, getAllSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(ReturnRef(smsDbWithTwoMessages));
+    EXPECT_CALL(smsDbMock, hasUnreadSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(false));
+    
+    // Allow these methods to be called multiple times
+    EXPECT_CALL(userPortMock, setSmsList(Ref(smsDbWithTwoMessages)))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, setSelectSmsCallback(_))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, showSmsList())
+        .Times(AtLeast(1));
+        
+    objectUnderTest.viewSms();
+
+    // View first message
+    EXPECT_CALL(userPortMock, showSmsContent(std::to_string(sender1.value), text1));
+    objectUnderTest.selectSms(0);
+
+    EXPECT_CALL(userPortMock, showConnected());
+    objectUnderTest.closeSmsView();  // Return to main menu
+    
+    // Second viewing - reset expectations for the second viewing
+    EXPECT_CALL(smsDbMock, getAllSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(ReturnRef(smsDbWithTwoMessages));
+    EXPECT_CALL(smsDbMock, hasUnreadSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(false));
+        
+    EXPECT_CALL(userPortMock, setSmsList(Ref(smsDbWithTwoMessages)))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, setSelectSmsCallback(_))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, showSmsList())
+        .Times(AtLeast(1));
+        
+    objectUnderTest.viewSms();
+    
+    // View second message
+    EXPECT_CALL(userPortMock, showSmsContent(std::to_string(sender2.value), text2));
+    objectUnderTest.selectSms(1);
+
+    // Return to main menu
+    EXPECT_CALL(userPortMock, showConnected());
+    objectUnderTest.closeSmsView();
+}
+
+TEST_F(ViewSmsTestSuite, ShouldCloseCurrentSmsAndReturnToList)
+{
+    const common::PhoneNumber senderNumber{43};
+    const std::string smsText = "Test message";
+    
+    EXPECT_CALL(smsDbMock, addSms(senderNumber, smsText));
+    EXPECT_CALL(userPortMock, showNewSms(_))
+        .Times(AnyNumber());
+    objectUnderTest.handleSms(senderNumber, smsText);
+
+    std::vector<Sms> smsDbWithOneMessage = {
+        Sms{senderNumber, smsText}
+    };
+    
+    EXPECT_CALL(smsDbMock, getAllSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(ReturnRef(smsDbWithOneMessage));
+    EXPECT_CALL(smsDbMock, hasUnreadSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(false));
+    
+    // Allow these methods to be called multiple times
+    EXPECT_CALL(userPortMock, setSmsList(Ref(smsDbWithOneMessage)))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, setSelectSmsCallback(_))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, showSmsList())
+        .Times(AtLeast(1));
+        
+    objectUnderTest.viewSms();
+
+    EXPECT_CALL(userPortMock, showSmsContent(std::to_string(senderNumber.value), smsText));
+    objectUnderTest.selectSms(0);
+
+    EXPECT_CALL(userPortMock, showConnected());
+    objectUnderTest.closeSmsView();
+}
+
+TEST_F(ViewSmsTestSuite, ShouldCloseListAndReturnToMainMenu)
+{
+    // Allow for any showNewSms calls
+    EXPECT_CALL(userPortMock, showNewSms(_))
+        .Times(AnyNumber());
+        
+    EXPECT_CALL(smsDbMock, getAllSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(ReturnRef(emptySmsVector));
+    EXPECT_CALL(smsDbMock, hasUnreadSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(false));
+    
+    // Allow these methods to be called multiple times
+    EXPECT_CALL(userPortMock, setSmsList(Ref(emptySmsVector)))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, setSelectSmsCallback(_))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, showSmsList())
+        .Times(AtLeast(1));
+        
+    objectUnderTest.viewSms();
+
+    EXPECT_CALL(userPortMock, showConnected());
+    objectUnderTest.closeSmsView();
+}
+}

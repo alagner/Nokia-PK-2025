@@ -18,7 +18,8 @@ public:
                 ILogger& iLogger,
                 IBtsPort& bts,
                 IUserPort& user,
-                ITimerPort& timer);
+                ITimerPort& timer,
+                ISmsDb& smsDb);
     ~Application();
 
 
@@ -48,8 +49,11 @@ public:
     void acceptSmsCompose(common::PhoneNumber number, const std::string& text) override;
     void rejectSmsCompose() override;
     
+
+    const ISmsDb& getSmsDb() const { return context.smsDb; }
     
     void handleClose();
+
     
 private:
     Context context;
