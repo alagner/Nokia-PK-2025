@@ -105,4 +105,8 @@ void BaseState::handleRedirect()
     logger.logError("Unexpected: handleRedirect");
 }
 
+void BaseState::handleCallRequest(common::PhoneNumber)
+{
+    logger.logError("Unexpected: handleCallRequest");
+}
 }

@@ -129,4 +129,17 @@ void ConnectedState::handleRedirect()
     context.user.showConnected();
 }
 
+void ConnectedState::handleCallRequest(common::PhoneNumber from)
+{
+    logger.logInfo("Call request from ", from);
+    context.timer.startTimer();
+    context.user.showCallRequest(from);
+}
+
+void ConnectedState::callAccept(common::PhoneNumber from)
+{
+    context.bts.sendCallAccepted(from);
+    context.timer.stopTimer();
+    context.setState<TalkingState>();
+}
 }

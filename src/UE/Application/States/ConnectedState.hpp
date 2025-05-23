@@ -17,6 +17,7 @@ public:
     void handleSmsDeliveryFailure(common::PhoneNumber from) override;
     void handleCallRecipientNotAvailable(common::PhoneNumber from) override;
     void handleCallDropped() override;
+    void handleCallRequest(common::PhoneNumber from) override;
 
     // IUserEventsHandler interface
     void viewSmsList() override;

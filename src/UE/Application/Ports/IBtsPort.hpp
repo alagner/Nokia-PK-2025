@@ -21,6 +21,7 @@ public:
     virtual void handleCallAccepted() = 0;
     virtual void handleCallDropped() = 0;
     virtual void handleCallRecipientNotAvailable(common::PhoneNumber from) = 0;
+    virtual void handleCallRequest(common::PhoneNumber from) = 0;
 
 };
 
@@ -33,6 +34,7 @@ public:
     virtual void sendSms(const SmsEntity& sms) = 0;
     virtual void sendCallRequest(common::PhoneNumber from, common::PhoneNumber to) = 0;
     virtual void sendCallDropped(common::PhoneNumber from, common::PhoneNumber to) = 0;
+    virtual void sendCallAccepted(common::PhoneNumber from) = 0;
 };
 
 }

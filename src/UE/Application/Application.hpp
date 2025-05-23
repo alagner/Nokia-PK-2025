@@ -46,6 +46,7 @@ public:
     void handleCallAccepted() override;
     void handleCallDropped() override;
     void handleCallRecipientNotAvailable(common::PhoneNumber from) override;
+    void handleCallRequest(common::PhoneNumber from) override;
 
 private:
     Context context;

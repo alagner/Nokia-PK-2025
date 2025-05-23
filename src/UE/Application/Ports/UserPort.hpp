@@ -28,6 +28,7 @@ public:
     void showTalking() override;
     common::PhoneNumber getPhoneNumber() const;
     void showPartnerNotAvailable() override;
+    void showCallRequest(common::PhoneNumber from) override;
 
 private:
     common::PrefixedLogger logger;

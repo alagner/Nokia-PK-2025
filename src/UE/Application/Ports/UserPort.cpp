@@ -189,4 +189,18 @@ void UserPort::showPartnerNotAvailable()
     });
 }
 
+void UserPort::showCallRequest(common::PhoneNumber from)
+{
+    IUeGui::ITextMode& mode = gui.setAlertMode();
+    mode.setText("Call request from", from);
+    gui.setAcceptCallback([this]() {
+        handler->callAccept(from);
+    });
+
+    gui.setRejectCallback([this]() {
+        //handler->callDrop(from);
+        //to do
+    });
+}
+
 }

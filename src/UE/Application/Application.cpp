@@ -116,4 +116,8 @@ void Application::handleRedirect()
     context.state->handleRedirect();
 }
 
+void Application::handleCallRequest(common::PhoneNumber from)
+{
+    context.state->handleCallRequest(from);
+}
 }

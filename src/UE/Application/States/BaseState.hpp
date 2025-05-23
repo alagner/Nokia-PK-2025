@@ -36,6 +36,7 @@ public:
     void handleSmsDeliveryFailure(common::PhoneNumber);
     void handleCallRecipientNotAvailable(common::PhoneNumber) override;
     void handleCallDropped() override;
+    void handleCallRequest(common::PhoneNumber) override;
 
 protected:
     Context& context;
