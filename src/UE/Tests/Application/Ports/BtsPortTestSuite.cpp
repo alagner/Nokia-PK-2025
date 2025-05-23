@@ -32,6 +32,8 @@ protected:
                 .WillOnce(SaveArg<0>(&messageCallback));
         EXPECT_CALL(transportMock, registerDisconnectedCallback(_))
                 .WillOnce(SaveArg<0>(&disconnectedCallback));
+        ON_CALL(transportMock, sendMessage(_)).WillByDefault(Return(true));
+        EXPECT_CALL(transportMock, sendMessage(_)).Times(AnyNumber());
         objectUnderTest.start(handlerMock);
     }
     ~BtsPortTestSuite()
@@ -115,4 +117,61 @@ TEST_F(BtsPortTestSuite, shallHandleDisConnect)
     EXPECT_CALL(handlerMock, handleDisconnect());
     disconnectedCallback();
 }
+
+TEST_F(BtsPortTestSuite, shallHandleCallTalk)
+{
+    const common::PhoneNumber FROM{11};
+    EXPECT_CALL(handlerMock, handleTalkMessage(FROM, "Hi!"));
+
+    common::OutgoingMessage msg{common::MessageId::CallTalk, FROM, PHONE_NUMBER};
+    msg.writeText("Hi!");
+    messageCallback(msg.getMessage());
+}
+
+TEST_F(BtsPortTestSuite, shallHandleUnknownRecipientAfterCallTalk)
+{
+    const common::PhoneNumber PEER{22};
+    objectUnderTest.sendTalkMessage(PEER, "abc");
+
+    EXPECT_CALL(handlerMock, handleCallRecipientNotAvailable(PEER));
+
+    common::OutgoingMessage msg{common::MessageId::UnknownRecipient, PHONE_NUMBER, PEER};
+    msg.writeNumber<uint8_t>(0);
+    messageCallback(msg.getMessage());
+}
+
+TEST_F(BtsPortTestSuite, shallHandleUnknownRecipientAfterCallRequest)
+{
+    const common::PhoneNumber PEER{33};
+    objectUnderTest.sendCallRequest(PHONE_NUMBER, PEER);
+
+    EXPECT_CALL(handlerMock, handleCallRecipientNotAvailable(PEER));
+
+    common::OutgoingMessage msg{common::MessageId::UnknownRecipient, PHONE_NUMBER, PEER};
+    msg.writeNumber<uint8_t>(0);
+    messageCallback(msg.getMessage());
+}
+
+TEST_F(BtsPortTestSuite, shallSendTalkMessage)
+{
+    const common::PhoneNumber TO{124};
+    const std::string TEXT = "Let's talk!";
+    common::BinaryMessage sentMsg;
+
+    EXPECT_CALL(transportMock, sendMessage(_))
+        .WillOnce([&sentMsg](auto param) {
+            sentMsg = std::move(param);
+            return true;
+        });
+
+    objectUnderTest.sendTalkMessage(TO, TEXT);
+
+    common::IncomingMessage reader(sentMsg);
+    EXPECT_EQ(common::MessageId::CallTalk, reader.readMessageId());
+    EXPECT_EQ(PHONE_NUMBER, reader.readPhoneNumber());
+    EXPECT_EQ(TO, reader.readPhoneNumber());
+    EXPECT_EQ(TEXT, reader.readRemainingText());
+    EXPECT_NO_THROW(reader.checkEndOfMessage());
+}
+
 }

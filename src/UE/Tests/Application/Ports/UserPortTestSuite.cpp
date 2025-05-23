@@ -20,6 +20,7 @@ protected:
     StrictMock<IUeGuiMock> guiMock;
     StrictMock<IListViewModeMock> listViewModeMock;
     StrictMock<ITextModeMock> textModeMock;
+    StrictMock<ICallModeMock> callModeMock;
 
     UserPort objectUnderTest{loggerMock, guiMock, PHONE_NUMBER};
 
@@ -88,6 +89,24 @@ TEST_F(UserPortTestSuite, shallShowSms)
     EXPECT_CALL(guiMock, setRejectCallback(_)).Times(Exactly(1));
 
     objectUnderTest.showSms(testSms);
+}
+
+TEST_F(UserPortTestSuite, showTalking_setsUpGuiAndAcceptSendsText)
+{
+    EXPECT_CALL(guiMock, setCallMode()).WillOnce(ReturnRef(callModeMock));
+    EXPECT_CALL(callModeMock, clearIncomingText());
+    EXPECT_CALL(guiMock, setAcceptCallback(_));
+    EXPECT_CALL(guiMock, setRejectCallback(_));
+
+    objectUnderTest.showTalking();
+}
+
+TEST_F(UserPortTestSuite, displayMessage_appendsPeerText)
+{
+    EXPECT_CALL(guiMock, setCallMode()).WillOnce(ReturnRef(callModeMock));
+    EXPECT_CALL(callModeMock, appendIncomingText("Peer: Hello"));
+
+    objectUnderTest.displayMessage(common::PhoneNumber{123}, "Hello");
 }
 
 }
