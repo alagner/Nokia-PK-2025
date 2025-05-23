@@ -48,6 +48,9 @@ public:
     void acceptSmsCompose(common::PhoneNumber number, const std::string& text) override;
     void rejectSmsCompose() override;
     
+    
+    void handleClose();
+    
 private:
     Context context;
     common::PrefixedLogger logger;
