@@ -18,7 +18,8 @@ public:
                 ILogger& iLogger,
                 IBtsPort& bts,
                 IUserPort& user,
-                ITimerPort& timer);
+                ITimerPort& timer,
+                ISmsDb& smsDb);
     ~Application();
 
 
@@ -49,7 +50,7 @@ public:
     void rejectSmsCompose() override;
     
 
-    const SmsDb& getSmsDb() const { return context.smsDb; }
+    const ISmsDb& getSmsDb() const { return context.smsDb; }
     
     void handleClose();
 

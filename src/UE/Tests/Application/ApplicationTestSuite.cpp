@@ -6,6 +6,7 @@
 #include "Mocks/IBtsPortMock.hpp"
 #include "Mocks/IUserPortMock.hpp"
 #include "Mocks/ITimerPortMock.hpp"
+#include "Mocks/ISmsDbMock.hpp"
 #include "Messages/PhoneNumber.hpp"
 #include "Messages/BtsId.hpp"
 #include <memory>
@@ -22,12 +23,18 @@ protected:
     NiceMock<IBtsPortMock> btsPortMock;
     NiceMock<IUserPortMock> userPortMock;
     NiceMock<ITimerPortMock> timerPortMock;
+    NiceMock<ISmsDbMock> smsDbMock;
 
-    Application objectUnderTest{PHONE_NUMBER,
-                                loggerMock,
-                                btsPortMock,
-                                userPortMock,
-                                timerPortMock};
+    Application objectUnderTest;
+    
+    ApplicationTestSuite()
+        : objectUnderTest(PHONE_NUMBER, 
+                         loggerMock,
+                         btsPortMock,
+                         userPortMock,
+                         timerPortMock,
+                         smsDbMock)
+    {}
 };
 
 struct ApplicationNotConnectedTestSuite : ApplicationTestSuite
