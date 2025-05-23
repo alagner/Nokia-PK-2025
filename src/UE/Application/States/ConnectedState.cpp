@@ -60,6 +60,7 @@ void ConnectedState::handleUiAction(std::optional<std::size_t> selectedIndex)
         break;
      case 2:
          logger.logInfo("User chose: Dial number");
+         context.user.showDialCompose();
          context.setState<DialingState>();
          break;
     default:
@@ -98,7 +99,7 @@ void ConnectedState::handleCallRequest(common::PhoneNumber from)
 void ConnectedState::handleDialRequest(common::PhoneNumber to)
 {
     logger.logInfo("Dial request to: ", to);
-    context.setState<OutgoingCallState>(to);
+    context.setState<DialingState>();
 }
 
 

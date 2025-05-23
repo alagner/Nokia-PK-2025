@@ -2,6 +2,7 @@
 #include "ViewingSmsState.hpp"
 #include "ConnectedState.hpp"
 #include "NotConnectedState.hpp"
+#include "IncomingCallState.hpp"
 
 namespace ue
 {
@@ -91,4 +92,10 @@ void ViewingSmsListState::handleSmsReceive(common::PhoneNumber from, std::string
     showList();
 }
 
+void ViewingSmsListState::handleCallRequest(common::PhoneNumber from)
+{
+    logger.logInfo("Incoming call request while viewing SMS list, caller: ", from);
+    context.setState<IncomingCallState>(from);
+
+}
 } // namespace ue

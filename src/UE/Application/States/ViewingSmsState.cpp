@@ -1,6 +1,7 @@
 #include "ViewingSmsState.hpp"
 #include "ViewingSmsListState.hpp"
 #include "NotConnectedState.hpp"
+#include "IncomingCallState.hpp"
 #include <stdexcept>
 
 namespace ue
@@ -75,6 +76,13 @@ namespace ue
 
         context.user.showSmsList(allSms);
         context.setState<ViewingSmsListState>();
+    }
+
+    void ViewingSmsState::handleCallRequest(common::PhoneNumber from)
+    {
+        logger.logInfo("Incoming call request from: ", from);
+        context.user.showIncomingCall(from);
+        context.setState<IncomingCallState>(from);
     }
 
 }

@@ -17,6 +17,7 @@ namespace ue
 
         void handleSmsReceive(common::PhoneNumber from, std::string textMessage) override;
         void handleSmsSent(common::PhoneNumber to, bool succeed) override;
+        void handleCallRequest(common::PhoneNumber from) override;
     };
 
 } // namespace ue

@@ -67,7 +67,31 @@
                 }
             case common::MessageId::CallRequest:
                 {
-                    handler->handleCallRequest(from);
+                    logger.logInfo("Incoming call from: ", from);
+                    if (handler)
+                        handler->handleCallRequest(from);
+                    break;
+                }
+            case common::MessageId::CallDropped:
+                {
+                    logger.logInfo("Call dropped from: ", from);
+                    if (handler) {
+                        handler->handleCallDropped(from);
+                    }
+                    break;
+                }
+            case common::MessageId::CallAccepted:
+                {
+                    logger.logInfo("Call accepted by: ", from);
+                    if (handler)
+                        handler->handleAcceptCall(from);
+                    break;
+                }
+            case common::MessageId::CallTalk:
+                {
+                    std::string text = reader.readRemainingText();
+                    if (handler)
+                        handler->handleTalkCall(from, text);
                     break;
                 }
             //TODO: add more cases here
@@ -127,5 +151,27 @@
             common::OutgoingMessage msg{common::MessageId::CallDropped, phoneNumber, to};
             transport.sendMessage(msg.getMessage());
         }
+
+    void BtsPort::sendTalkCall(common::PhoneNumber to, const std::string &message) {
+        logger.logInfo("Talking to: ", to);
+        common::OutgoingMessage msg{common::MessageId::CallTalk, phoneNumber, to};
+        msg.writeText(message);
+        transport.sendMessage(msg.getMessage());
+    }
+
+    void BtsPort::sendAcceptCall(common::PhoneNumber to)
+    {
+        logger.logInfo("Sending call accept to: ", to);
+        common::OutgoingMessage msg{common::MessageId::CallAccepted, phoneNumber, to};
+        transport.sendMessage(msg.getMessage());
+    }
+
+    void BtsPort::sendRejectCall(common::PhoneNumber to)
+    {
+        logger.logInfo("Sending call reject to: ", to);
+        common::OutgoingMessage msg{common::MessageId::CallDropped, phoneNumber, to};
+        transport.sendMessage(msg.getMessage());
+    }
+
 
 }

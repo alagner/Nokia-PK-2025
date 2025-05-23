@@ -4,6 +4,7 @@
 #include "UeGui/ISmsComposeMode.hpp"
 #include "UeGui/IDialMode.hpp"
 #include <string>
+#include <UeGui/ICallMode.hpp>
 
 namespace ue {
     UserPort::UserPort(common::ILogger &logger, IUeGui &gui, common::PhoneNumber phoneNumber)
@@ -167,6 +168,9 @@ namespace ue {
         else if (currentViewMode == details::GuiViewMode::SmsCompose)
         {
             selectedIndex = std::nullopt;
+        } else if (currentViewMode == details::GuiViewMode::Unknown) {
+            logger.logDebug("Accept in Unknown mode");
+            selectedIndex = std::nullopt;
         }
 
         logger.logDebug("Accept triggered, mode: ", static_cast<int>(currentViewMode));
@@ -180,51 +184,6 @@ namespace ue {
         handler->handleUiBack();
     }
 
-    //void UserPort::onEnvelopeClicked()
-    //{
-    //    if (!handler) return;
-    //    logger.logDebug("Envelope icon clicked");
-    //
-    //    if (currentViewMode == details::GuiViewMode::SmsCompose)
-    //    {
-    //        logger.logInfo("Sending composed SMS");
-    //
-    //        auto recipient = getSmsRecipient();
-    //        auto text = getSmsTextMessage();
-    //
-    //        if (!recipient.isValid() || text.empty())
-    //        {
-    //            showAlert("Error", "Invalid recipient or empty text.");
-    //            return;
-    //        }
-    //
-    //        handler->handleSmsCompose(recipient, text);
-    //        gui.setSmsComposeMode().clearSmsText();
-    //    }else if (currentViewMode == details::GuiViewMode::DialCompose)
-    //    {
-    //        logger.logInfo("Dialing number...");
-    //
-    //        auto number = gui.getSmsRecipient();
-    //
-    //        if (!number.isValid())
-    //        {
-    //            showAlert("Error", "Invalid phone number.");
-    //            return;
-    //        }
-    //
-    //        handler->handleDialRequest(number);
-    //        gui.getSmsComposeMode().clearSmsText();
-    //    }else
-    //    {
-    //        currentViewMode = details::GuiViewMode::SmsMenu;
-    //        auto& menu = gui.setListViewMode();
-    //        menu.clearSelectionList();
-    //        menu.addSelectionListItem("Compose SMS", "Write new SMS");
-    //        menu.addSelectionListItem("View SMS", "Check received messages");
-    //        menu.addSelectionListItem("Dial Menu", "Call Someone");
-    //    }
-    //}
-
     void UserPort::showSmsCompose()
     {
         currentViewMode = details::GuiViewMode::SmsCompose;
@@ -233,6 +192,7 @@ namespace ue {
         auto& composeMode = gui.setSmsComposeMode();
         composeMode.clearSmsText();
     }
+
 
     common::PhoneNumber UserPort::getSmsRecipient()
     {
@@ -260,6 +220,27 @@ namespace ue {
         logger.logInfo("Incoming call from ", from);
         auto& alertView = gui.setAlertMode();
         alertView.setText("Incoming call from: " + common::to_string(from));
+    }
+
+    void UserPort::showTalkingMobileScreen(common::PhoneNumber to)
+    {
+        currentViewMode = details::GuiViewMode::Unknown;
+        logger.logInfo("Talking to ", to);
+        auto& callMode = gui.setCallMode();
+        callMode.appendIncomingText("Connected to: " + common::to_string(to));
+    }
+
+    std::string UserPort::getTextFromCall() const
+    {
+        return gui.setCallMode().getOutgoingText();
+    }
+
+    void UserPort::addIncomingText(const std::string &messageText) {
+        gui.setCallMode().appendIncomingText(messageText);
+    }
+
+    void UserPort::deleteOutgoingText() {
+        gui.setCallMode().clearOutgoingText();
     }
 
     common::PhoneNumber UserPort::getDialedPhoneNumber() const
