@@ -129,7 +129,56 @@ TEST_F(ViewSmsTestSuite, ShouldHandleEmptySmsListCorrectly)
     // Verify that selecting a message from empty list is handled properly
     objectUnderTest.selectSms(0);
 
-    // When closing view - should return to main menu
+    // Return to main menu
+    EXPECT_CALL(userPortMock, showConnected());
+    objectUnderTest.closeSmsView();
+}
+
+TEST_F(ViewSmsTestSuite, ShouldAllowViewingMultipleSmsInSequence)
+{
+    const common::PhoneNumber sender1{43};
+    const common::PhoneNumber sender2{44};
+    const std::string text1 = "Hello1";
+    const std::string text2 = "Hello2";
+    objectUnderTest.handleSms(sender1, text1);
+    objectUnderTest.handleSms(sender2, text2);
+
+    // Compare only relevant fields of SMSes
+    EXPECT_CALL(userPortMock, setSmsList(Truly([&](const std::vector<Sms>& smsList) -> bool {
+        return smsList.size() == 2 && 
+               smsList[0].from == sender1 && 
+               smsList[0].text == text1 &&
+               smsList[1].from == sender2 && 
+               smsList[1].text == text2;
+    })));
+    EXPECT_CALL(userPortMock, setSelectSmsCallback(_));
+    EXPECT_CALL(userPortMock, showSmsList());
+    objectUnderTest.viewSms();
+
+    // View first message
+    EXPECT_CALL(userPortMock, showSmsContent(std::to_string(sender1.value), text1));
+    objectUnderTest.selectSms(0);
+
+    EXPECT_CALL(userPortMock, showConnected());
+    objectUnderTest.closeSmsView();  // Return to main menu
+    
+    // Compare only relevant fields of SMSes
+    EXPECT_CALL(userPortMock, setSmsList(Truly([&](const std::vector<Sms>& smsList) -> bool {
+        return smsList.size() == 2 && 
+               smsList[0].from == sender1 && 
+               smsList[0].text == text1 &&
+               smsList[1].from == sender2 && 
+               smsList[1].text == text2;
+    })));
+    EXPECT_CALL(userPortMock, setSelectSmsCallback(_));
+    EXPECT_CALL(userPortMock, showSmsList());
+    objectUnderTest.viewSms();
+    
+    // View second message
+    EXPECT_CALL(userPortMock, showSmsContent(std::to_string(sender2.value), text2));
+    objectUnderTest.selectSms(1);
+
+    // Return to main menu
     EXPECT_CALL(userPortMock, showConnected());
     objectUnderTest.closeSmsView();
 }
