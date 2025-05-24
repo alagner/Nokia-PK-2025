@@ -25,6 +25,7 @@ public:
     
     
     void handleCallRequest(common::PhoneNumber from) override;
+    void handleCallDropped(common::PhoneNumber from) override;
     void acceptCallRequest() override;
     void rejectCallRequest() override;
     void handleTimeout() override;
@@ -34,6 +35,6 @@ private:
     void updateNotificationIcon(const std::string& source);
     common::PhoneNumber callingPhoneNumber;
     static const std::chrono::seconds CALL_TIMEOUT;
+    bool receivingCallRequest = false; 
 };
-
 }
