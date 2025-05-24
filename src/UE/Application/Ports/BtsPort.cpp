@@ -75,7 +75,7 @@ void BtsPort::handleMessage(BinaryMessage msg)
         }
         case common::MessageId::CallAccepted:
         {
-            handler->handleCallAccepted(to);
+            handler->handleCallAccepted(from);
             break;
         }
         case common::MessageId::CallDropped:
@@ -87,6 +87,11 @@ void BtsPort::handleMessage(BinaryMessage msg)
         {
             auto text = reader.readRemainingText();
             handler->handleTalkMessage(from, text);
+            break;
+        }
+        case common::MessageId::CallRequest:
+        {
+            handler->handleCallRequest(from);
             break;
         }
         default:
@@ -140,6 +145,13 @@ void BtsPort::sendTalkMessage(common::PhoneNumber to, const std::string& text)
     lastSentMessageType = common::MessageId::CallTalk;
     common::OutgoingMessage msg(common::MessageId::CallTalk, phoneNumber, to);
     msg.writeText(text);
+    transport.sendMessage(msg.getMessage());
+}
+
+void BtsPort::sendCallAccepted(common::PhoneNumber from)
+{
+    logger.logInfo("Sending CallAcceptted from ", phoneNumber, " to ", from);
+    common::OutgoingMessage msg(common::MessageId::CallAccepted, phoneNumber, from);
     transport.sendMessage(msg.getMessage());
 }
 

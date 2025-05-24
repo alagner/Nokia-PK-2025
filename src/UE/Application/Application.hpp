@@ -33,6 +33,9 @@ public:
     void cancelCallRequest() override;
     void handleRedirect() override;
     void sendTalkMessage(const std::string& text) override;
+    void callAccept(common::PhoneNumber from) override;
+    void callDrop(common::PhoneNumber from) override;
+
 
     // ITimerEventsHandler interface
     void handleTimeout() override;
@@ -44,10 +47,11 @@ public:
     void handleDisconnect() override;
     void handleSms(common::PhoneNumber from, std::string text) override;
     void handleSmsDeliveryFailure(common::PhoneNumber from) override;
-    void handleCallAccepted(PhoneNumber to) override;
+    void handleCallAccepted(PhoneNumber from) override;
     void handleCallDropped() override;
     void handleCallRecipientNotAvailable(common::PhoneNumber from) override;
     void handleTalkMessage(common::PhoneNumber from, const std::string& text);
+    void handleCallRequest(common::PhoneNumber from) override;
 
 private:
     Context context;

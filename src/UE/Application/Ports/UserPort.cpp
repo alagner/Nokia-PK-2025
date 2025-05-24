@@ -207,4 +207,17 @@ void UserPort::displayMessage(common::PhoneNumber from, const std::string& text)
     chat.appendIncomingText("Peer: " + text);
 }
 
+void UserPort::showCallRequest(common::PhoneNumber from)
+{
+    IUeGui::ITextMode& mode = gui.setAlertMode();
+    mode.setText("Call request ...");
+    gui.setAcceptCallback([this,from]() {
+        handler->callAccept(from);
+    });
+
+    gui.setRejectCallback([this, from]() {
+        handler->callDrop(from);
+    });
+}
+
 }

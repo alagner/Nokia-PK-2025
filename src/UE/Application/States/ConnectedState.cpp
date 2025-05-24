@@ -88,10 +88,10 @@ void ConnectedState::sendCallRequest(common::PhoneNumber number)
     context.user.showDialing();
 }
 
-void ConnectedState::handleCallAccepted(common::PhoneNumber to)
+void ConnectedState::handleCallAccepted(common::PhoneNumber from)
 {
     context.timer.stopTimer();
-    context.setState<TalkingState>(to);
+    context.setState<TalkingState>(from);
 }
 
 void ConnectedState::handleCallDropped()
@@ -131,6 +131,27 @@ void ConnectedState::handleRedirect()
 void ConnectedState::handleTalkMessage(common::PhoneNumber from, const std::string& text)
 {
     logger.logInfo("Error: Should be talking stage.");
+}
+
+void ConnectedState::handleCallRequest(common::PhoneNumber from)
+{
+    logger.logInfo("Call request from ", from);
+    context.timer.startTimer(std::chrono::seconds(60));
+    context.user.showCallRequest(from);
+}
+
+void ConnectedState::callAccept(common::PhoneNumber from)
+{
+    context.bts.sendCallAccepted(from);
+    context.timer.stopTimer();
+    context.setState<TalkingState>(from);
+}
+
+void ConnectedState::callDrop(common::PhoneNumber from)
+{
+    context.timer.stopTimer();
+    context.bts.sendCallDropped(context.user.getPhoneNumber(),from);
+    context.user.showConnected();
 }
 
 }

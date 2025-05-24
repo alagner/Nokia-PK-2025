@@ -9,6 +9,7 @@
 #include "Mocks/ISmsRepositoryMock.h"
 #include "Messages/PhoneNumber.hpp"
 #include <memory>
+#include "Messages/OutgoingMessage.hpp"
 
 namespace ue
 {
@@ -105,7 +106,7 @@ struct ApplicationConnectedTestSuite : ApplicationConnectingTestSuite
 
     void showSmsListView(std::vector<SmsEntity>);
     void recieveSms(std::string);
-    void sendSmsTo(common::PhoneNumber to);
+    void sendSmsTo(common::PhoneNumber from);
 };
 
 void ApplicationConnectedTestSuite::showSmsListView(std::vector<SmsEntity> testSmsVector)
@@ -124,7 +125,7 @@ void ApplicationConnectedTestSuite::recieveSms(std::string text)
     objectUnderTest.handleSms(TEST_SENDER_NUMBER, text);
 }
 
-void ApplicationConnectedTestSuite::sendSmsTo(common::PhoneNumber to){
+void ApplicationConnectedTestSuite::sendSmsTo(common::PhoneNumber from){
     SmsEntity smsToSend{PHONE_NUMBER.value, TEST_SENDER_NUMBER.value, "Hello!", false};
 
     EXPECT_CALL(userPortMock, getPhoneNumber()).WillOnce(Return(PHONE_NUMBER));
@@ -271,6 +272,34 @@ TEST_F(ApplicationTalkingTestSuite, shallHandleTimeoutAndDropCall)
     EXPECT_CALL(userPortMock, getPhoneNumber()).WillOnce(Return(PHONE_NUMBER));
     EXPECT_CALL(btsPortMock, sendCallDropped(PHONE_NUMBER, TEST_SENDER_NUMBER));
     EXPECT_CALL(userPortMock, showConnected()).Times(AnyNumber());
+}
+
+TEST_F(ApplicationConnectedTestSuite, shallGoToTalkingStateWhenCallAccepted)
+{
+    EXPECT_CALL(userPortMock, getPhoneNumber()).WillOnce(Return(PHONE_NUMBER));
+    EXPECT_CALL(btsPortMock, sendCallRequest(PHONE_NUMBER, TEST_SENDER_NUMBER));
+    EXPECT_CALL(timerPortMock, startTimer(_));
+    EXPECT_CALL(userPortMock, showDialing());
+
+    objectUnderTest.sendCallRequest(TEST_SENDER_NUMBER);
+
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(userPortMock, showTalking());
+    objectUnderTest.handleCallAccepted(PHONE_NUMBER);
+}
+
+TEST_F(ApplicationConnectedTestSuite, shallReturnToConnectedOnCallTimeout)
+{
+    EXPECT_CALL(userPortMock, getPhoneNumber()).Times(AnyNumber()).WillRepeatedly(Return(PHONE_NUMBER));
+
+    EXPECT_CALL(btsPortMock, sendCallRequest(PHONE_NUMBER, TEST_SENDER_NUMBER));
+    EXPECT_CALL(timerPortMock, startTimer(_));
+    EXPECT_CALL(userPortMock, showDialing());
+
+    objectUnderTest.sendCallRequest(TEST_SENDER_NUMBER);
+
+    EXPECT_CALL(btsPortMock, sendCallDropped(PHONE_NUMBER, TEST_SENDER_NUMBER));
+    EXPECT_CALL(userPortMock, showConnected());
 
     objectUnderTest.handleTimeout();
 }
@@ -281,8 +310,53 @@ TEST_F(ApplicationTalkingTestSuite, shallHandlePeerUnavailable)
     EXPECT_CALL(timerPortMock, stopTimer());
     using namespace std::chrono;
     EXPECT_CALL(timerPortMock, startRedirectTimer(duration_cast<milliseconds>(seconds(3))));
+}
+
+TEST_F(ApplicationConnectedTestSuite, shallReturnToConnectedOnUnknownRecipient)
+{
+    EXPECT_CALL(userPortMock, getPhoneNumber()).WillOnce(Return(PHONE_NUMBER));
+    EXPECT_CALL(btsPortMock, sendCallRequest(PHONE_NUMBER, TEST_SENDER_NUMBER));
+    EXPECT_CALL(timerPortMock, startTimer(_));
+    EXPECT_CALL(userPortMock, showDialing());
+
+    objectUnderTest.sendCallRequest(TEST_SENDER_NUMBER);
+
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(timerPortMock, startRedirectTimer(_));
+    EXPECT_CALL(userPortMock, showPartnerNotAvailable());
 
     objectUnderTest.handleCallRecipientNotAvailable(TEST_SENDER_NUMBER);
+}
+
+TEST_F(ApplicationConnectedTestSuite, shallReturnToConnectedOnCallDroppedFromBts)
+{
+    EXPECT_CALL(userPortMock, getPhoneNumber()).WillRepeatedly(Return(PHONE_NUMBER));
+    EXPECT_CALL(btsPortMock, sendCallRequest(PHONE_NUMBER, TEST_SENDER_NUMBER));
+    EXPECT_CALL(timerPortMock, startTimer(_));
+    EXPECT_CALL(userPortMock, showDialing());
+
+    objectUnderTest.sendCallRequest(TEST_SENDER_NUMBER);
+
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(userPortMock, showConnected());
+
+    objectUnderTest.handleCallDropped();
+}
+
+TEST_F(ApplicationConnectedTestSuite, shallResignCallRequestWhenUserCancels)
+{
+    EXPECT_CALL(userPortMock, getPhoneNumber()).WillRepeatedly(Return(PHONE_NUMBER));
+    EXPECT_CALL(btsPortMock, sendCallRequest(PHONE_NUMBER, TEST_SENDER_NUMBER));
+    EXPECT_CALL(timerPortMock, startTimer(_));
+    EXPECT_CALL(userPortMock, showDialing());
+
+    objectUnderTest.sendCallRequest(TEST_SENDER_NUMBER);
+
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(btsPortMock, sendCallDropped(PHONE_NUMBER, TEST_SENDER_NUMBER));
+    EXPECT_CALL(userPortMock, showConnected());
+
+    objectUnderTest.cancelCallRequest();
 }
 
 }

@@ -29,6 +29,7 @@ public:
     common::PhoneNumber getPhoneNumber() const;
     void showPartnerNotAvailable() override;
     void displayMessage(common::PhoneNumber from, const std::string& text) override;
+    void showCallRequest(common::PhoneNumber from) override;
 
 private:
     common::PrefixedLogger logger;
