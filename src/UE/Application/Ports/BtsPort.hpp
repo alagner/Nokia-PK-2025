@@ -19,6 +19,7 @@ public:
     void sendSms(const SmsEntity& sms);
     void sendCallRequest(common::PhoneNumber from, common::PhoneNumber to) override;
     void sendCallDropped(common::PhoneNumber from, common::PhoneNumber to) override;
+    void sendCallAccepted(common::PhoneNumber from) override;
 
 private:
     void handleMessage(BinaryMessage msg);

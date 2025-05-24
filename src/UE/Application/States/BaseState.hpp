@@ -23,6 +23,8 @@ public:
     void handleCallAccepted() override;
     void cancelCallRequest() override;
     void handleRedirect() override;
+    void callAccept(common::PhoneNumber from) override;
+    void callDrop(common::PhoneNumber from) override;
 
     // ITimerEventsHandler interface
     void handleTimeout() override;

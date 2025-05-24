@@ -109,4 +109,15 @@ void BaseState::handleCallRequest(common::PhoneNumber)
 {
     logger.logError("Unexpected: handleCallRequest");
 }
+
+void BaseState::callAccept(common::PhoneNumber)
+{
+    logger.logError("Unexpected: callAccept");
+}
+
+void BaseState::callDrop(common::PhoneNumber)
+{
+    logger.logError("Unexpected: callDrop");
+}
+
 }

@@ -132,7 +132,7 @@ void ConnectedState::handleRedirect()
 void ConnectedState::handleCallRequest(common::PhoneNumber from)
 {
     logger.logInfo("Call request from ", from);
-    context.timer.startTimer();
+    context.timer.startTimer(std::chrono::seconds(60));
     context.user.showCallRequest(from);
 }
 
@@ -143,7 +143,7 @@ void ConnectedState::callAccept(common::PhoneNumber from)
     context.setState<TalkingState>();
 }
 
-void ConnectedState::callDropped(common::PhoneNumber from)
+void ConnectedState::callDrop(common::PhoneNumber from)
 {
     context.timer.stopTimer();
     context.bts.sendCallDropped(context.user.getPhoneNumber(),from);

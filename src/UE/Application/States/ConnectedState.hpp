@@ -19,7 +19,7 @@ public:
     void handleCallDropped() override;
     void handleCallRequest(common::PhoneNumber from) override;
     void callAccept(common::PhoneNumber from) override;
-    void callDropped(common::PhoneNumber from) override;
+    void callDrop(common::PhoneNumber from) override;
 
 
     // IUserEventsHandler interface

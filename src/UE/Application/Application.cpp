@@ -120,4 +120,15 @@ void Application::handleCallRequest(common::PhoneNumber from)
 {
     context.state->handleCallRequest(from);
 }
+
+void Application::callAccept(PhoneNumber from)
+{
+    context.state->callAccept(from);
+}
+
+void Application::callDrop(PhoneNumber from)
+{
+    context.state->callDrop(from);
+}
+
 }
