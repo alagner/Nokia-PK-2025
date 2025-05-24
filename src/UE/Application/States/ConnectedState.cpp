@@ -142,4 +142,11 @@ void ConnectedState::callAccept(common::PhoneNumber from)
     context.timer.stopTimer();
     context.setState<TalkingState>();
 }
+
+void ConnectedState::callDropped(common::PhoneNumber from)
+{
+    context.timer.stopTimer();
+    context.bts.sendCallDropped(context.user.getPhoneNumber(),from);
+    context.user.showConnected();
+}
 }

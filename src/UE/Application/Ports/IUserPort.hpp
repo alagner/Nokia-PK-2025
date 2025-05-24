@@ -19,6 +19,7 @@ class IUserEventsHandler
     virtual void sendCallRequest(common::PhoneNumber number) = 0;
     virtual void cancelCallRequest() = 0;
     virtual void callAccept(common::PhoneNumber from) = 0;
+    virtual void callDrop(common::PhoneNumber from) = 0;
 };
 
 class IUserPort

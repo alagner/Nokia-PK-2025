@@ -18,6 +18,8 @@ public:
     void handleCallRecipientNotAvailable(common::PhoneNumber from) override;
     void handleCallDropped() override;
     void handleCallRequest(common::PhoneNumber from) override;
+    void callAccept(common::PhoneNumber from) override;
+    virtual void callAccept(common::PhoneNumber from) override;
 
     // IUserEventsHandler interface
     void viewSmsList() override;
