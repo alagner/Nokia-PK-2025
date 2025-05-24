@@ -463,7 +463,7 @@ TEST_F(BtsPortTestSuite, shallHandleCallDropFailure)
 
 TEST_F(BtsPortTestSuite, shallHandleMultipleCallMessages)
 {
-    // Test sequence: Call Request -> Call Accept -> Call Talk -> Call Drop
+    
     const common::PhoneNumber PEER_NUMBER{125};
     const std::string CALL_TEXT{"Multi-sequence call test"};
     
@@ -474,16 +474,9 @@ TEST_F(BtsPortTestSuite, shallHandleMultipleCallMessages)
         .WillOnce([&talkMsg](auto param) { talkMsg = std::move(param); return true; })
         .WillOnce([&dropMsg](auto param) { dropMsg = std::move(param); return true; });
     
-    // 1. Send Call Request
     objectUnderTest.sendCallRequest(PEER_NUMBER);
-    
-    // 2. Send Call Accept
     objectUnderTest.sendCallAccept(PEER_NUMBER);
-    
-    // 3. Send Call Talk
     objectUnderTest.sendCallTalk(PEER_NUMBER, CALL_TEXT);
-    
-    // 4. Send Call Dropped
     objectUnderTest.sendCallDropped(PEER_NUMBER);
     
     // Verify Call Request
@@ -519,7 +512,7 @@ TEST_F(BtsPortTestSuite, shallHandleMultipleCallMessages)
 TEST_F(BtsPortTestSuite, shallHandleLongCallTalkMessage)
 {
     const common::PhoneNumber TO_NUMBER{123};
-    const std::string LONG_TALK_TEXT(500, 'T');  // 500 character message
+    const std::string LONG_TALK_TEXT(500, 'T'); 
     
     common::BinaryMessage msg;
     EXPECT_CALL(transportMock, sendMessage(_)).WillOnce([&msg](auto param) { msg = std::move(param); return true; });
