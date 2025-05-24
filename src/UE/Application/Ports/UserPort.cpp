@@ -170,7 +170,7 @@ void UserPort::showSmsList()
     });
     
     gui.setRejectCallback([this]() {
-        showConnected();
+        handleCloseSmsViewClicked();
     });
 }
 

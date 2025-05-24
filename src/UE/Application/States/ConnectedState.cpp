@@ -31,6 +31,13 @@ ConnectedState::ConnectedState(Context &context)
 }
 
 void ConnectedState::handleDisconnect() {
+    if (receivingCallRequest) {
+        logger.logInfo("Connection dropped while receiving call request from: ", callingPhoneNumber, 
+                      " - cannot inform peer UE, going to NotConnected immediately");
+        context.timer.stopTimer();
+        receivingCallRequest = false;
+    }
+    
     context.setState<NotConnectedState>();
 }
 
@@ -47,13 +54,40 @@ void ConnectedState::handleSms(common::PhoneNumber from, std::string text)
 
 void ConnectedState::handleCallRequest(common::PhoneNumber from)
 {
+    if (receivingCallRequest) {
+        if (from == callingPhoneNumber) {
+            logger.logInfo("Received subsequent call request from same caller: ", from, " - ignoring as already processing call request from this peer");
+        } else {
+            logger.logInfo("Received subsequent call request from: ", from, " while already processing call request from: ", callingPhoneNumber, " - dropping new request");
+            context.bts.sendCallDropped(from);
+        }
+        return;
+    }
+    
     logger.logInfo("Received call request from: ", from);
     callingPhoneNumber = from;
+    receivingCallRequest = true;  
     
     context.timer.startTimer(CALL_TIMEOUT);
     
     logger.logInfo("Showing call request UI for caller: ", from);
     context.user.showCallRequest(from);
+}
+
+void ConnectedState::handleCallDropped(common::PhoneNumber from)
+{
+    if (receivingCallRequest && from == callingPhoneNumber) {
+        logger.logInfo("Call dropped by caller: ", from, " - returning to normal connected state");
+        
+        context.timer.stopTimer();
+        receivingCallRequest = false;
+        
+        context.user.showConnected();
+    } else if (receivingCallRequest) {
+        logger.logInfo("Received call dropped from unexpected number: ", from, " while receiving call from: ", callingPhoneNumber, " - ignoring");
+    } else {
+        logger.logInfo("Received call dropped from: ", from, " but not expecting any call - ignoring");
+    }
 }
 
 void ConnectedState::handleTimeout()
@@ -62,6 +96,7 @@ void ConnectedState::handleTimeout()
     
     context.bts.sendCallDropped(callingPhoneNumber);
     
+    receivingCallRequest = false;  
     context.user.showConnected();
 }
 
@@ -70,6 +105,7 @@ void ConnectedState::acceptCallRequest()
     logger.logInfo("User accepted call from: ", callingPhoneNumber);
     
     context.timer.stopTimer();
+    receivingCallRequest = false;  
     
     logger.logInfo("Sending CallAccept message to: ", callingPhoneNumber);
     context.bts.sendCallAccept(callingPhoneNumber);
@@ -83,6 +119,7 @@ void ConnectedState::rejectCallRequest()
     logger.logInfo("User rejected call from: ", callingPhoneNumber);
     
     context.timer.stopTimer();
+    receivingCallRequest = false;  
     
     context.bts.sendCallDropped(callingPhoneNumber);
     
@@ -153,6 +190,20 @@ void ConnectedState::updateNotificationIcon(const std::string& source)
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
     
     context.user.showNewSms(hasUnread);
+}
+
+void ConnectedState::handleClose()
+{
+    logger.logInfo("User closes UE while in ConnectedState");
+    
+    if (receivingCallRequest) {
+        logger.logInfo("UE closing while receiving call request from: ", callingPhoneNumber, " - sending CallDropped");
+        context.timer.stopTimer();
+        context.bts.sendCallDropped(callingPhoneNumber);
+        receivingCallRequest = false;
+    }
+    
+    logger.logInfo("UE closing immediately without waiting");
 }
 
 }

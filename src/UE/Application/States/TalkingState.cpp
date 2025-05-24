@@ -1,5 +1,6 @@
 #include "TalkingState.hpp"
 #include "ConnectedState.hpp"
+#include "NotConnectedState.hpp"
 #include "UeGui/ICallMode.hpp"
 #include "Ports/UserPort.hpp"
 
@@ -27,7 +28,8 @@ TalkingState::~TalkingState()
 
 void TalkingState::handleDisconnect()
 {
-    context.setState<ConnectedState>();
+    logger.logInfo("Connection to BTS dropped during call with: ", peerPhoneNumber);
+    context.setState<NotConnectedState>();
 }
 
 void TalkingState::handleCallTalk(common::PhoneNumber from, std::string text)
@@ -55,6 +57,27 @@ void TalkingState::handleCallDropped(common::PhoneNumber from)
     } else {
         logger.logError("Received call dropped from unknown peer: ", from, ", expected: ", peerPhoneNumber);
     }
+}
+
+void TalkingState::handleCallRequest(common::PhoneNumber from)
+{
+    if (from == peerPhoneNumber) {
+        logger.logInfo("Received subsequent call request from same peer: ", from, " - ignoring as already in call with this peer");
+    } else {
+        logger.logInfo("Received subsequent call request from: ", from, " while in call with: ", peerPhoneNumber, " - dropping new request");
+        context.bts.sendCallDropped(from);
+    }
+}
+
+void TalkingState::handleSms(common::PhoneNumber from, std::string text)
+{
+    logger.logInfo("Received SMS from: ", from, " while in call with: ", peerPhoneNumber);
+    
+    context.smsDb.addSms(from, text);
+    
+    context.user.showNewSms(true);
+    
+    logger.logInfo("SMS stored in background, call continues uninterrupted");
 }
 
 void TalkingState::handleUnknownRecipient(common::PhoneNumber to)
@@ -146,6 +169,16 @@ void TalkingState::rejectCallRequest()
     context.bts.sendCallDropped(peerPhoneNumber);
     
     context.setState<ConnectedState>();
+}
+
+void TalkingState::handleClose()
+{
+    logger.logInfo("User closes UE while in call with: ", peerPhoneNumber);
+    
+    logger.logInfo("Sending CallDropped to peer before closing");
+    context.bts.sendCallDropped(peerPhoneNumber);
+    
+    logger.logInfo("UE closing immediately without waiting for call completion");
 }
 
 }
