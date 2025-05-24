@@ -44,5 +44,49 @@ TEST_F(ApplicationNotConnectedTestSuite, todo)
 {
 }
 
+TEST_F(ApplicationNotConnectedTestSuite, ShallStopTimerAndCloseUeWhenClosingInConnectingState)
+{
+    EXPECT_CALL(userPortMock, showConnecting());
+    EXPECT_CALL(btsPortMock, sendAttachRequest(common::BtsId{1}));
+    objectUnderTest.handleSib(common::BtsId{1});
+    
+    EXPECT_CALL(timerPortMock, stopTimer()).Times(1);
+    
+    objectUnderTest.handleClose();
+}
+
+TEST_F(ApplicationNotConnectedTestSuite, ShallStoreNewSibDataWhileInConnectingState)
+{
+    EXPECT_CALL(userPortMock, showConnecting());
+    EXPECT_CALL(btsPortMock, sendAttachRequest(common::BtsId{1})).Times(1);
+    objectUnderTest.handleSib(common::BtsId{1});
+    
+    EXPECT_CALL(btsPortMock, sendAttachRequest(common::BtsId{2})).Times(0);
+    objectUnderTest.handleSib(common::BtsId{2});
+
+    EXPECT_CALL(userPortMock, showConnected());
+    EXPECT_CALL(timerPortMock, stopTimer());
+    objectUnderTest.handleAttachAccept();
+}
+
+TEST_F(ApplicationNotConnectedTestSuite, ShallBreakAttachProcedureWhenConnectionToBtsDroppingWhileConnecting)
+{
+    // Put UE in Connecting state first
+    EXPECT_CALL(userPortMock, showConnecting());
+    EXPECT_CALL(btsPortMock, sendAttachRequest(common::BtsId{1}));
+    objectUnderTest.handleSib(common::BtsId{1});
+    
+    // Simulate BTS connection drop
+    EXPECT_CALL(timerPortMock, stopTimer()).Times(1);
+    EXPECT_CALL(userPortMock, showNotConnected());
+    objectUnderTest.handleDisconnect();
+    
+    // Verify UE is back in NotConnected state by checking behavior
+    // If we receive a SIB now, it should trigger a new attach request
+    EXPECT_CALL(userPortMock, showConnecting());
+    EXPECT_CALL(btsPortMock, sendAttachRequest(common::BtsId{2}));
+    objectUnderTest.handleSib(common::BtsId{2});
+}
+
 // ViewSmsTestSuite has been moved to its own file: ViewSmsTestSuite.cpp
 }
