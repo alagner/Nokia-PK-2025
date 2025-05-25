@@ -37,7 +37,7 @@ protected:
     {}
 };
 
-struct ViewSmsTestSuite : ApplicationTestSuite
+struct SmsTestSuite : ApplicationTestSuite
 {
 protected:
     void SetUp() override
@@ -50,12 +50,11 @@ protected:
         objectUnderTest.handleAttachAccept();
     }
 
-    std::vector<Sms> emptySmsVector;  // Empty vector for tests
+    std::vector<Sms> emptySmsVector;
 };
 
-TEST_F(ViewSmsTestSuite, ShouldDisplaySmsListWhenViewingSms)
+TEST_F(SmsTestSuite, ShouldDisplaySmsListWhenViewingSms)
 {
-    // Allow for any showNewSms calls that might happen
     EXPECT_CALL(userPortMock, showNewSms(_))
         .Times(AnyNumber());
 
@@ -81,19 +80,17 @@ TEST_F(ViewSmsTestSuite, ShouldDisplaySmsListWhenViewingSms)
     objectUnderTest.closeSmsView();
 }
 
-TEST_F(ViewSmsTestSuite, ShouldDisplaySmsContentWhenSelectingSms)
+TEST_F(SmsTestSuite, ShouldDisplaySmsContentWhenSelectingSms)
 {
     const common::PhoneNumber senderNumber{123};
     const std::string smsText = "Test message";
 
-    // Set up mock to expect SMS addition
     EXPECT_CALL(smsDbMock, addSms(senderNumber, smsText));
     EXPECT_CALL(userPortMock, showNewSms(_))
         .Times(AnyNumber());
 
     objectUnderTest.handleSms(senderNumber, smsText);
 
-    // Prepare mock data for viewing SMS
     std::vector<Sms> smsDbWithOneMessage = {
         Sms{senderNumber, smsText}
     };
@@ -121,12 +118,11 @@ TEST_F(ViewSmsTestSuite, ShouldDisplaySmsContentWhenSelectingSms)
     objectUnderTest.closeSmsView();
 }
 
-TEST_F(ViewSmsTestSuite, ShouldMarkSmsAsReadWhenViewing)
+TEST_F(SmsTestSuite, ShouldMarkSmsAsReadWhenViewing)
 {
     const common::PhoneNumber senderNumber{123};
     const std::string smsText = "Test message";
 
-    // Set up mock to expect SMS addition
     EXPECT_CALL(smsDbMock, addSms(senderNumber, smsText));
     EXPECT_CALL(userPortMock, showNewSms(_))
         .Times(AnyNumber());
@@ -152,13 +148,12 @@ TEST_F(ViewSmsTestSuite, ShouldMarkSmsAsReadWhenViewing)
 
     objectUnderTest.viewSms();
 
-    // When selecting SMS, expect it to be marked as read
     EXPECT_CALL(smsDbMock, markAsRead(0));
     EXPECT_CALL(userPortMock, showSmsContent(std::to_string(senderNumber.value), smsText));
     objectUnderTest.selectSms(0);
 }
 
-TEST_F(ViewSmsTestSuite, ShouldAllowViewingMultipleSmsInSequence)
+TEST_F(SmsTestSuite, ShouldAllowViewingMultipleSmsInSequence)
 {
     const common::PhoneNumber sender1{43};
     const common::PhoneNumber sender2{44};
@@ -179,7 +174,6 @@ TEST_F(ViewSmsTestSuite, ShouldAllowViewingMultipleSmsInSequence)
         Sms{sender2, text2}
     };
 
-    // First viewing
     EXPECT_CALL(smsDbMock, getAllSms())
         .Times(AtLeast(1))
         .WillRepeatedly(ReturnRef(smsDbWithTwoMessages));
@@ -196,14 +190,12 @@ TEST_F(ViewSmsTestSuite, ShouldAllowViewingMultipleSmsInSequence)
 
     objectUnderTest.viewSms();
 
-    // View first message
     EXPECT_CALL(userPortMock, showSmsContent(std::to_string(sender1.value), text1));
     objectUnderTest.selectSms(0);
 
     EXPECT_CALL(userPortMock, showConnected());
-    objectUnderTest.closeSmsView();  // Return to main menu
+    objectUnderTest.closeSmsView();
 
-    // Second viewing - reset expectations for the second viewing
     EXPECT_CALL(smsDbMock, getAllSms())
         .Times(AtLeast(1))
         .WillRepeatedly(ReturnRef(smsDbWithTwoMessages));
@@ -230,7 +222,7 @@ TEST_F(ViewSmsTestSuite, ShouldAllowViewingMultipleSmsInSequence)
 }
 
 // Tests for interactions with Viewing SMS
-TEST_F(ViewSmsTestSuite, ShallCloseImmediatelyWhenUserClosesWhileViewingSms)
+TEST_F(SmsTestSuite, ShallCloseImmediatelyWhenUserClosesWhileViewingSms)
 {
     const common::PhoneNumber sender{123};
     const std::string text = "Test message";
@@ -267,7 +259,7 @@ TEST_F(ViewSmsTestSuite, ShallCloseImmediatelyWhenUserClosesWhileViewingSms)
 
 }
 
-TEST_F(ViewSmsTestSuite, ShallGoToNotConnectedStateImmediatelyWhenBtsConnectionDroppedWhileViewingSms)
+TEST_F(SmsTestSuite, ShallGoToNotConnectedStateImmediatelyWhenBtsConnectionDroppedWhileViewingSms)
 {
     const common::PhoneNumber sender{123};
     const std::string text = "Test message";
@@ -309,7 +301,7 @@ TEST_F(ViewSmsTestSuite, ShallGoToNotConnectedStateImmediatelyWhenBtsConnectionD
     
 }
 
-TEST_F(ViewSmsTestSuite, ShallStoreAndNotInterruptViewingWhenReceivingSmsWhileViewingSms)
+TEST_F(SmsTestSuite, ShallStoreAndNotInterruptViewingWhenReceivingSmsWhileViewingSms)
 {
     const common::PhoneNumber sender1{43};
     const std::string text1 = "Initial message";
@@ -382,7 +374,7 @@ TEST_F(ViewSmsTestSuite, ShallStoreAndNotInterruptViewingWhenReceivingSmsWhileVi
     objectUnderTest.selectSms(1);
 }
 
-TEST_F(ViewSmsTestSuite, ShallInterruptViewingSmsWhenReceivingCallRequest)
+TEST_F(SmsTestSuite, ShallInterruptViewingSmsWhenReceivingCallRequest)
 {
     const common::PhoneNumber sender{123};
     const std::string text = "Test message";
@@ -474,7 +466,7 @@ TEST_F(ViewSmsTestSuite, ShallInterruptViewingSmsWhenReceivingCallRequest)
 }
 
 // Tests for interactions with Sending SMS
-TEST_F(ViewSmsTestSuite, ShallCloseUeImmediatelyWhenClosingWhileSendingSms)
+TEST_F(SmsTestSuite, ShallCloseUeImmediatelyWhenClosingWhileSendingSms)
 {
     testing::Mock::VerifyAndClearExpectations(&userPortMock);
     testing::Mock::VerifyAndClearExpectations(&btsPortMock);
@@ -490,7 +482,7 @@ TEST_F(ViewSmsTestSuite, ShallCloseUeImmediatelyWhenClosingWhileSendingSms)
     objectUnderTest.handleClose();
 }
 
-TEST_F(ViewSmsTestSuite, ShallGoToNotConnectedStateImmediatelyWhenBtsConnectionDroppedWhileSendingSms)
+TEST_F(SmsTestSuite, ShallGoToNotConnectedStateImmediatelyWhenBtsConnectionDroppedWhileSendingSms)
 {
     testing::Mock::VerifyAndClearExpectations(&userPortMock);
     testing::Mock::VerifyAndClearExpectations(&btsPortMock);
@@ -511,7 +503,7 @@ TEST_F(ViewSmsTestSuite, ShallGoToNotConnectedStateImmediatelyWhenBtsConnectionD
     objectUnderTest.handleSib(common::BtsId{2});
 }
 
-TEST_F(ViewSmsTestSuite, ShallStoreAndNotInterruptSendingWhenReceivingSmsWhileSendingSms)
+TEST_F(SmsTestSuite, ShallStoreAndNotInterruptSendingWhenReceivingSmsWhileSendingSms)
 {
     testing::Mock::VerifyAndClearExpectations(&userPortMock);
     testing::Mock::VerifyAndClearExpectations(&btsPortMock);
@@ -568,7 +560,7 @@ TEST_F(ViewSmsTestSuite, ShallStoreAndNotInterruptSendingWhenReceivingSmsWhileSe
     objectUnderTest.viewSms();
 }
 
-TEST_F(ViewSmsTestSuite, ShallInterruptSendingSmsWhenReceivingCallRequest)
+TEST_F(SmsTestSuite, ShallInterruptSendingSmsWhenReceivingCallRequest)
 {
     testing::Mock::VerifyAndClearExpectations(&userPortMock);
     testing::Mock::VerifyAndClearExpectations(&btsPortMock);
