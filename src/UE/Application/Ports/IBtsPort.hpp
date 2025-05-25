@@ -34,6 +34,7 @@ public:
     virtual void sendSms(common::PhoneNumber to, const std::string& textMessage) =0;
     virtual void sendCallRequest(common::PhoneNumber to) = 0;
     virtual void sendCallDropped(common::PhoneNumber to) = 0;
+    virtual void callMissed(common::PhoneNumber to) = 0;
     virtual void sendAcceptCall(common::PhoneNumber to) = 0;
     virtual void sendRejectCall(common::PhoneNumber to) = 0;
     virtual void sendTalkCall(common::PhoneNumber to, const std::string &message) = 0;

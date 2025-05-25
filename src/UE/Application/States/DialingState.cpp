@@ -14,7 +14,7 @@ namespace ue
         : BaseState(context, "DialingState"), awaitingAfterFail(false)
     {
         logger.logInfo("CallingState...");
-        context.timer.startTimer(60s);
+        context.timer.startTimer(5s); // Start timer for 5 seconds
     }
 
     DialingState::~DialingState()

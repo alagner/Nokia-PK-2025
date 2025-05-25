@@ -152,6 +152,11 @@
             transport.sendMessage(msg.getMessage());
         }
 
+    void BtsPort::callMissed(common::PhoneNumber to)
+        {
+            logger.logInfo("Sending call missed to: ", to);
+        }
+
     void BtsPort::sendTalkCall(common::PhoneNumber to, const std::string &message) {
         logger.logInfo("Talking to: ", to);
         common::OutgoingMessage msg{common::MessageId::CallTalk, phoneNumber, to};
