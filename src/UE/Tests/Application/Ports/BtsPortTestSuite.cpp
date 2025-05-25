@@ -177,11 +177,10 @@ TEST_F(BtsPortTestSuite, shallSendTalkMessage)
 
 TEST_F(BtsPortTestSuite, shallHandleCallAccepted)
 {
-    EXPECT_CALL(handlerMock, handleCallAccepted(PHONE_NUMBER));
+    const common::PhoneNumber caller{123};
+    EXPECT_CALL(handlerMock, handleCallAccepted(caller));
 
-    common::OutgoingMessage msg{common::MessageId::CallAccepted,
-                                common::PhoneNumber{123},
-                                PHONE_NUMBER};
+    common::OutgoingMessage msg{common::MessageId::CallAccepted, caller, PHONE_NUMBER};
     messageCallback(msg.getMessage());
 }
 
@@ -221,6 +220,40 @@ TEST_F(BtsPortTestSuite, shallHandleUnknownRecipientForSms)
                                 PHONE_NUMBER,
                                 common::PhoneNumber{123}};
     messageCallback(msg.getMessage());
+}
+
+TEST_F(BtsPortTestSuite, shallSendCallRequest)
+{
+    common::BinaryMessage msg;
+    const common::PhoneNumber from = PHONE_NUMBER;
+    const common::PhoneNumber to{123};
+    EXPECT_CALL(transportMock, sendMessage(_)).WillOnce([&msg](auto param) {
+        msg = std::move(param);
+        return true;
+    });
+    objectUnderTest.sendCallRequest(from, to);
+    common::IncomingMessage reader(msg);
+    ASSERT_EQ(reader.readMessageId(), common::MessageId::CallRequest);
+    ASSERT_EQ(reader.readPhoneNumber(), from);
+    ASSERT_EQ(reader.readPhoneNumber(), to);
+    ASSERT_NO_THROW(reader.checkEndOfMessage());
+}
+
+TEST_F(BtsPortTestSuite, shallSendCallDropped)
+{
+    common::BinaryMessage msg;
+    const common::PhoneNumber from = PHONE_NUMBER;
+    const common::PhoneNumber to{123};
+    EXPECT_CALL(transportMock, sendMessage(_)).WillOnce([&msg](auto param) {
+        msg = std::move(param);
+        return true;
+    });
+    objectUnderTest.sendCallDropped(from, to);
+    common::IncomingMessage reader(msg);
+    ASSERT_EQ(reader.readMessageId(), common::MessageId::CallDropped);
+    ASSERT_EQ(reader.readPhoneNumber(), from);
+    ASSERT_EQ(reader.readPhoneNumber(), to);
+    ASSERT_NO_THROW(reader.checkEndOfMessage());
 }
 
 }

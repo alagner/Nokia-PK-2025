@@ -127,4 +127,78 @@ TEST_F(UserPortTestSuite, shallComposeSmsAndSend)
     acceptCallback();
 }
 
+TEST_F(UserPortTestSuite, shallStartDialAndSendCallRequest)
+{
+    StrictMock<IDialModeMock> dialModeMock;
+
+    EXPECT_CALL(guiMock, setDialMode()).WillOnce(ReturnRef(dialModeMock));
+    EXPECT_CALL(dialModeMock, getPhoneNumber()).WillOnce(Return(common::PhoneNumber{123}));
+    EXPECT_CALL(handlerMock, sendCallRequest(common::PhoneNumber{123}));
+
+    EXPECT_CALL(guiMock, setAcceptCallback(_)).WillOnce(Invoke([](auto cb){ cb(); }));
+    EXPECT_CALL(guiMock, setRejectCallback(_));
+
+    objectUnderTest.startDial();
+}
+
+TEST_F(UserPortTestSuite, shallShowNewSms)
+{
+    EXPECT_CALL(guiMock, showNewSms(true));
+    objectUnderTest.showNewSms();
+}
+
+TEST_F(UserPortTestSuite, shallReturnPhoneNumber)
+{
+    EXPECT_EQ(objectUnderTest.getPhoneNumber(), PHONE_NUMBER);
+}
+
+TEST_F(UserPortTestSuite, shallStartDial)
+{
+    StrictMock<IDialModeMock> dialModeMock;
+    EXPECT_CALL(guiMock, setDialMode()).WillOnce(ReturnRef(dialModeMock));
+    EXPECT_CALL(guiMock, setAcceptCallback(_));
+    EXPECT_CALL(guiMock, setRejectCallback(_));
+    objectUnderTest.startDial();
+}
+
+TEST_F(UserPortTestSuite, shallShowDialingAndCancel)
+{
+    StrictMock<ITextModeMock> alertModeMock;
+    EXPECT_CALL(guiMock, setAlertMode()).WillOnce(ReturnRef(alertModeMock));
+    EXPECT_CALL(alertModeMock, setText("Dialing..."));
+    EXPECT_CALL(guiMock, setRejectCallback(_)).WillOnce(Invoke([this](auto cb) {
+        cb();
+    }));
+    EXPECT_CALL(handlerMock, cancelCallRequest());
+    objectUnderTest.showDialing();
+}
+
+TEST_F(UserPortTestSuite, showTalking_acceptSendsTextWhenNotEmpty)
+{
+    StrictMock<ICallModeMock> callModeMock;
+
+    EXPECT_CALL(guiMock, setCallMode()).WillOnce(ReturnRef(callModeMock));
+    EXPECT_CALL(callModeMock, clearIncomingText());
+    EXPECT_CALL(guiMock, setAcceptCallback(_)).WillOnce(Invoke([&](auto cb) {
+        EXPECT_CALL(callModeMock, getOutgoingText()).WillOnce(Return("Hello"));
+        EXPECT_CALL(callModeMock, appendIncomingText("You: Hello"));
+        EXPECT_CALL(handlerMock, sendTalkMessage("Hello"));
+        EXPECT_CALL(callModeMock, clearOutgoingText());
+        cb();
+    }));
+    EXPECT_CALL(guiMock, setRejectCallback(_));
+
+    objectUnderTest.showTalking(common::PhoneNumber{123});
+}
+
+TEST_F(UserPortTestSuite, shallShowPartnerNotAvailable)
+{
+    StrictMock<ITextModeMock> modeMock;
+    EXPECT_CALL(guiMock, setAlertMode()).WillOnce(ReturnRef(modeMock));
+    EXPECT_CALL(modeMock, setText("Partner is not available."));
+    EXPECT_CALL(guiMock, setRejectCallback(_));
+    EXPECT_CALL(guiMock, setAcceptCallback(_));
+    objectUnderTest.showPartnerNotAvailable();
+}
+
 }

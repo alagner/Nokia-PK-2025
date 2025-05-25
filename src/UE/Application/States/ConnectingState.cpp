@@ -32,7 +32,7 @@ void ConnectingState::handleDisconnect()
 void ConnectingState::handleTimeout()
 {
     context.timer.stopTimer();
-    context.setState<ConnectedState>();
+    context.setState<NotConnectedState>();
 }
 
 void ConnectingState::handleTalkMessage(common::PhoneNumber from, const std::string& text)

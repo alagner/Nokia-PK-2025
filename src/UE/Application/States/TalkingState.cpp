@@ -54,11 +54,11 @@ void TalkingState::handleRedirect()
     context.setState<ConnectedState>();
 }
 
-void TalkingState::callDrop(common::PhoneNumber from)
+void TalkingState::callDrop(common::PhoneNumber)
 {
     logger.logInfo("User dropped the call");
-    context.bts.sendCallDropped(context.user.getPhoneNumber(), to);
     context.timer.stopTimer();
+    context.bts.sendCallDropped(context.user.getPhoneNumber(), to);
     context.user.showConnected();
     context.setState<ConnectedState>();
 }

@@ -86,6 +86,7 @@ TEST_F(ApplicationConnectingTestSuite, shallDisConnectOnAttachReject)
 
 TEST_F(ApplicationConnectingTestSuite, shallDisConnectOnTimeout)
 {
+    EXPECT_CALL(timerPortMock, stopTimer());
     EXPECT_CALL(userPortMock, showNotConnected());
     objectUnderTest.handleTimeout();
 }
@@ -271,7 +272,8 @@ TEST_F(ApplicationTalkingTestSuite, shallHandleTimeoutAndDropCall)
 {
     EXPECT_CALL(userPortMock, getPhoneNumber()).WillOnce(Return(PHONE_NUMBER));
     EXPECT_CALL(btsPortMock, sendCallDropped(PHONE_NUMBER, TEST_SENDER_NUMBER));
-    EXPECT_CALL(userPortMock, showConnected()).Times(AnyNumber());
+    EXPECT_CALL(userPortMock, showConnected()).Times(AtLeast(1));
+    objectUnderTest.handleTimeout();
 }
 
 TEST_F(ApplicationConnectedTestSuite, shallGoToTalkingStateWhenCallAccepted)
@@ -310,6 +312,7 @@ TEST_F(ApplicationTalkingTestSuite, shallHandlePeerUnavailable)
     EXPECT_CALL(timerPortMock, stopTimer());
     using namespace std::chrono;
     EXPECT_CALL(timerPortMock, startRedirectTimer(duration_cast<milliseconds>(seconds(3))));
+    objectUnderTest.handleCallRecipientNotAvailable(TEST_SENDER_NUMBER);
 }
 
 TEST_F(ApplicationConnectedTestSuite, shallReturnToConnectedOnUnknownRecipient)
@@ -357,6 +360,15 @@ TEST_F(ApplicationConnectedTestSuite, shallResignCallRequestWhenUserCancels)
     EXPECT_CALL(userPortMock, showConnected());
 
     objectUnderTest.cancelCallRequest();
+}
+
+TEST_F(ApplicationTalkingTestSuite, shallHandleUserDroppingCall)
+{
+    EXPECT_CALL(userPortMock, getPhoneNumber()).WillOnce(Return(PHONE_NUMBER));
+    EXPECT_CALL(btsPortMock, sendCallDropped(PHONE_NUMBER, TEST_SENDER_NUMBER));
+    EXPECT_CALL(timerPortMock, stopTimer()).Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, showConnected()).Times(AtLeast(1));
+    objectUnderTest.callDrop(TEST_SENDER_NUMBER);
 }
 
 }
