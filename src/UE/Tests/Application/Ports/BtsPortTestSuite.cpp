@@ -43,6 +43,7 @@ protected:
     }
 };
 
+#pragma region Base Functionality Tests
 TEST_F(BtsPortTestSuite, shallRegisterHandlersBetweenStartStop)
 {
 }
@@ -53,7 +54,9 @@ TEST_F(BtsPortTestSuite, shallIgnoreWrongMessage)
     wrongMsg.writeBtsId(BTS_ID);
     messageCallback(wrongMsg.getMessage());
 }
+#pragma endregion
 
+#pragma region Attach/Detach Tests
 TEST_F(BtsPortTestSuite, shallHandleSib)
 {
     EXPECT_CALL(handlerMock, handleSib(BTS_ID));
@@ -96,7 +99,9 @@ TEST_F(BtsPortTestSuite, shallSendAttachRequest)
     ASSERT_NO_THROW(EXPECT_EQ(BTS_ID, reader.readBtsId()));
     ASSERT_NO_THROW(reader.checkEndOfMessage());
 }
+#pragma endregion
 
+#pragma region SMS Tests
 TEST_F(BtsPortTestSuite, shallSendSmsMessage)
 {
     const common::PhoneNumber TO_NUMBER{123};
@@ -298,7 +303,9 @@ TEST_F(BtsPortTestSuite, shallHandleMultipleSmsMessages)
     ASSERT_NO_THROW(EXPECT_EQ(OUTGOING_TEXT2, reader2.readRemainingText()));
     ASSERT_NO_THROW(reader2.checkEndOfMessage());
 }
+#pragma endregion
 
+#pragma region Call Control Tests
 TEST_F(BtsPortTestSuite, shallReceiveCallRequest)
 {
     const common::PhoneNumber FROM_NUMBER{124};
@@ -376,7 +383,9 @@ TEST_F(BtsPortTestSuite, shallReceiveCallDropped)
     common::OutgoingMessage msg{common::MessageId::CallDropped, FROM_NUMBER, PHONE_NUMBER};
     messageCallback(msg.getMessage());
 }
+#pragma endregion
 
+#pragma region Call Talk Tests
 TEST_F(BtsPortTestSuite, shallHandleCallTalkSending)
 {
     const common::PhoneNumber TO_NUMBER{123};
@@ -406,7 +415,9 @@ TEST_F(BtsPortTestSuite, shallHandleCallTalkReceiving)
     msg.writeText(CALL_TEXT);
     messageCallback(msg.getMessage());
 }
+#pragma endregion
 
+#pragma region Error Handling Tests
 TEST_F(BtsPortTestSuite, shallHandleCallRequestFailure)
 {
     const common::PhoneNumber TO_NUMBER{123};
@@ -443,7 +454,9 @@ TEST_F(BtsPortTestSuite, shallHandleCallDropFailure)
     
     ASSERT_NO_THROW(objectUnderTest.sendCallDropped(TO_NUMBER));
 }
+#pragma endregion
 
+#pragma region Multiple Message Tests
 TEST_F(BtsPortTestSuite, shallHandleMultipleCallMessages)
 {
     
@@ -487,7 +500,9 @@ TEST_F(BtsPortTestSuite, shallHandleMultipleCallMessages)
     ASSERT_NO_THROW(EXPECT_EQ(PEER_NUMBER, dropReader.readPhoneNumber()));
     ASSERT_NO_THROW(dropReader.checkEndOfMessage());
 }
+#pragma endregion
 
+#pragma region Edge Cases Tests
 TEST_F(BtsPortTestSuite, shallHandleLongCallTalkMessage)
 {
     const common::PhoneNumber TO_NUMBER{123};
@@ -523,5 +538,6 @@ TEST_F(BtsPortTestSuite, shallHandleEmptyCallTalkMessage)
     ASSERT_NO_THROW(EXPECT_EQ(EMPTY_TALK_TEXT, reader.readRemainingText()));
     ASSERT_NO_THROW(reader.checkEndOfMessage());
 }
+#pragma endregion
 
 }
