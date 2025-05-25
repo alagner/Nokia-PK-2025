@@ -72,16 +72,13 @@ TEST_F(UserPortTestSuite, shallShowSmsListView)
     
     objectUnderTest.setSmsList(testSmsList);
     
-    // Expect GUI to be set to list view mode
     EXPECT_CALL(guiMock, setListViewMode()).WillOnce(ReturnRef(listViewModeMock));
     EXPECT_CALL(listViewModeMock, clearSelectionList());
     
-    // Expect SMS items to be added to the list
     EXPECT_CALL(listViewModeMock, addSelectionListItem("From: 123", "Read"));
     EXPECT_CALL(listViewModeMock, addSelectionListItem("From: 200", "Unread"));
     EXPECT_CALL(listViewModeMock, addSelectionListItem("Back", "Return to main menu"));
     
-    // Expect callbacks to be set
     EXPECT_CALL(guiMock, setAcceptCallback(_));
     EXPECT_CALL(guiMock, setRejectCallback(_));
     
@@ -93,14 +90,11 @@ TEST_F(UserPortTestSuite, shallShowSmsContent)
     const std::string fromNumber = "123";
     const std::string smsText = "Hello World!";
     
-    // Expect GUI to be set to text view mode
     EXPECT_CALL(guiMock, setViewTextMode()).WillOnce(ReturnRef(textModeMock));
     
-    // Expect the formatted SMS content to be displayed
     std::string expectedContent = "From: " + fromNumber + "\n\n" + smsText;
     EXPECT_CALL(textModeMock, setText(expectedContent));
     
-    // Expect reject callback to be set for closing the view
     EXPECT_CALL(guiMock, setRejectCallback(_));
     
     objectUnderTest.showSmsContent(fromNumber, smsText);
@@ -108,12 +102,10 @@ TEST_F(UserPortTestSuite, shallShowSmsContent)
 
 TEST_F(UserPortTestSuite, shallShowSmsComposeView)
 {
-    // Expect GUI to be set to SMS compose mode
     EXPECT_CALL(guiMock, setSmsComposeMode()).WillOnce(ReturnRef(smsComposeModeMock));
     
     EXPECT_CALL(smsComposeModeMock, clearSmsText());
     
-    // Expect accept and reject callbacks to be set
     EXPECT_CALL(guiMock, setAcceptCallback(_));
     EXPECT_CALL(guiMock, setRejectCallback(_));
     
@@ -137,26 +129,22 @@ TEST_F(UserPortTestSuite, shallHandleSmsSelection)
         selectedIndex = index;
     });
     
-    // Setup GUI expectations for showSmsList
     EXPECT_CALL(guiMock, setListViewMode()).WillOnce(ReturnRef(listViewModeMock));
     EXPECT_CALL(listViewModeMock, clearSelectionList());
     EXPECT_CALL(listViewModeMock, addSelectionListItem("From: 123", "Unread"));
     EXPECT_CALL(listViewModeMock, addSelectionListItem("Back", "Return to main menu"));
     
-    // Capture the accept callback
     std::function<void()> capturedCallback;
     EXPECT_CALL(guiMock, setAcceptCallback(_))
         .WillOnce(SaveArg<0>(&capturedCallback));
     EXPECT_CALL(guiMock, setRejectCallback(_));
     
-    // Show the SMS list
     objectUnderTest.showSmsList();
     
     EXPECT_CALL(guiMock, setListViewMode()).WillOnce(ReturnRef(listViewModeMock));
     EXPECT_CALL(listViewModeMock, getCurrentItemIndex())
         .WillOnce(Return(std::make_pair(true, 0)));
     
-    // Simulate user selection
     capturedCallback();
     
     EXPECT_TRUE(callbackCalled);
