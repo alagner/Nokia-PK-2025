@@ -39,7 +39,7 @@ class IUserPort
     virtual common::PhoneNumber getPhoneNumber() const = 0;
     virtual void startDial() = 0;
     virtual void showDialing() = 0;
-    virtual void showTalking() = 0;
+    virtual void showTalking(common::PhoneNumber from) = 0;
     virtual void showPartnerNotAvailable() = 0;
     virtual void displayMessage(common::PhoneNumber from, const std::string& text) = 0;
     virtual void showCallRequest(common::PhoneNumber from) = 0;

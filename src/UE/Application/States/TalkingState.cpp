@@ -8,7 +8,7 @@ TalkingState::TalkingState(Context& context, common::PhoneNumber to)
     : BaseState(context, "TalkingState"),
       to(to)
 {
-    context.user.showTalking();
+    context.user.showTalking(to);
 }
 
 void TalkingState::handleDisconnect()
@@ -49,6 +49,23 @@ void TalkingState::handleCallRecipientNotAvailable(common::PhoneNumber)
 
 void TalkingState::handleRedirect()
 {
+    context.timer.stopTimer();
+    context.user.showConnected();
+    context.setState<ConnectedState>();
+}
+
+void TalkingState::callDrop(common::PhoneNumber from)
+{
+    logger.logInfo("User dropped the call");
+    context.bts.sendCallDropped(context.user.getPhoneNumber(), to);
+    context.timer.stopTimer();
+    context.user.showConnected();
+    context.setState<ConnectedState>();
+}
+
+void TalkingState::handleCallDropped()
+{
+    logger.logInfo("Peer dropped the call");
     context.timer.stopTimer();
     context.user.showConnected();
     context.setState<ConnectedState>();

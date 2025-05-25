@@ -169,7 +169,7 @@ void UserPort::showDialing()
     });
 }
 
-void UserPort::showTalking()
+void UserPort::showTalking(common::PhoneNumber from)
 {
     IUeGui::ICallMode& chat = gui.setCallMode();
     chat.clearIncomingText();
@@ -183,9 +183,9 @@ void UserPort::showTalking()
         }
     });
 
-    gui.setRejectCallback([this]() {
+    gui.setRejectCallback([this,from]() {
         logger.logInfo("User ended the call");
-        handler->cancelCallRequest();
+        handler->callDrop(from);
     });
 }
 

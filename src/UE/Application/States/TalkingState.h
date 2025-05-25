@@ -17,6 +17,8 @@ class TalkingState : public BaseState
     void handleTimeout();
     void handleCallRecipientNotAvailable(common::PhoneNumber from);
     void handleRedirect();
+    void callDrop(common::PhoneNumber from) override;
+    void handleCallDropped() override;
 };
 
 }

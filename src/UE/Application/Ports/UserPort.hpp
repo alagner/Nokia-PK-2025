@@ -25,7 +25,7 @@ public:
     void composeSms() override;
     void startDial() override;
     void showDialing() override;
-    void showTalking() override;
+    void showTalking(common::PhoneNumber from) override;
     common::PhoneNumber getPhoneNumber() const;
     void showPartnerNotAvailable() override;
     void displayMessage(common::PhoneNumber from, const std::string& text) override;

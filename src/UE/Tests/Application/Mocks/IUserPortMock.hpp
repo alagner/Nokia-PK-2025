@@ -39,7 +39,7 @@ public:
     MOCK_METHOD(void, composeSms, (), (final));
     MOCK_METHOD(void, startDial, (), (override));
     MOCK_METHOD(void, showDialing, (), (override));
-    MOCK_METHOD(void, showTalking, (), (override));
+    MOCK_METHOD(void, showTalking, (common:: PhoneNumber), (override));
     MOCK_METHOD(common::PhoneNumber, getPhoneNumber, (), (const));
     MOCK_METHOD(void, showPartnerNotAvailable,(), (override));
     MOCK_METHOD(void, displayMessage, (common::PhoneNumber from, const std::string& text), (override));

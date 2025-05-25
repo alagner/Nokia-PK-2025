@@ -98,7 +98,7 @@ TEST_F(UserPortTestSuite, showTalking_setsUpGuiAndAcceptSendsText)
     EXPECT_CALL(guiMock, setAcceptCallback(_));
     EXPECT_CALL(guiMock, setRejectCallback(_));
 
-    objectUnderTest.showTalking();
+    objectUnderTest.showTalking(common::PhoneNumber{123});
 }
 
 TEST_F(UserPortTestSuite, displayMessage_appendsPeerText)

@@ -240,7 +240,7 @@ struct ApplicationTalkingTestSuite : ApplicationConnectedTestSuite
     ApplicationTalkingTestSuite()
     {
         EXPECT_CALL(timerPortMock, stopTimer());
-        EXPECT_CALL(userPortMock, showTalking());
+        EXPECT_CALL(userPortMock, showTalking(_));
         objectUnderTest.handleCallAccepted(TEST_SENDER_NUMBER);
     }
 };
@@ -284,7 +284,7 @@ TEST_F(ApplicationConnectedTestSuite, shallGoToTalkingStateWhenCallAccepted)
     objectUnderTest.sendCallRequest(TEST_SENDER_NUMBER);
 
     EXPECT_CALL(timerPortMock, stopTimer());
-    EXPECT_CALL(userPortMock, showTalking());
+    EXPECT_CALL(userPortMock, showTalking(_));
     objectUnderTest.handleCallAccepted(PHONE_NUMBER);
 }
 
