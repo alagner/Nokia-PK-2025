@@ -23,6 +23,7 @@ namespace ue
         diallingNumber = common::PhoneNumber{};  // Reset phone number
     }
 
+    
     void DialingState::handleUiAction(std::optional<std::size_t>)
     {
         if (awaitingAfterFail)
@@ -119,6 +120,8 @@ namespace ue
             logger.logInfo("Call dropped by: ", from);
             context.timer.stopTimer();
             context.user.showAlert("Call Rejected", "Call was rejected by recipient.");
+            context.user.showConnected();
+            context.setState<ConnectedState>();
             awaitingAfterFail = true;
         }
     }
