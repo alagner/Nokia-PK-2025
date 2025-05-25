@@ -118,4 +118,56 @@ TEST_F(ApplicationTestSuite, ReceivesAndDisplaysSmsProperly) {
     app->handleDisconnected();
 }
 
+TEST_F(ApplicationTestSuite, shallHandleIncomingCallRequest)
+{
+    initApp();
+    clearExpectations();
+    common::PhoneNumber from{123};
+
+    common::BtsId btsId{42};
+    EXPECT_CALL(btsPortMock, sendAttachRequest(btsId));
+    EXPECT_CALL(timerPortMock, startTimer(::testing::_));
+    app->handleSib(btsId);
+
+    EXPECT_CALL(timerPortMock, stopTimer()).Times(::testing::AnyNumber());
+    EXPECT_CALL(userPortMock, showConnected());
+    app->handleAttachAccept();
+
+    clearExpectations();
+
+    EXPECT_CALL(userPortMock, showIncomingCall(from));
+    EXPECT_CALL(timerPortMock, startTimer(::testing::_)).Times(::testing::AnyNumber());
+    app->handleCallRequest(from);
+
+    EXPECT_CALL(btsPortMock, sendAcceptCall(from));
+    EXPECT_CALL(userPortMock, showTalkingMobileScreen(from));
+    app->handleAcceptCall(from);
+}
+
+TEST_F(ApplicationTestSuite, shallRejectIncomingCallRequest)
+{
+    initApp();
+    clearExpectations();
+    common::PhoneNumber from{123};
+    common::BtsId btsId{42};
+
+    EXPECT_CALL(btsPortMock, sendAttachRequest(btsId));
+    EXPECT_CALL(timerPortMock, startTimer(::testing::_));
+    app->handleSib(btsId);
+
+    EXPECT_CALL(timerPortMock, stopTimer()).Times(::testing::AnyNumber());
+    EXPECT_CALL(userPortMock, showConnected());
+    app->handleAttachAccept();
+
+    clearExpectations();
+
+    EXPECT_CALL(userPortMock, showIncomingCall(from));
+    EXPECT_CALL(timerPortMock, startTimer(::testing::_)).Times(::testing::AnyNumber());
+    app->handleCallRequest(from);
+
+    EXPECT_CALL(btsPortMock, sendRejectCall(from));
+    EXPECT_CALL(userPortMock, showConnected());
+    app->handleUiBack();
+}
+
 } // namespace ue

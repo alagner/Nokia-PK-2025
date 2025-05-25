@@ -18,7 +18,10 @@ namespace ue
     {
         context.timer.stopTimer();
     }
-
+    void IncomingCallState::handleAcceptCall(common::PhoneNumber)
+    {
+        handleUiAction(std::nullopt);
+    }
     void IncomingCallState::handleUiAction(std::optional<std::size_t> chosenIndex)
     {
         logger.logInfo("Call accepted from: ", caller);

@@ -20,6 +20,7 @@ namespace ue
         void handleCallDropped(common::PhoneNumber to) override;
         void handleCallReject(common::PhoneNumber to) override;
         void handleSmsReceive(common::PhoneNumber from, std::string messageText) override;
+        void handleAcceptCall(common::PhoneNumber from) override;
         void handleCallRequest(common::PhoneNumber from) override;
 
     private:
