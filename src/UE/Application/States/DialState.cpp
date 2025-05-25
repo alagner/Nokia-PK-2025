@@ -59,6 +59,11 @@ void DialState::handleCallRequest(common::PhoneNumber from)
 
 void DialState::acceptDialing(common::PhoneNumber recipientNumber)
 {
+    if (receivingCallRequest) {
+        logger.logInfo("Ignoring outgoing call request to: ", recipientNumber, " because we're already receiving a call from: ", callingPhoneNumber);
+        return;
+    }
+    
     logger.logInfo("Sending call request to: ", recipientNumber);
     
     recipientPhoneNumber = recipientNumber;
@@ -68,6 +73,8 @@ void DialState::acceptDialing(common::PhoneNumber recipientNumber)
     logger.logInfo("About to send CallRequest message to recipient: ", recipientPhoneNumber);
     
     context.bts.sendCallRequest(recipientPhoneNumber);
+
+    context.user.showCallView(recipientPhoneNumber);
     
     callRequestSent = true;
     

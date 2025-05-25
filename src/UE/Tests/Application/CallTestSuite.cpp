@@ -223,4 +223,264 @@ TEST_F(CallTestSuite, ShallDropSubsequentCallRequests)
 
 // Tests for interactions with Sending Call Request
 
+TEST_F(CallTestSuite, ShallCloseImmediatelyWhenUserClosesWhileDialing)
+{
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+
+    EXPECT_CALL(userPortMock, showDialView());
+    objectUnderTest.dial();
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    
+    EXPECT_CALL(btsPortMock, sendCallRequest(_)).Times(0);
+    
+    objectUnderTest.handleClose();
+}
+
+TEST_F(CallTestSuite, ShallSendCallDroppedWhenUserClosesAfterSendingCallRequest)
+{
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+
+    EXPECT_CALL(userPortMock, showDialView());
+    objectUnderTest.dial();
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    
+    const common::PhoneNumber recipientNumber{200};
+    
+    EXPECT_CALL(btsPortMock, sendCallRequest(recipientNumber));
+    EXPECT_CALL(timerPortMock, startTimer(_));
+
+    EXPECT_CALL(userPortMock, showCallView(recipientNumber));
+    
+    objectUnderTest.acceptDialing(recipientNumber);
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(btsPortMock, sendCallDropped(recipientNumber));
+    
+    objectUnderTest.handleClose();
+}
+
+TEST_F(CallTestSuite, ShallGoToNotConnectedStateImmediatelyWhenBtsConnectionDroppedWhileSendingCallRequest)
+{
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+
+    EXPECT_CALL(userPortMock, showDialView());
+    objectUnderTest.dial();
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    
+    const common::PhoneNumber recipientNumber{198};
+    
+    EXPECT_CALL(btsPortMock, sendCallRequest(recipientNumber));
+    EXPECT_CALL(timerPortMock, startTimer(_));
+    EXPECT_CALL(userPortMock, showCallView(recipientNumber));
+    
+    objectUnderTest.acceptDialing(recipientNumber);
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+    
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(userPortMock, showNotConnected());
+    EXPECT_CALL(btsPortMock, sendCallDropped(_)).Times(0);
+    
+    objectUnderTest.handleDisconnect();
+    
+    EXPECT_CALL(userPortMock, showConnecting());
+    EXPECT_CALL(btsPortMock, sendAttachRequest(common::BtsId{3}));
+    objectUnderTest.handleSib(common::BtsId{3});
+}
+
+TEST_F(CallTestSuite, ShallStoreAndNotInterruptSendingCallRequestWhenReceivingSms)
+{
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+    testing::Mock::VerifyAndClearExpectations(&smsDbMock);
+
+    EXPECT_CALL(userPortMock, showDialView());
+    objectUnderTest.dial();
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    
+    const common::PhoneNumber recipientNumber{199};
+    
+    EXPECT_CALL(btsPortMock, sendCallRequest(recipientNumber));
+    EXPECT_CALL(timerPortMock, startTimer(_));
+    EXPECT_CALL(userPortMock, showCallView(recipientNumber));
+    
+    objectUnderTest.acceptDialing(recipientNumber);
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+    testing::Mock::VerifyAndClearExpectations(&smsDbMock);
+
+    const common::PhoneNumber smsNumber{147};
+    const std::string smsText = "Test SMS received during sending call request";
+
+    EXPECT_CALL(smsDbMock, addSms(smsNumber, smsText));
+
+    EXPECT_CALL(userPortMock, showNewSms(_))
+        .Times(AnyNumber());
+
+    EXPECT_CALL(userPortMock, showCallView(_))
+        .Times(0);
+    
+    objectUnderTest.handleSms(smsNumber, smsText);
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+    testing::Mock::VerifyAndClearExpectations(&smsDbMock);
+
+    EXPECT_CALL(timerPortMock, stopTimer());
+    
+    objectUnderTest.handleCallAccepted(recipientNumber);
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+
+    EXPECT_CALL(userPortMock, showConnected());
+    
+    objectUnderTest.handleCallDropped(recipientNumber);
+
+    std::vector<Sms> expectedSmsDb = {
+        Sms{smsNumber, smsText}
+    };
+    
+    EXPECT_CALL(smsDbMock, getAllSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(ReturnRef(expectedSmsDb));
+    EXPECT_CALL(smsDbMock, hasUnreadSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(true));
+    
+    EXPECT_CALL(userPortMock, setSmsList(Ref(expectedSmsDb)))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, setSelectSmsCallback(_))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, showSmsList())
+        .Times(AtLeast(1));
+    
+    objectUnderTest.viewSms();
+}
+
+TEST_F(CallTestSuite, ShallInterruptDialingWhenReceivingCallRequest)
+{
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+
+    EXPECT_CALL(userPortMock, showDialView());
+    objectUnderTest.dial();
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+
+    const common::PhoneNumber callerNumber{190};
+    
+    EXPECT_CALL(timerPortMock, startTimer(_));
+    EXPECT_CALL(userPortMock, showCallRequest(callerNumber));
+    
+    objectUnderTest.handleCallRequest(callerNumber);
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+    
+    const common::PhoneNumber recipientNumber{195};
+    
+    EXPECT_CALL(btsPortMock, sendCallRequest(recipientNumber)).Times(0);
+    EXPECT_CALL(timerPortMock, startTimer(_)).Times(0);
+    EXPECT_CALL(userPortMock, showCallView(recipientNumber)).Times(0);
+    
+    objectUnderTest.acceptDialing(recipientNumber);
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(btsPortMock, sendCallAccept(callerNumber));
+    
+    objectUnderTest.acceptCallRequest();
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+
+    EXPECT_CALL(userPortMock, showConnected());
+    
+    objectUnderTest.handleCallDropped(callerNumber);
+}
+
+TEST_F(CallTestSuite, ShallSendCallDroppedWhenReceivingCallRequestAfterSendingCallRequest)
+{
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+
+    EXPECT_CALL(userPortMock, showDialView());
+    objectUnderTest.dial();
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+
+    const common::PhoneNumber recipientNumber{191};
+    
+    EXPECT_CALL(btsPortMock, sendCallRequest(recipientNumber));
+    EXPECT_CALL(timerPortMock, startTimer(_));
+    EXPECT_CALL(userPortMock, showCallView(recipientNumber));
+    
+    objectUnderTest.acceptDialing(recipientNumber);
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+
+    const common::PhoneNumber callerNumber{175};
+    
+    EXPECT_CALL(timerPortMock, stopTimer());  
+    EXPECT_CALL(btsPortMock, sendCallDropped(recipientNumber));  
+    EXPECT_CALL(timerPortMock, startTimer(_));  
+    EXPECT_CALL(userPortMock, showCallRequest(callerNumber));
+    
+    objectUnderTest.handleCallRequest(callerNumber);
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(btsPortMock, sendCallAccept(callerNumber));
+    
+    objectUnderTest.acceptCallRequest();
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+
+    EXPECT_CALL(userPortMock, showConnected());
+    
+    objectUnderTest.handleCallDropped(callerNumber);
+}
+
 }  // namespace ue
