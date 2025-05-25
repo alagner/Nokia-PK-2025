@@ -193,12 +193,11 @@ TEST_F(UserPortTestSuite, showTalking_acceptSendsTextWhenNotEmpty)
 
 TEST_F(UserPortTestSuite, shallShowPartnerNotAvailable)
 {
-    StrictMock<ITextModeMock> modeMock;
-    EXPECT_CALL(guiMock, setAlertMode()).WillOnce(ReturnRef(modeMock));
-    EXPECT_CALL(modeMock, setText("Partner is not available."));
+    common::PhoneNumber TO{113};
+    EXPECT_CALL(guiMock, showPeerUserNotAvailable(TO));
     EXPECT_CALL(guiMock, setRejectCallback(_));
     EXPECT_CALL(guiMock, setAcceptCallback(_));
-    objectUnderTest.showPartnerNotAvailable();
+    objectUnderTest.showPartnerNotAvailable(TO);
 }
 
 }

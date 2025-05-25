@@ -90,7 +90,7 @@ void BaseState::cancelCallRequest()
     logger.logError("Unexpected: cancelCallRequest");
 }
 
-void BaseState::handleCallRecipientNotAvailable(common::PhoneNumber from)
+void BaseState::handleCallRecipientNotAvailable()
 {
     logger.logError("Unexpected: handleCallRecipientNotAvailable");
 }
@@ -120,7 +120,7 @@ void BaseState::callAccept(common::PhoneNumber)
     logger.logError("Unexpected: callAccept");
 }
 
-void BaseState::callDrop(common::PhoneNumber)
+void BaseState::callDrop()
 {
     logger.logError("Unexpected: callDrop");
 }

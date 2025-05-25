@@ -27,7 +27,7 @@ public:
     void showDialing() override;
     void showTalking(common::PhoneNumber from) override;
     common::PhoneNumber getPhoneNumber() const;
-    void showPartnerNotAvailable() override;
+    void showPartnerNotAvailable(common::PhoneNumber) override;
     void displayMessage(common::PhoneNumber from, const std::string& text) override;
     void showCallRequest(common::PhoneNumber from) override;
 

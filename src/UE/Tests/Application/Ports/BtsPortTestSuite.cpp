@@ -134,9 +134,9 @@ TEST_F(BtsPortTestSuite, shallHandleUnknownRecipientAfterCallTalk)
     const common::PhoneNumber PEER{22};
     objectUnderTest.sendTalkMessage(PEER, "abc");
 
-    EXPECT_CALL(handlerMock, handleCallRecipientNotAvailable(PEER));
+    EXPECT_CALL(handlerMock, handleCallRecipientNotAvailable());
 
-    common::OutgoingMessage msg{common::MessageId::UnknownRecipient, PHONE_NUMBER, PEER};
+    common::OutgoingMessage msg{common::MessageId::UnknownRecipient, PHONE_NUMBER, common::PhoneNumber{}};
     msg.writeNumber<uint8_t>(0);
     messageCallback(msg.getMessage());
 }
@@ -146,9 +146,9 @@ TEST_F(BtsPortTestSuite, shallHandleUnknownRecipientAfterCallRequest)
     const common::PhoneNumber PEER{33};
     objectUnderTest.sendCallRequest(PHONE_NUMBER, PEER);
 
-    EXPECT_CALL(handlerMock, handleCallRecipientNotAvailable(PEER));
+    EXPECT_CALL(handlerMock, handleCallRecipientNotAvailable());
 
-    common::OutgoingMessage msg{common::MessageId::UnknownRecipient, PHONE_NUMBER, PEER};
+    common::OutgoingMessage msg{common::MessageId::UnknownRecipient, PHONE_NUMBER, common::PhoneNumber{}};
     msg.writeNumber<uint8_t>(0);
     messageCallback(msg.getMessage());
 }
@@ -200,11 +200,11 @@ TEST_F(BtsPortTestSuite, shallHandleUnknownRecipientForCall)
 
     objectUnderTest.sendCallRequest(PHONE_NUMBER, common::PhoneNumber{123});
 
-    EXPECT_CALL(handlerMock, handleCallRecipientNotAvailable(common::PhoneNumber{123}));
+    EXPECT_CALL(handlerMock, handleCallRecipientNotAvailable());
 
     common::OutgoingMessage msg{common::MessageId::UnknownRecipient,
                                 PHONE_NUMBER,
-                                common::PhoneNumber{123}};
+                                common::PhoneNumber{}};
     messageCallback(msg.getMessage());
 }
 

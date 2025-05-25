@@ -17,6 +17,12 @@ void TalkingState::handleDisconnect()
     context.setState<NotConnectedState>();
 }
 
+void TalkingState::handleSms(common::PhoneNumber from, std::string text)
+{
+    logger.logInfo(common::ILogger::INFO_LEVEL, "[ConnectedState] Received SMS from: ", from, ", text: ", text);
+    context.user.showNewSms();
+}
+
 void TalkingState::sendTalkMessage(const std::string& text)
 {
     context.bts.sendTalkMessage(to, text);
@@ -39,10 +45,10 @@ void TalkingState::handleTimeout()
     context.setState<ConnectedState>();
 }
 
-void TalkingState::handleCallRecipientNotAvailable(common::PhoneNumber)
+void TalkingState::handleCallRecipientNotAvailable()
 {
     logger.logInfo("Peer is unavailable during call");
-    context.user.showPartnerNotAvailable();
+    context.user.showPartnerNotAvailable(to);
     context.timer.stopTimer();
     context.timer.startRedirectTimer(std::chrono::seconds(3));
 }
@@ -54,7 +60,7 @@ void TalkingState::handleRedirect()
     context.setState<ConnectedState>();
 }
 
-void TalkingState::callDrop(common::PhoneNumber)
+void TalkingState::callDrop()
 {
     logger.logInfo("User dropped the call");
     context.timer.stopTimer();
@@ -69,6 +75,12 @@ void TalkingState::handleCallDropped()
     context.timer.stopTimer();
     context.user.showConnected();
     context.setState<ConnectedState>();
+}
+
+void TalkingState::handleCallRequest(common::PhoneNumber from)
+{
+    context.timer.stopTimer();
+    context.bts.sendCallDropped(context.user.getPhoneNumber(), from);
 }
 
 }

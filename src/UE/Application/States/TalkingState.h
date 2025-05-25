@@ -9,16 +9,20 @@ namespace ue {
 class TalkingState : public BaseState
 {
    public:
-    common::PhoneNumber to;
     explicit TalkingState(Context& context, common::PhoneNumber to);
     void handleDisconnect() override;
+    void handleSms(common::PhoneNumber, std::string) override;
     void sendTalkMessage(const std::string& text);
     void handleTalkMessage(common::PhoneNumber from, const std::string& text);
     void handleTimeout();
-    void handleCallRecipientNotAvailable(common::PhoneNumber from);
+    void handleCallRecipientNotAvailable();
     void handleRedirect();
-    void callDrop(common::PhoneNumber from) override;
+    void callDrop() override;
     void handleCallDropped() override;
+    void handleCallRequest(common::PhoneNumber from) override;
+
+   private:
+    common::PhoneNumber to;
 };
 
 }

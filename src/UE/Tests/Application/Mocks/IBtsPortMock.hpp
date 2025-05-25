@@ -20,7 +20,7 @@ public:
     MOCK_METHOD(void, handleSmsDeliveryFailure, (common::PhoneNumber from), (override));
     MOCK_METHOD(void, handleCallAccepted, (common::PhoneNumber), (override));
     MOCK_METHOD(void, handleCallDropped, (), (override));
-    MOCK_METHOD(void, handleCallRecipientNotAvailable, (common::PhoneNumber from), (override));
+    MOCK_METHOD(void, handleCallRecipientNotAvailable, (), (override));
     MOCK_METHOD(void, handleTalkMessage, (common::PhoneNumber, const std::string&), (override));
     MOCK_METHOD(void, handleCallRequest, (common::PhoneNumber), (override));
 

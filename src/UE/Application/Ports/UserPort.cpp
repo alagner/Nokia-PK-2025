@@ -185,14 +185,13 @@ void UserPort::showTalking(common::PhoneNumber from)
 
     gui.setRejectCallback([this,from]() {
         logger.logInfo("User ended the call");
-        handler->callDrop(from);
+        handler->callDrop();
     });
 }
 
-void UserPort::showPartnerNotAvailable()
+void UserPort::showPartnerNotAvailable(common::PhoneNumber from)
 {
-    IUeGui::ITextMode& mode = gui.setAlertMode();
-    mode.setText("Partner is not available.");
+    gui.showPeerUserNotAvailable(from);
     gui.setRejectCallback([this]() {
 
     });
@@ -216,7 +215,7 @@ void UserPort::showCallRequest(common::PhoneNumber from)
     });
 
     gui.setRejectCallback([this, from]() {
-        handler->callDrop(from);
+        handler->callDrop();
     });
 }
 

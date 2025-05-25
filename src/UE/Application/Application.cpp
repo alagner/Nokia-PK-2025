@@ -106,9 +106,9 @@ void Application::cancelCallRequest()
     context.state->cancelCallRequest();
 }
 
-void Application::handleCallRecipientNotAvailable(common::PhoneNumber from)
+void Application::handleCallRecipientNotAvailable()
 {
-    context.state->handleCallRecipientNotAvailable(from);
+    context.state->handleCallRecipientNotAvailable();
 }
 
 void Application::handleRedirect()
@@ -136,9 +136,9 @@ void Application::callAccept(PhoneNumber from)
     context.state->callAccept(from);
 }
 
-void Application::callDrop(PhoneNumber from)
+void Application::callDrop()
 {
-    context.state->callDrop(from);
+    context.state->callDrop();
 }
 
 }

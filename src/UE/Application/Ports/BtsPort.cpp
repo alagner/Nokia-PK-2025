@@ -61,11 +61,11 @@ void BtsPort::handleMessage(BinaryMessage msg)
         {
             if (lastSentMessageType == common::MessageId::CallRequest)
             {
-                handler->handleCallRecipientNotAvailable(to);
+                handler->handleCallRecipientNotAvailable();
             }
             else if (lastSentMessageType == common::MessageId::CallTalk)
             {
-                handler->handleCallRecipientNotAvailable(to);
+                handler->handleCallRecipientNotAvailable();
             }
             else
             {
