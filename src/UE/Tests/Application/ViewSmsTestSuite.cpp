@@ -379,4 +379,95 @@ TEST_F(ViewSmsTestSuite, ShallStoreAndNotInterruptViewingWhenReceivingSmsWhileVi
     EXPECT_CALL(userPortMock, showSmsContent(std::to_string(sender2.value), text2));
     objectUnderTest.selectSms(1);
 }
+
+TEST_F(ViewSmsTestSuite, ShallInterruptViewingSmsWhenReceivingCallRequest)
+{
+    const common::PhoneNumber sender{123};
+    const std::string text = "Test message";
+    
+    EXPECT_CALL(smsDbMock, addSms(sender, text));
+    EXPECT_CALL(userPortMock, showNewSms(_))
+        .Times(AnyNumber());
+    objectUnderTest.handleSms(sender, text);
+
+    std::vector<Sms> smsDbWithMessage = {
+        Sms{sender, text}
+    };
+
+
+    EXPECT_CALL(smsDbMock, getAllSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(ReturnRef(smsDbWithMessage));
+    EXPECT_CALL(smsDbMock, hasUnreadSms())
+        .Times(AtLeast(1))
+        .WillRepeatedly(Return(false));
+    
+    EXPECT_CALL(userPortMock, setSmsList(Ref(smsDbWithMessage)))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, setSelectSmsCallback(_))
+        .Times(AtLeast(1));
+    EXPECT_CALL(userPortMock, showSmsList())
+        .Times(AtLeast(1));
+        
+    objectUnderTest.viewSms();
+    
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&smsDbMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+
+    const common::PhoneNumber callerNumber{156};
+
+    EXPECT_CALL(timerPortMock, startTimer(_));
+
+    EXPECT_CALL(userPortMock, showCallRequest(callerNumber));
+
+    EXPECT_CALL(userPortMock, showSmsList())
+        .Times(0);
+    EXPECT_CALL(userPortMock, showSmsContent(_, _))
+        .Times(0);
+
+    objectUnderTest.handleCallRequest(callerNumber);
+
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(btsPortMock, sendCallAccept(callerNumber));
+
+    EXPECT_CALL(userPortMock, showSmsList())
+        .Times(0);
+    EXPECT_CALL(userPortMock, showSmsContent(_, _))
+        .Times(0);
+    
+    objectUnderTest.acceptCallRequest();
+
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+
+    EXPECT_CALL(userPortMock, showConnected());
+    objectUnderTest.handleCallDropped(callerNumber);
+
+    const common::PhoneNumber callerNumber2{189};
+    
+    EXPECT_CALL(timerPortMock, startTimer(_));
+    EXPECT_CALL(userPortMock, showCallRequest(callerNumber2));
+    objectUnderTest.handleCallRequest(callerNumber2);
+
+    testing::Mock::VerifyAndClearExpectations(&userPortMock);
+    testing::Mock::VerifyAndClearExpectations(&timerPortMock);
+    testing::Mock::VerifyAndClearExpectations(&btsPortMock);
+    
+    EXPECT_CALL(timerPortMock, stopTimer());
+    EXPECT_CALL(btsPortMock, sendCallDropped(callerNumber2));
+    EXPECT_CALL(userPortMock, showConnected());
+ 
+    EXPECT_CALL(userPortMock, showSmsList())
+        .Times(0);
+    EXPECT_CALL(userPortMock, showSmsContent(_, _))
+        .Times(0);
+    
+    objectUnderTest.rejectCallRequest();
+}
 }
