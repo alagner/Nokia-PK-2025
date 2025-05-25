@@ -39,6 +39,14 @@ SmsViewState::SmsViewState(Context &context)
 void SmsViewState::handleDisconnect() 
 {
     logger.logInfo("Connection to BTS dropped while viewing SMS/SMS list");
+    
+    if (receivingCallRequest) {
+        logger.logInfo("Connection dropped while receiving call request from: ", callingPhoneNumber, 
+                      " - cannot inform peer UE, going to NotConnected immediately");
+        context.timer.stopTimer();
+        receivingCallRequest = false;
+    }
+    
     context.setState<NotConnectedState>();
 }
 
@@ -131,10 +139,20 @@ void SmsViewState::composeSms()
 
 void SmsViewState::handleCallRequest(common::PhoneNumber from)
 {
+    if (receivingCallRequest) {
+        if (from == callingPhoneNumber) {
+            logger.logInfo("Received subsequent call request from same caller: ", from, " - ignoring as already processing call request from this peer");
+        } else {
+            logger.logInfo("Received subsequent call request from: ", from, " while already processing call request from: ", callingPhoneNumber, " - dropping new request");
+            context.bts.sendCallDropped(from);
+        }
+        return;
+    }
+    
     logger.logInfo("Received call request from: ", from, " - interrupting SMS viewing");
     callingPhoneNumber = from;
+    receivingCallRequest = true;  
     
-   
     viewingSpecificSms = false;
     
     context.timer.startTimer(CALL_TIMEOUT);
@@ -143,11 +161,43 @@ void SmsViewState::handleCallRequest(common::PhoneNumber from)
     context.user.showCallRequest(from);
 }
 
+void SmsViewState::handleCallDropped(common::PhoneNumber from)
+{
+    if (receivingCallRequest && from == callingPhoneNumber) {
+        logger.logInfo("Call dropped by caller: ", from, " - returning to SMS view state");
+        
+        context.timer.stopTimer();
+        receivingCallRequest = false;
+        
+        if (viewingSpecificSms) {
+            const auto& smsList = context.smsDb.getAllSms();
+            if (currentSmsIndex < smsList.size()) {
+                const auto& sms = smsList[currentSmsIndex];
+                if (sms.isSent) {
+                    context.user.showSentSmsContent(to_string(sms.to), sms.text);
+                } else {
+                    context.user.showSmsContent(to_string(sms.from), sms.text);
+                }
+            } else {
+                viewingSpecificSms = false;
+                viewSms();
+            }
+        } else {
+            viewSms();
+        }
+    } else if (receivingCallRequest) {
+        logger.logInfo("Received call dropped from unexpected number: ", from, " while receiving call from: ", callingPhoneNumber, " - ignoring");
+    } else {
+        logger.logInfo("Received call dropped from: ", from, " but not expecting any call - ignoring");
+    }
+}
+
 void SmsViewState::acceptCallRequest()
 {
     logger.logInfo("User accepted call from: ", callingPhoneNumber);
     
     context.timer.stopTimer();
+    receivingCallRequest = false;  
     
     logger.logInfo("Sending CallAccept message to: ", callingPhoneNumber);
     context.bts.sendCallAccept(callingPhoneNumber);
@@ -161,10 +211,10 @@ void SmsViewState::rejectCallRequest()
     logger.logInfo("User rejected call from: ", callingPhoneNumber);
     
     context.timer.stopTimer();
+    receivingCallRequest = false; 
     
     context.bts.sendCallDropped(callingPhoneNumber);
     
-   
     logger.logInfo("Not returning to SMS view after call rejection");
     context.setState<ConnectedState>();
 }
@@ -175,6 +225,7 @@ void SmsViewState::handleTimeout()
     
     context.bts.sendCallDropped(callingPhoneNumber);
     
+    receivingCallRequest = false;  
     
     logger.logInfo("Not returning to SMS view after call timeout");
     context.setState<ConnectedState>();
@@ -192,8 +243,16 @@ void SmsViewState::updateNotificationIcon(const std::string& source)
 
 void SmsViewState::handleClose()
 {
-    logger.logInfo("User closes UE while viewing SMS/SMS list - closing immediately");
-   
+    logger.logInfo("User closes UE while in SmsViewState");
+    
+    if (receivingCallRequest) {
+        logger.logInfo("UE closing while receiving call request from: ", callingPhoneNumber, " - sending CallDropped");
+        context.timer.stopTimer();
+        context.bts.sendCallDropped(callingPhoneNumber);
+        receivingCallRequest = false;
+    }
+    
+    logger.logInfo("UE closing immediately without waiting");
 }
 
 }

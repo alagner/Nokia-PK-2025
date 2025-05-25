@@ -17,6 +17,7 @@ public:
     void handleDisconnect() override;
     void handleSms(common::PhoneNumber from, std::string text) override;
     void handleCallRequest(common::PhoneNumber from) override;
+    void handleCallDropped(common::PhoneNumber from) override;
     void handleTimeout() override;
     
     void acceptCallRequest() override;
@@ -32,11 +33,14 @@ public:
 
     void dial() override;
     
+    void handleClose() override;
+    
 private:
     void updateNotificationIcon(const std::string& context);
     
     common::PhoneNumber callingPhoneNumber;
     static const std::chrono::seconds CALL_TIMEOUT;
+    bool receivingCallRequest = false;  
 };
 
 }

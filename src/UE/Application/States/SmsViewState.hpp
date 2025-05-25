@@ -27,6 +27,7 @@ public:
     
     
     void handleCallRequest(common::PhoneNumber from) override;
+    void handleCallDropped(common::PhoneNumber from) override;
     void acceptCallRequest() override;
     void rejectCallRequest() override;
     void handleTimeout() override;
@@ -39,6 +40,7 @@ private:
     
     bool viewingSpecificSms = false;  
     size_t currentSmsIndex = 0;       
+    bool receivingCallRequest = false; 
 };
 
 }

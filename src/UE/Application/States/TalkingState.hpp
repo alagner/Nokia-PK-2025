@@ -15,10 +15,13 @@ public:
     void handleDisconnect() override;
     void handleCallTalk(common::PhoneNumber from, std::string text) override;
     void handleCallDropped(common::PhoneNumber from) override;
+    void handleCallRequest(common::PhoneNumber from) override;
     void handleTimeout() override;
     void acceptCallRequest() override;
     void rejectDialing() override;
     void rejectCallRequest() override;
+    void handleSms(common::PhoneNumber from, std::string text) override;
+    void handleClose() override;
     
     void handleUnknownRecipient(common::PhoneNumber to);
     

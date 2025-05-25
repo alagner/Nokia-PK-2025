@@ -44,5 +44,47 @@ TEST_F(ApplicationNotConnectedTestSuite, todo)
 {
 }
 
+TEST_F(ApplicationNotConnectedTestSuite, ShallStopTimerAndCloseUeWhenClosingInConnectingState)
+{
+    EXPECT_CALL(userPortMock, showConnecting());
+    EXPECT_CALL(btsPortMock, sendAttachRequest(common::BtsId{1}));
+    objectUnderTest.handleSib(common::BtsId{1});
+    
+    EXPECT_CALL(timerPortMock, stopTimer()).Times(1);
+    
+    objectUnderTest.handleClose();
+}
+
+TEST_F(ApplicationNotConnectedTestSuite, ShallStoreNewSibDataWhileInConnectingState)
+{
+    EXPECT_CALL(userPortMock, showConnecting());
+    EXPECT_CALL(btsPortMock, sendAttachRequest(common::BtsId{1})).Times(1);
+    objectUnderTest.handleSib(common::BtsId{1});
+    
+    EXPECT_CALL(btsPortMock, sendAttachRequest(common::BtsId{2})).Times(0);
+    objectUnderTest.handleSib(common::BtsId{2});
+
+    EXPECT_CALL(userPortMock, showConnected());
+    EXPECT_CALL(timerPortMock, stopTimer());
+    objectUnderTest.handleAttachAccept();
+}
+
+TEST_F(ApplicationNotConnectedTestSuite, ShallBreakAttachProcedureWhenConnectionToBtsDroppingWhileConnecting)
+{
+    EXPECT_CALL(userPortMock, showConnecting());
+    EXPECT_CALL(btsPortMock, sendAttachRequest(common::BtsId{1}));
+    objectUnderTest.handleSib(common::BtsId{1});
+    
+    EXPECT_CALL(timerPortMock, stopTimer()).Times(1);
+    EXPECT_CALL(userPortMock, showNotConnected());
+    objectUnderTest.handleDisconnect();
+
+    EXPECT_CALL(userPortMock, showConnecting());
+    EXPECT_CALL(btsPortMock, sendAttachRequest(common::BtsId{2}));
+    objectUnderTest.handleSib(common::BtsId{2});
+}
+
+// Tests related to SMS viewing have been moved to ViewSmsTestSuite.cpp
+
 // ViewSmsTestSuite has been moved to its own file: ViewSmsTestSuite.cpp
 }
