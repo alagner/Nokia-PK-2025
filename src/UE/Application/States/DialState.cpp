@@ -6,8 +6,8 @@
 namespace ue
 {
 
-const std::chrono::seconds DialState::CALL_REQUEST_TIMEOUT{10};
-const std::chrono::seconds DialState::CALL_RESPONSE_TIMEOUT{5};
+const std::chrono::seconds DialState::CALL_REQUEST_TIMEOUT{62};
+const std::chrono::seconds DialState::CALL_RESPONSE_TIMEOUT{60};
 
 DialState::DialState(Context &context)
     : BaseState(context, "DialState")
