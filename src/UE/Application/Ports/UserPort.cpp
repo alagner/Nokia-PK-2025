@@ -7,6 +7,7 @@
 #include "IUeGui.hpp"
 #include <sstream>
 #include <vector>
+#include "UeGui/ICallMode.hpp"
 
 namespace ue
 {
@@ -52,6 +53,15 @@ void UserPort::showConnecting()
 
 void UserPort::showConnected()
 {
+    gui.setAlertMode().setText("");
+    gui.setAcceptCallback(nullptr);
+    gui.setRejectCallback(nullptr);
+    {
+        IUeGui::ICallMode& cm = gui.setCallMode();
+        cm.clearIncomingText();
+        cm.clearOutgoingText();
+    }
+
     currentSmsComposeMode = nullptr; // Ensure compose mode ptr is null
     logger.logInfo("Showing Connected state main menu");
     IUeGui::IListViewMode& menu = gui.setListViewMode();
@@ -188,6 +198,13 @@ bool UserPort::getComposedSmsData(common::PhoneNumber& recipient, std::string& t
 
 void UserPort::showDialing()
 {
+    gui.setAlertMode().setText("");
+    {
+        IUeGui::ICallMode& cm = gui.setCallMode();
+        cm.clearIncomingText();
+        cm.clearOutgoingText();
+    }
+
     logger.logInfo("Switching UI to dialing mode.");
     // Ustawiamy tryb dialingu w GUI
     currentDialMode = &gui.setDialMode(); 
@@ -238,6 +255,8 @@ bool UserPort::getDialedNumber(common::PhoneNumber& recipient)
 
 void UserPort::showIncomingCall(const common::PhoneNumber& caller)
 {
+    gui.setAlertMode().setText("");
+
     logger.logInfo("Switching UI to incoming call mode for caller: ", caller);
     IUeGui::ITextMode& alert = gui.setAlertMode();
     alert.setText("Incoming call from: " + common::to_string(caller));
