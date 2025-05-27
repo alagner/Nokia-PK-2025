@@ -53,14 +53,6 @@ void UserPort::showConnecting()
 
 void UserPort::showConnected()
 {
-    gui.setAlertMode().setText("");
-    gui.setAcceptCallback(nullptr);
-    gui.setRejectCallback(nullptr);
-    {
-        IUeGui::ICallMode& cm = gui.setCallMode();
-        cm.clearIncomingText();
-        cm.clearOutgoingText();
-    }
 
     currentSmsComposeMode = nullptr; // Ensure compose mode ptr is null
     logger.logInfo("Showing Connected state main menu");
